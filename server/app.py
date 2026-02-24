@@ -1,12 +1,16 @@
 # Import necessary libraries and modules
 from bson.objectid import ObjectId
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from pymongo import MongoClient
 
 # Import custom modules for database interactions
 import usersDB
 import projectsDB
 import hardwareDB
+
+import mongomock
+
+client = mongomock.MongoClient()
 
 # Define the MongoDB connection string
 MONGODB_SERVER = "your_mongodb_connection_string_here"
@@ -17,16 +21,24 @@ app = Flask(__name__)
 # Route for user login
 @app.route('/login', methods=['POST'])
 def login():
-    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
 
-    # Connect to MongoDB
+    userId = data.get('userId')
+    password = data.get('password')
 
-    # Attempt to log in the user using the usersDB module
+    if not all([userId, password]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-    # Close the MongoDB connection
+    # Attempt to log in the user
+    success, message = usersDB.login(client, userId, password)
 
-    # Return a JSON response
-    return jsonify({})
+    if success:
+        session['user_id'] = userId
+        return jsonify({"success": True, "message": message}), 200
+    else:
+        return jsonify({"success": False, "message": message}), 401
 
 # Route for the main page (Work in progress)
 @app.route('/main')
@@ -45,58 +57,91 @@ def mainPage():
 # Route for joining a project
 @app.route('/join_project', methods=['POST'])
 def join_project():
-    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
 
-    # Connect to MongoDB
+    projectId = data.get('projectId')
+    userId = session.get('userId')
+
+    if not all([projectId, userId]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
 
     # Attempt to join the project using the usersDB module
-
-    # Close the MongoDB connection
+    success, message = usersDB.joinProject(client, userId, projectId)
 
     # Return a JSON response
-    return jsonify({})
+    if success:
+        return jsonify({"success": True, "message": message}), 201
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 # Route for adding a new user
 @app.route('/add_user', methods=['POST'])
 def add_user():
     # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
 
-    # Connect to MongoDB
+    username = data.get('username')
+    userId = data.get('userId')
+    password = data.get('password')
+
+    if not all([username, userId, password]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
 
     # Attempt to add the user using the usersDB module
-
-    # Close the MongoDB connection
+    success, message = usersDB.addUser(client, username, userId, password)
 
     # Return a JSON response
-    return jsonify({})
+    if success:
+        return jsonify({"success": True, "message": message}), 201
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 # Route for getting the list of user projects
 @app.route('/get_user_projects_list', methods=['POST'])
 def get_user_projects_list():
     # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
 
-    # Connect to MongoDB
-
+    userId = session.get('userId')
     # Fetch the user's projects using the usersDB module
-
-    # Close the MongoDB connection
+    success, message = usersDB.getUserProjectsList(client, userId)
 
     # Return a JSON response
-    return jsonify({})
+    if success:
+        return jsonify({"success": True, "message": message}), 200
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 # Route for creating a new project
 @app.route('/create_project', methods=['POST'])
 def create_project():
     # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
 
-    # Connect to MongoDB
+    projectName = data.get('projectName')
+    projectId = data.get('projectId')
+    description = data.get('description')
+    userId = session.get('userId') 
 
-    # Attempt to create the project using the projectsDB module
+    if not all([projectName, projectId, description, userId]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-    # Close the MongoDB connection
+    # Attempt to add the project using the projectsDB module
+    success, message = projectsDB.createProject(client, projectName, projectId, description, userId)
 
     # Return a JSON response
-    return jsonify({})
+    if success:
+        return jsonify({"success": True, "message": message}), 201
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 # Route for getting project information
 @app.route('/get_project_info', methods=['POST'])
