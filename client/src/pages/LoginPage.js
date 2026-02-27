@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import LoginStyle from "../AppStyle/style.js";
 
 const LoginPage = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate();
+
   // BACKEND CONNECTION PLACEHOLDERS
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Connecting to backend...");
-    console.log("Sending Encrypted Data:", { userId, password });
+    console.log("logging in", { userId, password });
     
     // TODO: Implement actual fetch request here
     // const response = await fetch('/api/login', { method: 'POST', body: JSON.stringify({userId, password}) });
@@ -19,18 +21,20 @@ const LoginPage = () => {
     console.log(`Redirecting to forgot ${type} logic...`);
   };
 
-  const handleNewUser = () => {
+  const handleSignupRedirect = () => {
     console.log("Redirecting to Sign-in / Registration...");
+    navigate('/signup')
   };
 
   return (
     <div style={LoginStyle.container}>
+      <div style={LoginStyle.topTrim}></div>
       <div style={LoginStyle.loginBox}>
         <h1 style={LoginStyle.header}>Login</h1>
         
         <form onSubmit={handleLogin} style={LoginStyle.form}>
           <div style={LoginStyle.inputGroup}>
-            <label>user ID</label>
+            <label>User ID</label>
             <input 
               type="text" 
               value={userId} 
@@ -40,7 +44,7 @@ const LoginPage = () => {
           </div>
 
           <div style={LoginStyle.inputGroup}>
-            <label>password</label>
+            <label>Password</label>
             <input 
               type="password" 
               value={password} 
@@ -53,9 +57,11 @@ const LoginPage = () => {
         </form>
 
         <div style={LoginStyle.footer}>
-          <div style={LoginStyle.footerLeft} onClick={handleNewUser}>
+          <div style={LoginStyle.footerLeft}>
             <p>New User?</p>
-            <p><strong>Sign-in</strong></p>
+            <Link to = "/signup" style={LoginStyle.link}>
+             <strong>Sign-up</strong>
+              </Link>
           </div>
           
           <div style={LoginStyle.footerRight}>
@@ -68,6 +74,7 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+      <div style={LoginStyle.bottomTrim}></div>
     </div>
   );
 };

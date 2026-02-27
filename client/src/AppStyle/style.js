@@ -1,59 +1,111 @@
 const LoginStyle = {
   container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    fontFamily: 'Arial, sans-serif'
+    display: "flex",
+    position: 'relative',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100dvh",
+    width: "100vw",
+    margin: 0,
+    backgroundColor: "#f4f6f9",
+    fontFamily: "Arial, sans-serif",
   },
+
+  topTrim: {
+    width: "100%",
+    height: "35px",
+    backgroundColor: "#c65c1a",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+
+  bottomTrim: {
+    width: "100%",
+    height: "50px",
+    backgroundColor: "#c65c1a",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+  },
+
   loginBox: {
-    border: '1px solid black',
-    padding: '40px',
-    width: '400px',
-    position: 'relative'
+    backgroundColor: "#ffffff",
+    padding: "40px",
+    borderRadius: "12px",
+    boxShadow: "0 8px 20px #c65c1a",
+    width: "350px",
+    zIndex: 1,
   },
+
   header: {
-    textAlign: 'center',
-    marginBottom: '30px'
+    textAlign: "center",
+    marginBottom: "30px",
+    color: "#2c3e50",
   },
+
   form: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end'
+    display: "flex",
+    flexDirection: "column",
   },
+
   inputGroup: {
-    marginBottom: '15px',
-    display: 'flex',
-    alignItems: 'center'
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "20px",
+    fontSize: "14px",
+    color: "#121111",
   },
+
   input: {
-    marginLeft: '10px',
-    padding: '5px',
-    width: '200px',
-    border: '1px solid #777'
+    marginTop: "6px",
+    padding: "10px",
+    borderRadius: "6px",
+    backgroundColor: "#ede4de",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    outline: "none",
   },
+
   submitBtn: {
-    backgroundColor: '#add8e6', // Light blue from image
-    border: '1px solid #777',
-    padding: '10px 25px',
-    cursor: 'pointer',
-    marginTop: '10px'
+    marginTop: "10px",
+    padding: "12px",
+    backgroundColor: "#c65c1a",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "15px",
+    fontWeight: "bold",
   },
+
   footer: {
-    marginTop: '30px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '0.9rem'
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "25px",
+    fontSize: "13px",
   },
+
   footerLeft: {
-    cursor: 'pointer'
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "13px",
+    color: "#2c3e50",
   },
+
   footerRight: {
-    textAlign: 'right'
+    textAlign: "right",
   },
+
   link: {
-    cursor: 'pointer',
-    margin: '5px 0'
-  }
+    cursor: "pointer",
+    color: "#3498db",
+    margin: "4px 0",
+  },
 };
+
 export default LoginStyle;
