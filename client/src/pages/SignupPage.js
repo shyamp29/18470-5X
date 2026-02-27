@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginStyle from "../AppStyle/style.js";
+import LoginStyle from "../AppStyle/login";
+
+/*TODO
+  ADD username and USer ID to sigup page 
+  check if user ID exist already before creating profile
+*/
+
 
 const SignupPage = () => {
   const [userId, setUserId] = useState("");
@@ -17,7 +23,8 @@ const SignupPage = () => {
 
   const handleSignup = async (e) => {
     //TODO: 
-    console.log("signed up")
+    console.log("signed up");
+    navigate("/user-portal");
   };
 
   const handleLoginRedirect = (e) => {
