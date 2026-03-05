@@ -3,21 +3,17 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import SignupPage from '../pages/SignupPage';
 import UserPortal from '../pages/UserPortal';
+import { APP_ROUTES } from '../Auth/authActions';
 
 const AppRouter = () => {
   return (
     <Routes>
-      {/* root page (Login) */}
-      <Route path="/" element={<LoginPage />} />
-      
-      {/* Signup page */}
-      <Route path="/signup" element={<SignupPage />} />
+     <Route path={APP_ROUTES.LOGIN} element={<LoginPage />} />
+      <Route path={APP_ROUTES.SIGNUP} element={<SignupPage />} />
+      <Route path={APP_ROUTES.PROFILE} element={<UserPortal />} />
 
-      {/* User portal page */}
-      <Route path="/user-portal" element={<UserPortal />} />
-
-      {/* 404 Redirect - Optional but professional */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 404 Redirect */}
+      <Route path="*" element={<Navigate to={APP_ROUTES.LOGIN} />} />
     </Routes>
   );
 };
