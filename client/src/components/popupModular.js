@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PopupStyles from '../AppStyle/popup';
 
 const ErrorPopup = ({ showPopup, closePopup, message }) => {
@@ -33,8 +33,30 @@ const SuccessPopup = () => {
 
 };
 
-const LoadingPopup = () => {
+const LoadingPopup = ({ showPopup, message }) => {
+  if (!showPopup) return null;
 
+  return (
+    <div style={PopupStyles.overlay}>
+      <div style={{ ...PopupStyles.content, backgroundColor: '#c65c1a26' }}>
+        <p style={{ fontWeight: 'bold' }}>{message || "Loading "}<AnimatedDots/></p>
+      </div>
+    </div>
+  );
+};
+
+const AnimatedDots = () => {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span style={{ textAlign: 'left', display: 'inline-block', width: '20px' }}>{dots}</span>;
 };
 
 export { ErrorPopup, SuccessPopup, LoadingPopup };

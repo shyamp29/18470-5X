@@ -6,6 +6,7 @@ const PopupStyles = {
     width: '100%',
     height: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(2px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
