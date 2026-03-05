@@ -24,13 +24,13 @@ const AuthProvider = ({ children }) => {
 
   const handleAuthAction = async (actionType, payload = {}) => {
     const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
-    
+
     switch (actionType) {
       case AUTH_ACTIONS.LOGIN:
         setIsLoading(true);
         try {
           const [authResponse] = await Promise.all([mockAuthFetch(payload), minWait]);
-          
+
           if (authResponse.success) {
             setIsLoading(false);
             navigate(APP_ROUTES.PROFILE);
@@ -51,11 +51,13 @@ const AuthProvider = ({ children }) => {
           const [result] = await Promise.all([mockSignupApi(payload), minWait]);
           setIsLoading(false);
 
-          if (result.error) {
-            setErrorInfo({ show: true, msg: dbResult.error });
+          if (!result.success) {
+            setErrorInfo({ show: true, msg: result.message });
           } else {
-            setUser({ id: payload.userName });
-            navigate(APP_ROUTES.PROFILE);
+            setSuccessInfo({
+              show: true,
+              email: payload.email
+            });
           }
         } catch (err) {
           setIsLoading(false);

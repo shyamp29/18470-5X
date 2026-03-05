@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Auth/authHandler";
+import { AUTH_ACTIONS } from "../Auth/authActions";
 import LoginStyle from "../AppStyle/login";
 
 /*TODO
@@ -9,27 +10,32 @@ import LoginStyle from "../AppStyle/login";
 
 
 const SignupPage = () => {
-  const [userId, setUserId] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { handleAuthAction } = useAuth();
+  const [signupProps, setSignupProps] = useState({
+    userName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const navigate = useNavigate();
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    handleSignup({ userId, email, password, confirmPassword });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSignupProps((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSignup = async (e) => {
-    //TODO: 
+    e.preventDefault();
+    if (signupProps.password !== signupProps.confirmPassword) {
+      alert("Passwords must match!");
+      return;
+    }
     console.log("signed up");
-    navigate("/user-portal");
+    await handleAuthAction(AUTH_ACTIONS.SIGNUP, signupProps);
   };
 
-  const handleLoginRedirect = (e) => {
-    navigate("/");
-  };
+  const handleRedirect = () => {
+    handleAuthAction(AUTH_ACTIONS.BACK_TO_LOGIN);
+  }
 
   return (
     <div style={LoginStyle.container}>
@@ -38,13 +44,14 @@ const SignupPage = () => {
       <div style={LoginStyle.loginBox}>
         <h1 style={LoginStyle.header}>Sign Up</h1>
 
-        <form onSubmit={onSubmit} style={LoginStyle.form}>
+        <form onSubmit={handleSignup} style={LoginStyle.form}>
           <div style={LoginStyle.inputGroup}>
-            <label>User ID</label>
+            <label>User Name</label>
             <input
+              name="userName"
               type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              value={signupProps.userName}
+              onChange={handleChange}
               style={LoginStyle.input}
               required
             />
@@ -53,9 +60,10 @@ const SignupPage = () => {
           <div style={LoginStyle.inputGroup}>
             <label>Email</label>
             <input
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={signupProps.email}
+              onChange={handleChange}
               style={LoginStyle.input}
               required
             />
@@ -64,9 +72,10 @@ const SignupPage = () => {
           <div style={LoginStyle.inputGroup}>
             <label>Password</label>
             <input
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={signupProps.password}
+              onChange={handleChange}
               style={LoginStyle.input}
               required
             />
@@ -75,10 +84,11 @@ const SignupPage = () => {
           <div style={LoginStyle.inputGroup}>
             <label>Confirm Password</label>
             <input
+              name="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              style={LoginStyle.input}
+              value={signupProps.confirmPassword}
+              onChange={handleChange}
+               style={LoginStyle.input}
               required
             />
           </div>
@@ -91,7 +101,7 @@ const SignupPage = () => {
         <div style={LoginStyle.footer}>
           <div
             style={LoginStyle.footerLeft}
-            onClick={handleLoginRedirect}
+            onClick={handleRedirect}
           >
             <p>Already have an account?</p>
             <p><strong>Login</strong></p>
