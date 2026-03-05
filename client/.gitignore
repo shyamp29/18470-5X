@@ -28,7 +28,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
@@ -40,5 +39,7 @@ Thumbs.db
 /junit.xml
 /test-report.html
 /coverage/
-/test-result/
+/playwright-report/
+/test-results/
+/playwright/.cache/
 *.lcov
