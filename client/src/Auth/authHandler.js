@@ -3,6 +3,9 @@ import { AUTH_ACTIONS, APP_ROUTES } from '../Auth/authActions';
 import { createContext, useContext, useState } from 'react';
 import { ErrorPopup, SuccessPopup, LoadingPopup } from "../components/popupModular";
 
+//TODO: update import later + update all mock server calls.
+import { mockAuthFetch, mockSignupApi } from "../Auth/serverSimulation";
+
 export const AuthContext = createContext(null);
 
 export const useAuth = () => {
@@ -18,27 +21,16 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ show: false, msg: "" });
-  //  TEST - Delete later //
-  const mockAuthFetch = (credentials) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const isValid = true;
-        resolve({ success: isValid });
-      }, 2000);
-    });
-  };
-
 
   const handleAuthAction = async (actionType, payload = {}) => {
+    const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
+    
     switch (actionType) {
       case AUTH_ACTIONS.LOGIN:
         setIsLoading(true);
         try {
-          const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
-          const authRequest = mockAuthFetch(payload); //fix later
-
-          const [authResponse] = await Promise.all([authRequest, minWait]);
-
+          const [authResponse] = await Promise.all([mockAuthFetch(payload), minWait]);
+          
           if (authResponse.success) {
             setIsLoading(false);
             navigate(APP_ROUTES.PROFILE);
@@ -53,12 +45,29 @@ const AuthProvider = ({ children }) => {
         }
         break;
 
+      case AUTH_ACTIONS.SIGNUP:
+        setIsLoading(true);
+        try {
+          const [result] = await Promise.all([mockSignupApi(payload), minWait]);
+          setIsLoading(false);
+
+          if (result.error) {
+            setErrorInfo({ show: true, msg: dbResult.error });
+          } else {
+            setUser({ id: payload.userName });
+            navigate(APP_ROUTES.PROFILE);
+          }
+        } catch (err) {
+          setIsLoading(false);
+          setErrorInfo({ show: true, msg: "Registration failed. Try again." });
+        }
+        break;
+
       case AUTH_ACTIONS.SIGNUP_REDIRECT:
         navigate(APP_ROUTES.SIGNUP);
         break;
 
       case AUTH_ACTIONS.FORGOT_PASSWORD:
-        navigate(APP_ROUTES.FORGOT_PASS);
         break;
 
       case AUTH_ACTIONS.FORGOT_ID:

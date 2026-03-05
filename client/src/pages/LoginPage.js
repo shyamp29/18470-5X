@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginStyle from "../AppStyle/login";
 import { AUTH_ACTIONS } from "../Auth/authActions";
 import { useAuth } from "../Auth/authHandler";
-import { ErrorPopup, SuccessPopup, LoadingPopup } from "../components/popupModular";
+import { ErrorPopup} from "../components/popupModular";
 
 const LoginPage = () => {
   const { handleAuthAction } = useAuth();
