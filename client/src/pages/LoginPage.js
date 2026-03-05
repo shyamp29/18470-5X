@@ -1,35 +1,63 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import LoginStyle from "../AppStyle/login";
+import { AUTH_ACTIONS } from "../Auth/authActions";
+import { useAuth } from "../Auth/authHandler";
 import { ErrorPopup, SuccessPopup, LoadingPopup } from "../components/popupModular";
 
 const LoginPage = () => {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPopup, setShowPopup] = useState(false);
+  const { handleAuthAction } = useAuth();
+  const [loginProps, setLoginProps] = useState({ userId: '', password: '' });
+  const [showErrPopup, setShowErrPopup] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLoginProps(prev => ({ ...prev, [name]: value }));
+  };
 
-  // BACKEND CONNECTION PLACEHOLDERS
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("logging in", { userId, password });
+    /*
+    * IF both the password + userID field are empty
+    * DON't do anything
+    * IF only the password field is empty 
+    * DO send error message
+    * IF the userID + password is not in the account
+    * DO send error message
+    */
 
-    // TODO: Implement actual fetch request here
-    if (password.length > 5) {
-      navigate('/user-portal');
-    } else {
-      setShowPopup(true);
+    if (!loginProps.userId && !loginProps.password) return;
+    if (loginProps.userId && !loginProps.password) {
+      setMessage("Password field cannot be empty.");
+      setShowErrPopup(true);
+      return;
+    }
+
+    const usr = await handleAuthAction(AUTH_ACTIONS.LOGIN, loginProps);
+    if (usr?.error) {
+      setMessage(usr.error);
+      setShowErrPopup(true);
     }
   };
 
-  const handleForgotPassword = (type) => {
-    console.log(`Redirecting to forgot ${type} logic...`);
-  };
+  const handleRedirect = (type) => {
+    switch(type)
+    {
+      case 'ID':
+        handleAuthAction(AUTH_ACTIONS.FORGOT_ID);
+        break;
 
-  const handleSignupRedirect = () => {
-    console.log("Redirecting to Sign-in / Registration...");
-    navigate('/signup');
+      case 'PSW':
+       handleAuthAction(AUTH_ACTIONS.FORGOT_PASSWORD);
+        break;
+
+      case 'SIGNUP':
+        handleAuthAction(AUTH_ACTIONS.SIGNUP_REDIRECT);
+        break;
+      
+      default: 
+         console.log('Unknown redirect type');
+    }
   };
 
   return (
@@ -43,46 +71,48 @@ const LoginPage = () => {
             <label>User ID</label>
             <input
               type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              name="userId"
+              value={loginProps.userId}
+              onChange={handleChange}
               style={LoginStyle.input}
             />
           </div>
-
           <div style={LoginStyle.inputGroup}>
             <label>Password</label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={loginProps.password}
+              onChange={handleChange}
               style={LoginStyle.input}
             />
           </div>
-
           <button type="submit" style={LoginStyle.submitBtn}>Submit</button>
         </form>
-        
+
         <ErrorPopup
-          showPopup={showPopup}
-          closePopup={() => setShowPopup(false)}
+          showPopup={showErrPopup}
+          closePopup={() => setShowErrPopup(false)}
         >
           <h2 style={{ color: '#d9534f' }}>Login Error</h2>
-          <p>Password is too short! It must be at least 6 characters long.</p>
+          <p>{message}</p>
         </ErrorPopup>
 
         <div style={LoginStyle.footer}>
           <div style={LoginStyle.footerLeft}>
             <p>New User?</p>
-            <Link to="/signup" style={LoginStyle.link}>
+            <span
+              style={LoginStyle.link}
+              onClick={() => handleRedirect('SIGNUP')}
+            >
               <strong>Sign-up</strong>
-            </Link>
+            </span>
           </div>
-
           <div style={LoginStyle.footerRight}>
-            <p onClick={() => handleForgotPassword('id')} style={LoginStyle.link}>
+            <p onClick={() => handleRedirect('ID')} style={LoginStyle.link}>
               Forgot user_id?
             </p>
-            <p onClick={() => handleForgotPassword('password')} style={LoginStyle.link}>
+            <p onClick={() => handleRedirect('PSW')} style={LoginStyle.link}>
               Forgot password?
             </p>
           </div>
