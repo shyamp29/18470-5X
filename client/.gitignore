@@ -34,3 +34,11 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+#Testing
+/.jest/
+/junit.xml
+/test-report.html
+/coverage/
+/test-result/
+*.lcov
