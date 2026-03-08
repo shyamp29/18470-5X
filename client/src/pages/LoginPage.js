@@ -7,6 +7,7 @@ import { ErrorPopup} from "../components/popupModular";
 const LoginPage = () => {
   const { handleAuthAction } = useAuth();
   const [loginProps, setLoginProps] = useState({ userId: '', password: '' });
+  
   const [showErrPopup, setShowErrPopup] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -47,8 +48,8 @@ const LoginPage = () => {
         handleAuthAction(AUTH_ACTIONS.FORGOT_ID);
         break;
 
-      case 'PSW':
-       handleAuthAction(AUTH_ACTIONS.FORGOT_PASSWORD);
+      case 'PASSWORD':
+       handleAuthAction(AUTH_ACTIONS.FORGOT_PASSWORD, loginProps);
         break;
 
       case 'SIGNUP':
@@ -112,7 +113,7 @@ const LoginPage = () => {
             <p onClick={() => handleRedirect('ID')} style={LoginStyle.link}>
               Forgot user_id?
             </p>
-            <p onClick={() => handleRedirect('PSW')} style={LoginStyle.link}>
+            <p onClick={() => handleRedirect('PASSWORD')} style={LoginStyle.link}>
               Forgot password?
             </p>
           </div>

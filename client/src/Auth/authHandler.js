@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AUTH_ACTIONS, APP_ROUTES } from '../Auth/authActions';
 import { createContext, useContext, useState } from 'react';
-import { ErrorPopup, SuccessPopup, LoadingPopup } from "../components/popupModular";
+import { ErrorPopup, SuccessPopup, LoadingPopup, ForgetPopup } from "../components/popupModular";
 
 //TODO: update import later + update all mock server calls.
 import { mockAuthFetch, mockSignupApi } from "../Auth/serverSimulation";
@@ -21,6 +21,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ show: false, msg: "" });
+  const [successInfo, setSuccessInfo] = useState({ show: false, msg: "" })
+  const [forgetInfo, setForgetInfo] = useState({ show: false, type: "", content: "" });
 
   const handleAuthAction = async (actionType, payload = {}) => {
     const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
@@ -56,10 +58,11 @@ const AuthProvider = ({ children }) => {
           } else {
             setSuccessInfo({
               show: true,
-              email: payload.email
+              msg: payload.email
             });
           }
         } catch (err) {
+          console.log("error: " + err);
           setIsLoading(false);
           setErrorInfo({ show: true, msg: "Registration failed. Try again." });
         }
@@ -70,10 +73,41 @@ const AuthProvider = ({ children }) => {
         break;
 
       case AUTH_ACTIONS.FORGOT_PASSWORD:
+        setForgetInfo({
+          show: true,
+          type: "PASSWORD"
+        })
         break;
 
       case AUTH_ACTIONS.FORGOT_ID:
-        navigate(APP_ROUTES.FORGOT_ID);
+        setForgetInfo({
+          show: true,
+          type: "ID"
+        })
+        break;
+
+      case AUTH_ACTIONS.REQUEST_RESET:
+        setIsLoading(true);
+        try {
+          const minWait = new Promise((resolve) => setTimeout(resolve, 10000));
+          const [response] = await Promise.all([mockRequestResetApi(payload), minWait]);
+          setIsLoading(false);
+
+          if (response.success) {
+            setForgetInfo({ show: false, type: "" });
+            setSuccessInfo({
+              show: true,
+              email: payload,
+              userId: "RESET LINK SENT"
+            });
+          } else {
+            setErrorInfo({ show: true, msg: response.message });
+          }
+
+        } catch (err) {
+          setIsLoading(false);
+          setErrorInfo({ show: true, msg: "Recovery service is currently offline." });
+        }
         break;
 
       case AUTH_ACTIONS.BACK_TO_LOGIN:
@@ -89,6 +123,16 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ user, handleAuthAction }}>
       {children}
       <LoadingPopup showPopup={isLoading} />
+      <ForgetPopup
+        showPopup={forgetInfo.show}
+        msg={{ type: forgetInfo.type, content: forgetInfo.content }}
+        onClose={() => setForgetInfo({ show: false, type: "", content: "" })}
+        onSubmit={(email) => handleAuthAction(AUTH_ACTIONS.REQUEST_RESET, email)}
+      />
+      <SuccessPopup showPopup={successInfo.show}
+        message={successInfo.msg}
+        onClose={() => setSuccessInfo({ show: false, msg: "" })}
+      />
       <ErrorPopup
         showPopup={errorInfo.show}
         message={errorInfo.msg}
