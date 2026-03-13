@@ -103,14 +103,14 @@ const UserPortal = () => {
       <div style={UserProfileStyle.profileBox}>
         {/* Navigation Bar Section */}
         <div style={UserProfileStyle.navBar}>
-          <h2 style={{ margin: 0 }}>Welcome {user?.userName || '<user name>'}</h2>
+          <h2 style={{ margin: 0 }}>Welcome {user?.userName || '<Guest>'}</h2>
 
           <div style={UserProfileStyle.profileContainer}>
             <div
               style={UserProfileStyle.profileCircle}
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              {user?.userName ? user.userName.charAt(0).toUpperCase() : '$!'}
+              {user?.userName ? user.userName.charAt(0).toUpperCase() : '?'}
             </div>
 
             {isProfileOpen && (

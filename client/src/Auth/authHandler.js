@@ -35,6 +35,7 @@ const AuthProvider = ({ children }) => {
 
           if (authResponse.success) {
             setIsLoading(false);
+            setUser(authResponse.user)
             navigate(APP_ROUTES.PROFILE);
           } else {
             setIsLoading(false);
@@ -68,6 +69,12 @@ const AuthProvider = ({ children }) => {
         }
         break;
 
+      case AUTH_ACTIONS.SIGNOUT:
+        setUser(null);
+        localStorage.removeItem('userToken');
+        navigate(APP_ROUTES.LOGIN);
+        break;
+
       case AUTH_ACTIONS.SIGNUP_REDIRECT:
         navigate(APP_ROUTES.SIGNUP);
         break;
@@ -84,6 +91,16 @@ const AuthProvider = ({ children }) => {
           show: true,
           type: "ID"
         })
+        break;
+
+      case AUTH_ACTIONS.UPDATE_ACCOUNT:
+        setIsLoading(true);
+        const minWait = new Promise((resolve) => setTimeout(resolve, 3000));
+
+        await minWait;
+        setUser({ ...user, ...payload });
+        setIsLoading(false);
+        setAccountInfo({ show: false });
         break;
 
       case AUTH_ACTIONS.REQUEST_RESET:

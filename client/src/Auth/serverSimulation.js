@@ -5,7 +5,9 @@ const mockAuthFetch = (credentials) => {
         setTimeout(() => {
             const isValid = credentials.userId === "cats" &&
                 credentials.password === "123456";
-            resolve({ success: isValid });
+            resolve({ success: isValid,
+                user:{ Id: credentials.userId, userName: "Tester"}
+             });
         }, 2000);
     });
 };
