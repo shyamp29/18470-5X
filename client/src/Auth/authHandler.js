@@ -25,12 +25,13 @@ const AuthProvider = ({ children }) => {
   const [forgetInfo, setForgetInfo] = useState({ show: false, type: "", content: "" });
 
   const handleAuthAction = async (actionType, payload = {}) => {
-    const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
+
 
     switch (actionType) {
       case AUTH_ACTIONS.LOGIN:
         setIsLoading(true);
         try {
+            const minWait = new Promise((resolve) => setTimeout(resolve, 5000));
           const [authResponse] = await Promise.all([mockAuthFetch(payload), minWait]);
 
           if (authResponse.success) {
