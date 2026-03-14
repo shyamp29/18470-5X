@@ -35,7 +35,7 @@ const AllProjectsPage = ({ onBack }) => {
                         <tbody>
                         {data.map((proj, idx) => (
                             <tr key={idx}>
-                                <td style={UserProfileStyle.td}>{proj.projectId}</td>
+                                <td style={UserProfileStyle.td}>{proj.projectID}</td>
                                 <td style={UserProfileStyle.td}>{proj.projectName}</td>
                                 <td style={UserProfileStyle.td}>{proj.description}</td>
                             </tr>

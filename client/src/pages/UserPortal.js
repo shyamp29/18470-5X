@@ -71,7 +71,6 @@ const UserPortal = () => {
     };
 
     const goToDashboard = () => setCurrentView(VIEWS.DASHBOARD);
-
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
             <h2 style={{margin: 0}}>Welcome {user?.userName || '<Guest>'}</h2>
