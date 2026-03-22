@@ -32,12 +32,20 @@ def addUser(client, username, userId, password):
             'projects': []
         }
         users_col.insert_one(new_user)
-        return True, "User added successfully"
+        return True, "User added successfully, Please login"
 
 # Helper function to query a user by username and userId
 def __queryUser(client, username, userId):
     # Query and return a user from the database
-    pass
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found", None
+    elif user['userId'] == userId and user['username'] == username:
+        return True,"User credentials match", user
+    else:
+        return False, "UserId and username do not match", None
 
 # Function to log in a user
 def login(client, userId, password):
@@ -49,13 +57,30 @@ def login(client, userId, password):
     user = users_col.find_one({"userId": userId})
     
     if not user:
-        return False, "User not found"
+        return False, "User ID does not exist\nPlease check and try again"
         
     # 2. Check if the provided password matches the stored hash
     if check_password_hash(user['password'], password):
         return True, "Login successful"
     else:
-        return False, "Incorrect password"
+        return False, "Incorrect password\nPlease check and try again"
+
+# Function to reset password
+def resetPassword(client, userId, username, password):
+    db = client.myapp_database
+    users_col = db.users
+
+    success, message, user = __queryUser(client, username, userId)    
+    if not success:
+        return False, message 
+    elif user:
+        # Hash the new password
+        new_hashed_password = generate_password_hash(password)
+        users_col.update_one(
+        {"userId": userId}, # 1. Find the user with this ID
+        {"$set": {"password": new_hashed_password}})
+        return True, "Password reset successful"
+
 
 # Function to add a user to a project
 def joinProject(client, userId, projectId):

@@ -1,0 +1,6 @@
+.env
+server/__pycache__/
+server/.env
+server/__pycache__/projectsDB.cpython-312.pyc
+server/__pycache__/usersDB.cpython-312.pyc
+server/__pycache__/
