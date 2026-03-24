@@ -8,7 +8,8 @@ User = {
     'username': username,
     'userId': userId,
     'password': password,
-    'projects': [project1_ID, project2_ID, ...]
+    'projects': [project1_ID, project2_ID, ...],
+    'isAdmin': False
 }
 '''
 
@@ -29,7 +30,8 @@ def addUser(client, username, userId, password):
             'username': username,
             'userId': userId,
             'password': hashed_password,
-            'projects': []
+            'projects': [],
+            'isAdmin': False
         }
         users_col.insert_one(new_user)
         return True, "User added successfully, Please login"
@@ -104,5 +106,30 @@ def getUserProjectsList(client, userId):
     user = users_col.find_one({"userId": userId})
     if user:
         return True, user['projects']
-    return False, "User not found"  
+    return False, "User not found"
+
+# Function to check if a user is an admin
+def isAdminUser(client, userId):
+    # Check if the user has admin privileges
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found", False
+    else:
+        is_admin = user.get('isAdmin', False)
+        return True, "User found", is_admin
+
+# Function to set a user as admin
+def setAdminUser(client, userId, isAdminFlag):
+    # Set admin privileges for a user
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found"
+    else:
+        users_col.update_one({"userId": userId}, {"$set": {"isAdmin": isAdminFlag}})
+        status = "promoted to admin" if isAdminFlag else "removed from admin"
+        return True, f"User {status} successfully"
 
