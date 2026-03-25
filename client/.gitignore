@@ -4,6 +4,7 @@ dist
 dist-ssr
 
 # Logs
+*.pdf
 logs
 *.log
 npm-debug.log*
@@ -43,3 +44,4 @@ Thumbs.db
 /test-results/
 /playwright/.cache/
 *.lcov
+*.pyc
