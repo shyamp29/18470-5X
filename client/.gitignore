@@ -45,3 +45,6 @@ Thumbs.db
 /playwright/.cache/
 *.lcov
 *.pyc
+# Test JSON files
+test-results/**/*.json
+playwright-report/**/*.json
