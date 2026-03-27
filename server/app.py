@@ -30,7 +30,7 @@ app = Flask(__name__)
 app.secret_key = "encription_key"
 
 # Route for user login
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     if not data:
@@ -51,7 +51,7 @@ def login():
     else:
         return jsonify({"success": False, "message": message}), 401
 
-@app.route('/reset_password', methods=['POST'])
+@app.route('/api/reset_password', methods=['POST'])
 def reset_password():
     data = request.get_json()
     if not data:
@@ -72,7 +72,7 @@ def reset_password():
     else:
         return jsonify({"success": False, "message": message}), 401
 
-@app.route('/forgot_password', methods=['POST'])
+@app.route('/api/forgot_password', methods=['POST'])
 def forgot_password():
     data = request.get_json()
     if not data:
@@ -94,7 +94,7 @@ def forgot_password():
         return jsonify({"success": False, "message": message}), 401
 
 # Route for adding a new user
-@app.route('/add_user', methods=['POST'])
+@app.route('/api/add_user', methods=['POST'])
 def add_user():
     # Extract data from request
     data = request.get_json()
@@ -118,7 +118,7 @@ def add_user():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for getting the list of user projects
-@app.route('/get_user_projects_list', methods=['POST'])
+@app.route('/api/get_user_projects_list', methods=['POST'])
 def get_user_projects_list():
     # Extract data from request
     data = request.get_json()
@@ -136,7 +136,7 @@ def get_user_projects_list():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for getting all hardware names
-@app.route('/get_user_hw_names', methods=['POST'])
+@app.route('/api/get_user_hw_names', methods=['POST'])
 def get_user_hw_names():
     # Connect to MongoDB
     data = request.get_json()
@@ -159,7 +159,7 @@ def get_user_hw_names():
 
 
 # Route for the main page (Work in progress)
-@app.route('/main')
+@app.route('/api/main')
 def mainPage():
     # Extract data from request
 
@@ -200,7 +200,7 @@ def mainPage():
 
 
 # Route for creating a new project
-@app.route('/create_project', methods=['POST'])
+@app.route('/api/create_project', methods=['POST'])
 def create_project():
     # Extract data from request
     data = request.get_json()
@@ -225,7 +225,7 @@ def create_project():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for getting project information
-@app.route('/get_project_info', methods=['POST'])
+@app.route('/api/get_project_info', methods=['POST'])
 def get_project_info():
     # Extract data from request
     data = request.get_json()
@@ -246,7 +246,7 @@ def get_project_info():
     else:
         return jsonify({"success": False, "message": message}), 400
 
-@app.route('/add_user_to_project', methods=['POST'])
+@app.route('/api/add_user_to_project', methods=['POST'])
 def add_user_to_project():
     # Extract data from request
     data = request.get_json()
@@ -270,7 +270,7 @@ def add_user_to_project():
 
 
 # Route for checking out hardware
-@app.route('/check_out', methods=['POST'])
+@app.route('/api/check_out', methods=['POST'])
 def check_out():
     # Extract data from request
     data = request.get_json()
@@ -295,7 +295,7 @@ def check_out():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for checking in hardware
-@app.route('/check_in', methods=['POST'])
+@app.route('/api/check_in', methods=['POST'])
 def check_in():
     # Extract data from request
     data = request.get_json()
@@ -320,7 +320,7 @@ def check_in():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for creating a new hardware set
-@app.route('/create_hardware_set', methods=['POST'])
+@app.route('/api/create_hardware_set', methods=['POST'])
 def create_hardware_set():
     # Extract data from request
     data = request.get_json()
@@ -345,7 +345,7 @@ def create_hardware_set():
 
 
 # Route for getting hardware information
-@app.route('/get_hw_info', methods=['POST'])
+@app.route('/api/get_hw_info', methods=['POST'])
 def get_hw_info():
     # Extract data from request
     data = request.get_json()
@@ -365,7 +365,7 @@ def get_hw_info():
     else:
         return jsonify({"success": False, "message": message}), 400
 
-@app.route('/get_all_hw_names', methods=['POST'])
+@app.route('/api/get_all_hw_names', methods=['POST'])
 def get_all_hw_names():
     # Extract data from request
     data = request.get_json()
@@ -382,7 +382,7 @@ def get_all_hw_names():
         return jsonify({"success": False, "message": message}), 400
 
 # Route for checking the inventory of projects
-@app.route('/api/inventory', methods=['GET'])
+@app.route('/api/api/inventory', methods=['GET'])
 def check_inventory():
     # Connect to MongoDB
 
