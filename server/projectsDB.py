@@ -1,5 +1,6 @@
 # Import necessary libraries and modules
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
+from datetime import datetime
 
 import hardwareDB
 import usersDB
@@ -7,35 +8,41 @@ import usersDB
 '''
 Structure of Project entry:
 Project = {
-    'projectName': projectName,
     'projectId': projectId,
+    'name': name,
     'description': description,
-    'hwSets': {HW1: 0, HW2: 10, ...},
-    'users': [user1, user2, ...]
+    'ownerUserid': userId,
+    'checkedOut': {HW1: 0, HW2: 10, ...},
+    'members': [user1, user2, ...],
+    'createdAt': createdAt,
+    'updatedAt': updatedAt
 }
 '''
 
 # Function to create a new project
-def createProject(client, projectName, projectId, description, userId):
+def createProject(client, name, projectId, description, userId):
     # Create a new project in the database
     db = client.myapp_database
     projects_col = db.Projects
     if projects_col.find_one({"projectId": projectId}):
-        return False, "ProjectID already exists"
+        return False, "ProjectID already exists", None, None
     else:
         new_project = {
-            'projectName': projectName,
+            'name': name,
             'projectId': projectId,
             'description': description,
-            'hwSets': {},
-            'users': [userId] # Automatically add the creator to the project's users array
+            'ownerUserid': userId,
+            'checkedOut': {},
+            'members': [userId], # Automatically add the creator to the project's members array
+            'createdAt': datetime.now(),
+            'updatedAt': datetime.now()
         }
         projects_col.insert_one(new_project)
 
         # Establish two-way reference: Add this projectId to the User's database entry
         usersDB.joinProject(client, userId, projectId)
 
-        return True, "Project added successfully"
+        return True, "Project added successfully", projectId, name
 
 # Function to query a project by its ID
 def queryProject(client, projectId):
@@ -44,86 +51,103 @@ def queryProject(client, projectId):
     projects_col = db.Projects
     project = projects_col.find_one({"projectId": projectId})
     if project:
-        return True, project
+        project['_id'] = str(project['_id']) # Make JSON serializable
+        return True, "Project found", project
     else:
-        return False, "ProjectID not found"
+        return False, "ProjectID not found", None
 
 # Function to add a user to a project
 def addUser(client, projectId, userId):
     db = client.myapp_database
     projects_col = db.Projects
     project = projects_col.find_one({"projectId": projectId})
-    if project:
-        if userId in project['users']:
-            return False, "User already in project"
-        else:
-            project['users'].append(userId)
-            projects_col.update_one({"projectId": projectId}, {"$set": {"users": project['users']}})
-            
-            return True, "User added successfully"
-    else:
-        return False, "Project not found"
-
-# Function to update hardware usage in a project
-def updateUsage(client, projectId, hwSetName):
-    # Update the usage of a hardware set in the specified project
     
-    pass
+    if project:
+        if userId not in project['ownerUserid']:
+            return False, "User is not the owner of the project", None, None
+        if userId in project['members']:
+            return False, "User already in project", None, None
+        else:
+            project['members'].append(userId)
+            projects_col.update_one({"projectId": projectId}, {"$set": {"members": project['members'], "updatedAt": datetime.now()}})
+            
+            return True, "User added successfully", None, None
+    else:
+        return False, "Project not found", None, None
+
 
 # Function to check out hardware for a project
 def checkOutHW(client, projectId, hwSetName, qty, userId):
-    # Check out hardware for the specified project and update availability
+    # This acts like "returning" hardware from the project to the HW set
     db = client.myapp_database
     projects_col = db.Projects
-    hardware_col = db.hardware
-    users_col = db.users
+    
     project = projects_col.find_one({"projectId": projectId})
-    hardware = hardware_col.find_one({"hwName": hwSetName})
-    if hwSetName not in project['hwSets']:
-        return False, "Hardware not found in project"
-    if qty > project['hwSets'][hwSetName]:
-        return False, "Requested hardware checkout quantity exceeds project's hardware allocation"
-
-    success, message = hardwareDB.returnSpace(client, hwSetName, qty)
-    if not success:
-        return False, message
+    if not project:
+        return False, "Project not found", None, None, -1
+        
+    if hwSetName not in project.get('checkedOut', {}):
+        return False, "Hardware not found in project", None, None, -1
+        
+    current_checked_out = project['checkedOut'][hwSetName]
+    if qty > current_checked_out:
+        net_qty = current_checked_out
+        error = -1
+        error_message = f"Requested hardware checkout quantity exceeds project's hardware allocation, so checking out only {net_qty} units"
     else:
-        project['hwSets'][hwSetName] -= qty
-        if project['hwSets'][hwSetName] == 0:
-            del project['hwSets'][hwSetName]
-            for user in project['users']:
-                user = users_col.find_one({"userId": user})
-                if hwSetName in user['hwList']:
-                    user['hwList'].remove(hwSetName)
-                    users_col.update_one({"userId": user}, {"$set": {"hwList": user['hwList']}})
-        projects_col.update_one({"projectId": projectId}, {"$set": {"hwSets": project['hwSets']}})
-        return True, "Hardware checked out successfully"
+        net_qty = qty
+        error = 0
+        error_message = "Hardware checked out successfully"
+
+    # 1. Update hardware pool ATOMICALLY (return hardware to the pool)
+    success, message, checkedOutQty, newAvailability = hardwareDB.returnSpace(client, hwSetName, net_qty, projectId)
+    message = error_message + ", " + message if error == -1 else message
+    
+    if not success:
+        return False, message, None, None, error
+    
+    # 2. Update project ATOMICALLY
+    updated_project = projects_col.find_one_and_update(
+        {"projectId": projectId},
+        {
+            "$inc": {f"checkedOut.{hwSetName}": -net_qty},
+            "$set": {"updatedAt": datetime.now()}
+        },
+        return_document=ReturnDocument.AFTER
+    )
+    
+    # Cleanup zero allocations
+    if updated_project and updated_project['checkedOut'].get(hwSetName, 0) <= 0:
+        projects_col.update_one({"projectId": projectId}, {"$unset": {f"checkedOut.{hwSetName}": ""}})
+        
+    return True, message, checkedOutQty, newAvailability, error
 
 # Function to check in hardware for a project
 def checkInHW(client, projectId, hwSetName, qty, userId):
-    # Check in hardware for the specified project and update availability
+    # This acts like "borrowing" hardware into the project from the HW set
     db = client.myapp_database
     projects_col = db.Projects
-    hardware_col = db.hardware
-    users_col = db.users
+    
     project = projects_col.find_one({"projectId": projectId})
-    hardware = hardware_col.find_one({"hwName": hwSetName})
-    if hwSetName not in project['hwSets']:
-        project['hwSets'][hwSetName] = 0
+    if not project:
+        return False, "Project not found", None, None, -1
 
-    success, message = hardwareDB.requestSpace(client, hwSetName, qty)
+    # 1. Update hardware pool ATOMICALLY (take hardware from pool)
+    success, message, returnedQty, newAvailability, error = hardwareDB.requestSpace(client, hwSetName, qty, projectId)
     if not success:
-        return False, message
-    else:
-        project['hwSets'][hwSetName] += qty
-        projects_col.update_one({"projectId": projectId}, {"$set": {"hwSets": project['hwSets']}})
-        for user in project['users']:
-            user = users_col.find_one({"userId": user})
-            if hwSetName not in user['hwList']:
-                user['hwList'].append(hwSetName)
-                users_col.update_one({"userId": user}, {"$set": {"hwList": user['hwList']}})
+        return False, message, None, None, error
         
-        return True, "Hardware checked in successfully"
+    # 2. Update project ATOMICALLY
+    updated_project = projects_col.find_one_and_update(
+        {"projectId": projectId},
+        {
+            "$inc": {f"checkedOut.{hwSetName}": qty},
+            "$set": {"updatedAt": datetime.now()}
+        },
+        return_document=ReturnDocument.AFTER
+    )
+    
+    return True, message, returnedQty, newAvailability, error
         
     
         
