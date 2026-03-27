@@ -61,8 +61,8 @@ const apiLogout = async () => ({ success: true });
 // The client sends { userId, userName } to verify identity; newPassword is not
 // collected here (handled separately). Flask may return 400 until the contract
 // is updated to support an identity-only lookup. See server/TODO.md §6.
-const apiForgotPassword = async ({ userId, userName }) => {
-    return post('/api/forgot_password', { userId, username: userName });
+const apiForgotPassword = async ({ userId, userName, newPassword }) => {
+    return post('/api/forgot_password', { userId, username: userName, newPassword });
 };
 
 
