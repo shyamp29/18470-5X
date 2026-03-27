@@ -15,11 +15,16 @@ const post = async (path, body = {}) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
         method:      'POST',
         headers:     { 'Content-Type': 'application/json' },
-        credentials: 'include',          // send session cookie on every request
+        credentials: 'include',
         body:        JSON.stringify(body),
     });
-    const data = await res.json();
-    return { ...data, status: res.status };
+    try {
+        const data = await res.json();
+        return { ...data, status: res.status };
+    } catch {
+        // Server returned non-JSON (e.g. HTML error page on 500)
+        return { success: false, status: res.status, error: `Server error ${res.status}` };
+    }
 };
 
 
