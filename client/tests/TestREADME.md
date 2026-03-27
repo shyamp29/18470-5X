@@ -1,6 +1,51 @@
 
 ## 🧪 Client Test Suite Documentation
 
+### Structure / Organization
+
+- `tests/` (root test directory)
+  - `access/`, `auth/`, `edge_cases/`, `logic/`, `recovery/`, `routing/`, `snapshot/` (per-category feature-focused directories)
+  - `fixtures/` (shared test data setup)
+  - `auth/` and `access/` include auth + login/signup components tests.
+  - Each category further subdivides by component or scenario (e.g. `tests/access/login`, `tests/routing/dashboard`).
+
+### How to run tests
+
+- Run all tests:
+  ```bash
+  npx playwright test
+  ```
+
+- Run one category (example `logic`):
+  ```bash
+  npx playwright test tests/logic
+  ```
+
+- Run one subfolder (example `dashboard` integration flows):
+  ```bash
+  npx playwright test tests/routing/dashboard
+  ```
+
+- Run one test file:
+  ```bash
+  npx playwright test tests/auth/login/test1.test.js
+  ```
+
+- Run one test by title:
+  ```bash
+  npx playwright test -g "login access 1"
+  ```
+
+- Generate HTML report:
+  ```bash
+  npx playwright show-report
+  ```
+
+### Notes
+
+- Test files must end with `.test.js` to be auto-detected (Playwright default).
+- Ensure node server is running if tests hit the real backend (or use client mock simulation if local only).
+
 ### **1. `access` (Accessibility)**
 
 Focuses on ensuring the application is usable for everyone, including those using assistive technologies.
