@@ -158,6 +158,8 @@ const AuthProvider = ({children}) => {
             />
             <SuccessPopup showPopup={successInfo.show}
                           message={successInfo.msg}
+                          title="New User Sign-up"
+                          btnLabel="Login"
                           onClose={() => setSuccessInfo({show: false, msg: ""})}
             />
             <ErrorPopup showPopup={errorInfo.show}

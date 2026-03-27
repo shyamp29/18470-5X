@@ -30,7 +30,7 @@ const ErrorPopup = ({ showPopup, closePopup, message }) => {
   );
 };
 
-const SuccessPopup = ({ showPopup, message, msg, onClose }) => {
+const SuccessPopup = ({ showPopup, message, msg, onClose, title = "Success", btnLabel = "Close" }) => {
   if (!showPopup) return null;
   const text = message ?? msg;
 
@@ -38,7 +38,7 @@ const SuccessPopup = ({ showPopup, message, msg, onClose }) => {
     <div style={PopupStyles.overlay}>
       <div style={{ ...PopupStyles.content }}>
         <button onClick={onClose} style={{ ...PopupStyles.closeBtn }}>&times;</button>
-        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>New User Sign-up</h2>
+        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>{title}</h2>
         <p style={{ marginTop: '15px', fontSize: '0.9rem', lineHeight: '1.5' }}>
           {text}
         </p>
@@ -46,7 +46,7 @@ const SuccessPopup = ({ showPopup, message, msg, onClose }) => {
           onClick={onClose}
           style={{ ...LoginStyle.submitBtn, marginTop: '20px', backgroundColor: '#c65c1a' }}
         >
-          Login
+          {btnLabel}
         </button>
       </div>
     </div>
