@@ -22,8 +22,9 @@ const AppRouter = () => {
       <Route path={APP_ROUTES.SIGNUP} element={<GuestRoute><SignupPage /></GuestRoute>} />
       <Route path={APP_ROUTES.PROFILE} element={<ProtectedRoute><UserPortal /></ProtectedRoute>} />
 
-      {/* 404 Redirect */}
-      <Route path="*" element={<Navigate to={APP_ROUTES.LOGIN} />} />
+      {/* Root and 404 Redirect */}
+      <Route path="/" element={<Navigate to={APP_ROUTES.LOGIN} replace />} />
+      <Route path="*" element={<Navigate to={APP_ROUTES.LOGIN} replace />} />
     </Routes>
   );
 };

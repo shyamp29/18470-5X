@@ -11,7 +11,7 @@ export const AUTH_ACTIONS = {
 };
 
 export const APP_ROUTES = {
-    LOGIN: '/',
+    LOGIN: '/login',
     SIGNUP: '/signup',
     PROFILE: '/profile',
     SIGNOUT: '/'

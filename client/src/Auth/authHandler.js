@@ -6,7 +6,7 @@ import {mockLogin, mockRegister, mockLogout, mockForgotPassword} from "./serverS
 
 //TODO: update import later + update all mock server calls.
 
-const MIN_WAIT_MS = 1500;
+const MIN_WAIT_MS = 3000;
 const minWait = () => new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS));
 
 export const AuthContext = createContext(null);
@@ -92,14 +92,13 @@ const AuthProvider = ({children}) => {
             }
 
             case AUTH_ACTIONS.SIGNOUT:
+                setUser(null);
+                localStorage.removeItem('user');
+                navigate(APP_ROUTES.LOGIN);
                 try {
                     await mockLogout();
                 } catch (err) {
                     console.error("LOGOUT error:", err);
-                } finally {
-                    setUser(null);
-                    localStorage.removeItem('user');
-                    navigate(APP_ROUTES.LOGIN);
                 }
                 break;
 

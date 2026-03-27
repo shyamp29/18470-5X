@@ -112,8 +112,9 @@ const UserPortal = () => {
     };
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
-            <h2 style={{margin: 0}}>Welcome {user?.username || '<Guest>'}</h2>
+            <h1 style={{margin: 0}}>Welcome {user?.username || '<Guest>'}</h1>
             <div style={UserProfileStyle.profileContainer}>
+                <button onClick={handleSignOut} style={UserProfileStyle.dropdownItem}>Sign Out</button>
                 <div
                     style={UserProfileStyle.profileCircle}
                     onClick={() => setIsProfileOpen(prev => !prev)}
