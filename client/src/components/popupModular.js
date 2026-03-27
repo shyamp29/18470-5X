@@ -30,17 +30,17 @@ const ErrorPopup = ({ showPopup, closePopup, message }) => {
   );
 };
 
-const SuccessPopup = ({ showPopup, msg, onClose }) => {
+const SuccessPopup = ({ showPopup, message, msg, onClose }) => {
   if (!showPopup) return null;
+  const text = message ?? msg;
 
   return (
     <div style={PopupStyles.overlay}>
       <div style={{ ...PopupStyles.content }}>
         <button onClick={onClose} style={{ ...PopupStyles.closeBtn }}>&times;</button>
-        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>Account Created!</h2>
+        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>New User Sign-up</h2>
         <p style={{ marginTop: '15px', fontSize: '0.9rem', lineHeight: '1.5' }}>
-          Details have been sent to:<br />
-          <strong style={{ fontSize: '1.1rem' }}>{maskEmail(msg)}</strong>
+          {text}
         </p>
         <button
           onClick={onClose}
@@ -65,66 +65,49 @@ const LoadingPopup = ({ showPopup, message }) => {
   );
 };
 
-const ForgetPopup = ({ showPopup, msg, onClose, onSubmit }) => {
-  const [email, setEmail] = useState("");
-  const [isValid, setIsValid] = useState(true);
+const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
+  const [fields, setFields] = useState({ userId: "", userName: "" });
 
   if (!showPopup) return null;
 
-  const validateEmail = (input) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(input);
-  };
-
   const handleChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-
-    if (value === "") {
-      setIsValid(true);
-    } else {
-      setIsValid(validateEmail(value));
-    }
+    const { name, value } = e.target;
+    setFields(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = () => {
-    if (validateEmail(email)) {
-      onSubmit(email); 
-      setEmail(""); 
-    } else {
-      setIsValid(false);
-    }
+    onSubmit(fields);
+    setFields({ userId: "", userName: "" });
   };
+
+  const isReady = fields.userId.trim() !== "" && fields.userName.trim() !== "";
 
   return (
     <div style={PopupStyles.overlay}>
       <div style={{ ...PopupStyles.content }}>
         <button onClick={onClose} style={{ ...PopupStyles.closeBtn }}>&times;</button>
-        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>
-          Forgot {msg.type === 'ID' ? 'ID' : 'Password'}
-        </h2>
-        <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>
-          Enter registered email.
-        </p>
+        <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>Forgot Password</h2>
+        <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>Enter your User ID and Username.</p>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
+          type="text"
+          name="userId"
+          placeholder="User ID"
+          value={fields.userId}
           onChange={handleChange}
-          style={{...LoginStyle.input, marginBottom: '0px'}}
+          style={{ ...LoginStyle.input, marginBottom: '8px' }}
         />
-       
-       <div style={{ height: '20px', marginTop: '5px' }}>
-          {!isValid && (
-            <p style={{ color: '#ff0000', fontSize: '0.8rem', textAlign: 'center', margin: 0 }}>
-              Email not valid
-            </p>
-          )}
-        </div>
-
+        <input
+          type="text"
+          name="userName"
+          placeholder="Username"
+          value={fields.userName}
+          onChange={handleChange}
+          style={{ ...LoginStyle.input, marginBottom: '0px' }}
+        />
+        <div style={{ height: '20px' }} />
         <button
           onClick={handleSubmit}
-          disabled={!isValid || email === ""}
+          disabled={!isReady}
           style={{ ...LoginStyle.submitBtn, backgroundColor: '#c65c1a' }}
         >
           Send Reset Link
@@ -132,7 +115,6 @@ const ForgetPopup = ({ showPopup, msg, onClose, onSubmit }) => {
       </div>
     </div>
   );
-
 };
 
 const AnimatedDots = () => {

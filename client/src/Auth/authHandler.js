@@ -2,7 +2,7 @@ import {useNavigate} from 'react-router-dom';
 import {APP_ROUTES, AUTH_ACTIONS} from '../Auth/authActions';
 import {createContext, useContext, useState} from 'react';
 import {ErrorPopup, ForgetPopup, LoadingPopup, SuccessPopup} from "../components/popupModular";
-import {mockLogin, mockRegister, mockLogout, mockForgotPassword} from "./serverSimulation.js";
+import {apiLogin, apiRegister, apiLogout, apiForgotPassword} from "./apiCalls.js";
 
 //TODO: update import later + update all mock server calls.
 
@@ -31,7 +31,7 @@ const AuthProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorInfo, setErrorInfo] = useState({show: false, msg: ""});
     const [successInfo, setSuccessInfo] = useState({show: false, msg: ""})
-    const [forgetInfo, setForgetInfo] = useState({show: false, type: "", content: ""});
+    const [forgetInfo, setForgetInfo] = useState({show: false});
 
     const showError = (msg) => setErrorInfo({show: true, msg});
     const clearError = () => setErrorInfo({show: false, msg: ""});
@@ -42,7 +42,7 @@ const AuthProvider = ({children}) => {
             case AUTH_ACTIONS.LOGIN:
                 setIsLoading(true);
                 try {
-                    const [response] = await Promise.all([mockLogin(payload), minWait()]);
+                    const [response] = await Promise.all([apiLogin(payload), minWait()]);
 
                     if (response.success) {
                         const userData = {
@@ -71,12 +71,12 @@ const AuthProvider = ({children}) => {
             case AUTH_ACTIONS.SIGNUP: {
                 setIsLoading(true);
                 try {
-                    const [response] = await Promise.all([mockRegister(payload), minWait()]);
+                    const [response] = await Promise.all([apiRegister(payload), minWait()]);
 
                     if (response.success) {
                         setSuccessInfo({
                             show: true,
-                            msg: `Account created! Your user ID is: ${payload.userId}`,
+                            msg: "User added successfully, Please login",
                         });
                     } else {
                         // 409 — duplicate userName or email
@@ -96,7 +96,7 @@ const AuthProvider = ({children}) => {
                 localStorage.removeItem('user');
                 navigate(APP_ROUTES.LOGIN);
                 try {
-                    await mockLogout();
+                    await apiLogout();
                 } catch (err) {
                     console.error("LOGOUT error:", err);
                 }
@@ -107,19 +107,7 @@ const AuthProvider = ({children}) => {
                 break;
 
             case AUTH_ACTIONS.FORGOT_PASSWORD:
-                setForgetInfo({
-                    show: true,
-                    type: "PASSWORD",
-                    content: ""
-                })
-                break;
-
-            case AUTH_ACTIONS.FORGOT_ID:
-                setForgetInfo({
-                    show: true,
-                    type: "ID",
-                    content: ""
-                })
+                setForgetInfo({ show: true });
                 break;
 
             case AUTH_ACTIONS.UPDATE_ACCOUNT:
@@ -133,12 +121,12 @@ const AuthProvider = ({children}) => {
                 setIsLoading(true);
                 try {
                     const [response] = await Promise.all([
-                        mockForgotPassword({ email: payload }),
+                        apiForgotPassword(payload),
                         minWait(),
                     ]);
 
                     if (response.success) {
-                        setForgetInfo({show: false, type: "", content: ""});
+                        setForgetInfo({show: false});
                         setSuccessInfo({show: true, msg: response.message});
                     } else {
                         showError(response.message ?? "Recovery service is currently offline.");
@@ -165,9 +153,8 @@ const AuthProvider = ({children}) => {
             {children}
             <LoadingPopup showPopup={isLoading}/>
             <ForgetPopup showPopup={forgetInfo.show}
-                         msg={{type: forgetInfo.type, content: forgetInfo.content}}
-                         onClose={() => setForgetInfo({show: false, type: "", content: ""})}
-                         onSubmit={(email) => handleAuthAction(AUTH_ACTIONS.REQUEST_RESET, email)}
+                         onClose={() => setForgetInfo({show: false})}
+                         onSubmit={(fields) => handleAuthAction(AUTH_ACTIONS.REQUEST_RESET, fields)}
             />
             <SuccessPopup showPopup={successInfo.show}
                           message={successInfo.msg}

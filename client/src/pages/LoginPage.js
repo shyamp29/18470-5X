@@ -44,10 +44,6 @@ const LoginPage = () => {
   const handleRedirect = (type) => {
     switch(type)
     {
-      case 'ID':
-        handleAuthAction(AUTH_ACTIONS.FORGOT_ID);
-        break;
-
       case 'PASSWORD':
        handleAuthAction(AUTH_ACTIONS.FORGOT_PASSWORD, loginProps);
         break;
@@ -110,9 +106,6 @@ const LoginPage = () => {
             </span>
           </div>
           <div style={LoginStyle.footerRight}>
-            <p onClick={() => handleRedirect('ID')} style={LoginStyle.link}>
-              Forgot user_id?
-            </p>
             <p onClick={() => handleRedirect('PASSWORD')} style={LoginStyle.link}>
               Forgot password?
             </p>
