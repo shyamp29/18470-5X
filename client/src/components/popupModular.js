@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PopupStyles from '../AppStyle/popup';
 import LoginStyle from '../AppStyle/login';
 
@@ -66,7 +66,7 @@ const LoadingPopup = ({ showPopup, message }) => {
 };
 
 const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
-  const [fields, setFields] = useState({ userId: "", userName: "" });
+  const [fields, setFields] = useState({ userId: "", userName: "", newPassword: "" });
 
   if (!showPopup) return null;
 
@@ -77,30 +77,39 @@ const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     onSubmit(fields);
-    setFields({ userId: "", userName: "" });
+    setFields({ userId: "", userName: "", newPassword: "" });
   };
 
-  const isReady = fields.userId.trim() !== "" && fields.userName.trim() !== "";
+  const isReady = fields.userId.trim() !== "" && fields.userName.trim() !== "" && fields.newPassword.trim() !== "";
 
   return (
     <div style={PopupStyles.overlay}>
       <div style={{ ...PopupStyles.content }}>
         <button onClick={onClose} style={{ ...PopupStyles.closeBtn }}>&times;</button>
         <h2 style={{ color: '#111010', margin: '0 0 10px 0' }}>Forgot Password</h2>
-        <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>Enter your User ID and Username.</p>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+          <input
+            type="text"
+            name="userId"
+            placeholder="User ID"
+            value={fields.userId}
+            onChange={handleChange}
+            style={{ ...LoginStyle.input, marginBottom: '0px', flex: 1 }}
+          />
+          <input
+            type="text"
+            name="userName"
+            placeholder="Username"
+            value={fields.userName}
+            onChange={handleChange}
+            style={{ ...LoginStyle.input, marginBottom: '0px', flex: 1 }}
+          />
+        </div>
         <input
-          type="text"
-          name="userId"
-          placeholder="User ID"
-          value={fields.userId}
-          onChange={handleChange}
-          style={{ ...LoginStyle.input, marginBottom: '8px' }}
-        />
-        <input
-          type="text"
-          name="userName"
-          placeholder="Username"
-          value={fields.userName}
+          type="password"
+          name="newPassword"
+          placeholder="New Password"
+          value={fields.newPassword}
           onChange={handleChange}
           style={{ ...LoginStyle.input, marginBottom: '0px' }}
         />
@@ -110,7 +119,7 @@ const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
           disabled={!isReady}
           style={{ ...LoginStyle.submitBtn, backgroundColor: '#c65c1a' }}
         >
-          Send Reset Link
+          Reset Password
         </button>
       </div>
     </div>
@@ -131,16 +140,5 @@ const AnimatedDots = () => {
   return <span style={{ textAlign: 'left', display: 'inline-block', width: '20px' }}>{dots}</span>;
 };
 
-const maskEmail = (email) => {
-  if (!email) return "";
-  const [prefix, domain] = email.split("@");
-  const [domainName, extension] = domain.split(".");
-
-  const maskedPrefix = prefix.substring(0, 3) + "*".repeat(Math.max(0, prefix.length - 3));
-
-  const maskedDomain = domainName.substring(0, 1) + "*".repeat(Math.max(0, domainName.length - 1));
-
-  return `${maskedPrefix}@${maskedDomain}.${extension}`;
-};
 
 export { ErrorPopup, SuccessPopup, LoadingPopup, ForgetPopup };

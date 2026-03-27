@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import {useAuth} from '../Auth/authHandler';
 import {AUTH_ACTIONS} from '../Auth/authActions';
-import {mockFetchUserProjects, mockCreateProject} from '../Auth/apiCalls';
+import {apiFetchUserProjects, apiCreateProject} from '../Auth/apiCalls';
 import {SuccessPopup} from '../components/popupModular';
 import AllHardwarePage from '../pages/AllHardwarePage';
 import AllProjectsPage from '../pages/AllProjectsPage';
@@ -40,7 +40,7 @@ const UserPortal = () => {
         const fetchProjects = async () => {
             setIsLoadingProjects(true);
             try {
-                const response = await mockFetchUserProjects(user?.userid);
+                const response = await apiFetchUserProjects(user?.userid);
                 if (response.success) setUserProjects(response.projects);
             } catch (error) {
                 console.error("Failed to fetch projects", error);
@@ -85,7 +85,7 @@ const UserPortal = () => {
         }
         setIsCreatingProject(true);
         try {
-            const response = await mockCreateProject(
+            const response = await apiCreateProject(
                 { projectID: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() },
                 user?.userid
             );

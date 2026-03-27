@@ -170,10 +170,12 @@ const apiDeleteProject = async () => ({
 //  HARDWARE
 // ══════════════════════════════════════════════════════════════════════════
 
-// POST /api/get_user_hw_names → message is an array of hardware set names.
+// POST /api/get_all_hw_names → message is an array of hardware set names.
 // Full capacity/availability requires individual /api/get_hw_info calls.
+// TODO §HW1 — Flask route uses `if not data:` instead of `if data is None:`.
+// Fix: change `if not data:` → `if data is None:` in get_all_hw_names handler.
 const apiFetchAllHardware = async () => {
-    const data = await post('/api/get_user_hw_names', {});
+    const data = await post('/api/get_all_hw_names', {});
     if (!data.success) return data;
     const names = Array.isArray(data.message) ? data.message : [];
     return {

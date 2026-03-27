@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {mockFetchProjectInfo, mockCheckout, mockCheckin} from "../Auth/serverSimulation.js";
+import {apiFetchProjectInfo, apiCheckout, apiCheckin} from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
+import {SuccessPopup, ErrorPopup} from "../components/popupModular.js";
 
 const pageBox = {
     ...UserProfileStyle.profileBox,
@@ -14,10 +15,12 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
     const [loading, setLoading] = useState(true);
     const [qtys, setQtys]       = useState([]);
     const [busy, setBusy]       = useState(false);
+    const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
+    const [errorMsg, setErrorMsg]     = useState({show: false, msg: ""});
 
     const loadProject = () => {
         setLoading(true);
-        mockFetchProjectInfo(projectId).then((res) => {
+        apiFetchProjectInfo(projectId).then((res) => {
             if (res.success) {
                 setData(res.data);
                 setQtys(res.data.hardware.map(() => 0));
@@ -36,28 +39,34 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         const entries = data.hardware
             .map((hw, idx) => ({ setName: hw.setName, qty: qtys[idx] }))
             .filter(e => e.qty > 0);
-        if (entries.length === 0) { alert("Enter a quantity greater than 0 for at least one HW Set."); return; }
+        if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
         setBusy(true);
+        const errors = [];
         for (const { setName, qty } of entries) {
-            const res = await mockCheckout({ projectID: projectId, setName, qty });
-            if (!res.success) { alert(`Check Out failed for ${setName}: ${res.error || "Unknown error."}`); }
+            const res = await apiCheckout({ projectID: projectId, setName, qty });
+            if (!res.success) errors.push(`${setName}: ${res.error || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();
+        if (errors.length > 0) setErrorMsg({show: true, msg: `Check Out failed — ${errors.join(", ")}`});
+        else setSuccessMsg({show: true, msg: "Check Out successful!"});
     };
 
     const handleCheckinAll = async () => {
         const entries = data.hardware
             .map((hw, idx) => ({ setName: hw.setName, qty: qtys[idx] }))
             .filter(e => e.qty > 0);
-        if (entries.length === 0) { alert("Enter a quantity greater than 0 for at least one HW Set."); return; }
+        if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
         setBusy(true);
+        const errors = [];
         for (const { setName, qty } of entries) {
-            const res = await mockCheckin({ projectID: projectId, setName, qty });
-            if (!res.success) { alert(`Check In failed for ${setName}: ${res.error || "Unknown error."}`); }
+            const res = await apiCheckin({ projectID: projectId, setName, qty });
+            if (!res.success) errors.push(`${setName}: ${res.error || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();
+        if (errors.length > 0) setErrorMsg({show: true, msg: `Check In failed — ${errors.join(", ")}`});
+        else setSuccessMsg({show: true, msg: "Check In successful!"});
     };
 
     return (
@@ -125,6 +134,16 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                     </div>
                 </>
             )}
+        <SuccessPopup
+            showPopup={successMsg.show}
+            message={successMsg.msg}
+            onClose={() => setSuccessMsg({show: false, msg: ""})}
+        />
+        <ErrorPopup
+            showPopup={errorMsg.show}
+            message={errorMsg.msg}
+            closePopup={() => setErrorMsg({show: false, msg: ""})}
+        />
         </div>
     );
 };

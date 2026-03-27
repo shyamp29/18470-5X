@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
-import {mockFetchAllProjects, mockFetchUserProjects, mockJoinProject} from "../Auth/apiCalls.js";
-// mockExitProject and mockDeleteProject excluded — buttons disabled until server implements these routes (TODO §8, §9)
+import {apiFetchAllProjects, apiFetchUserProjects, apiJoinProject} from "../Auth/apiCalls.js";
+// apiExitProject and apiDeleteProject excluded — buttons disabled until server implements these routes (TODO §8, §9)
 import UserProfileStyle from "../AppStyle/userProfile.js";
+import {SuccessPopup, ErrorPopup} from "../components/popupModular.js";
 
 const sectionHeader = {
     fontSize: '17px',
@@ -18,12 +19,14 @@ const AllProjectsPage = ({ userId, onBack }) => {
     const [myProjectIDs, setMyProjectIDs] = useState(new Set());
     const [loading, setLoading]           = useState(true);
     const [joiningId, setJoiningId]       = useState(null);
+    const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
+    const [errorMsg, setErrorMsg]     = useState({show: false, msg: ""});
 
     const load = async () => {
         setLoading(true);
         const [allRes, myRes] = await Promise.all([
-            mockFetchAllProjects(),
-            mockFetchUserProjects(userId),
+            apiFetchAllProjects(),
+            apiFetchUserProjects(userId),
         ]);
         if (allRes.success) setAllProjects(allRes.data);
         if (myRes.success)  setMyProjectIDs(new Set(myRes.projects.map(p => p.projectId)));
@@ -36,12 +39,12 @@ const AllProjectsPage = ({ userId, onBack }) => {
 
     const handleJoin = async (projectID) => {
         setJoiningId(projectID);
-        const res = await mockJoinProject({ projectID }, userId);
+        const res = await apiJoinProject({ projectID }, userId);
         if (res.success) {
             setMyProjectIDs(prev => new Set([...prev, projectID]));
-            alert(res.message);
+            setSuccessMsg({show: true, msg: res.message});
         } else {
-            alert(res.error || "Failed to join project.");
+            setErrorMsg({show: true, msg: res.error || "Failed to join project."});
         }
         setJoiningId(null);
     };
@@ -150,6 +153,16 @@ const AllProjectsPage = ({ userId, onBack }) => {
                     {renderJoinTable(joinableProjects)}
                 </>
             )}
+        <SuccessPopup
+            showPopup={successMsg.show}
+            message={successMsg.msg}
+            onClose={() => setSuccessMsg({show: false, msg: ""})}
+        />
+        <ErrorPopup
+            showPopup={errorMsg.show}
+            message={errorMsg.msg}
+            closePopup={() => setErrorMsg({show: false, msg: ""})}
+        />
         </div>
     );
 };

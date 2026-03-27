@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {mockFetchAllHardware} from "../Auth/serverSimulation.js";
+import {useEffect, useState} from "react";
+import {apiFetchAllHardware} from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
 
 const AllHardwarePage = ({onBack}) => {
@@ -8,10 +8,12 @@ const AllHardwarePage = ({onBack}) => {
     const [expandedId, setExpandedId] = useState(null);
 
     useEffect(() => {
-        mockFetchAllHardware().then((res) => {
-            if (res.success) setData(res.data);
-            setLoading(false);
-        });
+        apiFetchAllHardware()
+            .then((res) => {
+                if (res.success) setData(res.data);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
     }, []);
 
     return (
