@@ -41,7 +41,7 @@ const UserPortal = () => {
             setIsLoadingProjects(true);
             try {
                 const response = await apiFetchUserProjects(user?.userid);
-                if (response.success) setUserProjects(response.projects);
+                if (response.status === 200) setUserProjects(response.projectsList ?? []);
             } catch (error) {
                 console.error("Failed to fetch projects", error);
             } finally {
@@ -89,14 +89,14 @@ const UserPortal = () => {
                 { projectID: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() },
                 user?.userid
             );
-            if (response.success) {
-                setSuccessMsg({show: true, msg: `Project "${response.data.name}" created successfully!`});
+            if (response.status === 200) {
+                setSuccessMsg({show: true, msg: `Project "${response.name}" created successfully!`});
                 setNewProjectId('');
                 setNewProjectName('');
                 setNewProjectDescription('');
-                setUserProjects(prev => [...prev, { projectId: response.data.projectId, name: response.data.name }]);
+                setUserProjects(prev => [...prev, { projectId: response.projectId, name: response.name }]);
             } else {
-                alert(response.error || "Failed to create project.");
+                alert(response.message || "Failed to create project.");
             }
         } catch (error) {
             console.error("Failed to create project", error);

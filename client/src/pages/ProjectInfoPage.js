@@ -21,9 +21,9 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
     const loadProject = () => {
         setLoading(true);
         apiFetchProjectInfo(projectId).then((res) => {
-            if (res.success) {
-                setData(res.data);
-                setQtys(res.data.hardware.map(() => 0));
+            if (res.status === 200) {
+                setData(res.project);
+                setQtys((res.project.hardware ?? []).map(() => 0));
             }
             setLoading(false);
         });
@@ -44,7 +44,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         const errors = [];
         for (const { setName, qty } of entries) {
             const res = await apiCheckout({ projectID: projectId, setName, qty });
-            if (!res.success) errors.push(`${setName}: ${res.error || "Unknown error."}`);
+            if (res.status !== 200 && res.status !== 206) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();
@@ -61,7 +61,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         const errors = [];
         for (const { setName, qty } of entries) {
             const res = await apiCheckin({ projectID: projectId, setName, qty });
-            if (!res.success) errors.push(`${setName}: ${res.error || "Unknown error."}`);
+            if (res.status !== 200) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();

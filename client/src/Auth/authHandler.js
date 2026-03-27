@@ -2,7 +2,7 @@ import {useNavigate} from 'react-router-dom';
 import {APP_ROUTES, AUTH_ACTIONS} from '../Auth/authActions';
 import {createContext, useContext, useState} from 'react';
 import {ErrorPopup, ForgetPopup, LoadingPopup, SuccessPopup} from "../components/popupModular";
-import {apiLogin, apiRegister, apiLogout, apiForgotPassword} from "./apiCalls.js";
+import {apiLogin, apiRegister, apiLogout, apiForgotPassword, setAuthToken, clearAuthToken} from "./apiCalls.js";
 
 //TODO: update import later + update all mock server calls.
 
@@ -44,18 +44,18 @@ const AuthProvider = ({children}) => {
                 try {
                     const [response] = await Promise.all([apiLogin(payload), minWait()]);
 
-                    if (response.success) {
+                    if (response.status === 200) {
                         const userData = {
-                            userid: response.userid,
+                            userid: response.userId,
                             username: response.username,
-                            token: response.token,
                         };
                         localStorage.setItem('user', JSON.stringify(userData));
+                        setAuthToken(response.token);
                         setUser(userData);
                         navigate(APP_ROUTES.PROFILE);
                     } else {
                         showError(
-                            response.status === 401
+                            response.status === 409 || response.status === 401
                                 ? "Invalid userId or password. Please try again."
                                 : "Login failed. Please try again."
                         );
@@ -94,6 +94,7 @@ const AuthProvider = ({children}) => {
             case AUTH_ACTIONS.SIGNOUT:
                 setUser(null);
                 localStorage.removeItem('user');
+                clearAuthToken();
                 navigate(APP_ROUTES.LOGIN);
                 try {
                     await apiLogout();

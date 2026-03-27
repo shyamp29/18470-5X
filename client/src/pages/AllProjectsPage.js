@@ -28,8 +28,8 @@ const AllProjectsPage = ({ userId, onBack }) => {
             apiFetchAllProjects(),
             apiFetchUserProjects(userId),
         ]);
-        if (allRes.success) setAllProjects(allRes.data);
-        if (myRes.success)  setMyProjectIDs(new Set(myRes.projects.map(p => p.projectId)));
+        if (allRes.status === 200) setAllProjects(allRes.projectsList);
+        if (myRes.status === 200)  setMyProjectIDs(new Set((myRes.projectsList ?? []).map(p => p.projectId)));
         setLoading(false);
     };
 
@@ -40,11 +40,11 @@ const AllProjectsPage = ({ userId, onBack }) => {
     const handleJoin = async (projectID) => {
         setJoiningId(projectID);
         const res = await apiJoinProject({ projectID }, userId);
-        if (res.success) {
+        if (res.status === 200) {
             setMyProjectIDs(prev => new Set([...prev, projectID]));
             setSuccessMsg({show: true, msg: res.message});
         } else {
-            setErrorMsg({show: true, msg: res.error || "Failed to join project."});
+            setErrorMsg({show: true, msg: res.message || "Failed to join project."});
         }
         setJoiningId(null);
     };

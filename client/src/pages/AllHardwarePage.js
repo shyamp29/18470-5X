@@ -10,7 +10,7 @@ const AllHardwarePage = ({onBack}) => {
     useEffect(() => {
         apiFetchAllHardware()
             .then((res) => {
-                if (res.success) setData(res.data);
+                if (res.status === 200) setData(res.hardwareSets);
                 setLoading(false);
             })
             .catch(() => setLoading(false));

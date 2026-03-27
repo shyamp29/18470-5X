@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useAuth } from "../Auth/authHandler";
 import { AUTH_ACTIONS } from "../Auth/authActions";
 import LoginStyle from "../AppStyle/login";
-import { apiCheckUserId } from "../Auth/apiCalls";
 
 const SignupPage = () => {
   const { handleAuthAction } = useAuth();
@@ -12,24 +11,13 @@ const SignupPage = () => {
     password: "",
     confirmPassword: "",
   });
-  const [userIdError, setUserIdError] = useState("");
+
   const [passwordError, setPasswordError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignupProps((prev) => ({ ...prev, [name]: value }));
-    if (name === "userId") setUserIdError("");
     if (name === "password" || name === "confirmPassword") setPasswordError("");
-  };
-
-  const handleUserIdBlur = async () => {
-    if (!signupProps.userId) return;
-    const res = await apiCheckUserId(signupProps.userId);
-    if (res.success && res.exists) {
-      setUserIdError("user id already exist");
-    } else {
-      setUserIdError("");
-    }
   };
 
   const handleConfirmPasswordBlur = () => {
@@ -40,7 +28,7 @@ const SignupPage = () => {
     }
   };
 
-  const isFormBlocked = !!userIdError || !!passwordError;
+  const isFormBlocked = !!passwordError;
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -79,11 +67,9 @@ const SignupPage = () => {
               type="text"
               value={signupProps.userId}
               onChange={handleChange}
-              onBlur={handleUserIdBlur}
               style={LoginStyle.input}
               required
             />
-            {userIdError && <span style={{color: "red", fontSize: "12px"}}>{userIdError}</span>}
           </div>
 
           <div style={LoginStyle.inputGroup}>
