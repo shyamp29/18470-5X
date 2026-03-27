@@ -30,7 +30,7 @@ const AllHardwarePage = ({onBack}) => {
                             style={{cursor: 'pointer', textDecoration: 'underline', color: '#000'}}
                             onClick={() => setExpandedId(expandedId === hw.setName ? null : hw.setName)}
                         >
-                            {hw.name} {expandedId === hw.setName ? '▲' : '▼'}
+                            {hw.setName} {expandedId === hw.setName ? '▲' : '▼'}
                         </h4>
 
                         {expandedId === hw.setName && (

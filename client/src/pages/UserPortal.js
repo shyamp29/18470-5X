@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import {useAuth} from '../Auth/authHandler';
 import {AUTH_ACTIONS} from '../Auth/authActions';
-import {mockFetchUserProjects} from '../Auth/serverSimulation';
-import AllHardwarePage from '../Pages/AllHardwarePage';
-import AllProjectsPage from '../Pages/AllProjectsPage';
-import ProjectInfoPage from '../Pages/ProjectInfoPage';
+import {mockFetchUserProjects, mockCreateProject} from '../Auth/serverSimulation';
+import AllHardwarePage from '../pages/AllHardwarePage';
+import AllProjectsPage from '../pages/AllProjectsPage';
+import ProjectInfoPage from '../pages/ProjectInfoPage';
 
 const VIEWS = {
     DASHBOARD: 'DASHBOARD',
@@ -28,12 +28,18 @@ const UserPortal = () => {
     const [userProjects, setUserProjects] = useState([]);
     const [isLoadingProjects, setIsLoadingProjects] = useState(false);
 
+    const [newProjectName, setNewProjectName] = useState('');
+    const [newProjectDescription, setNewProjectDescription] = useState('');
+    const [newProjectId, setNewProjectId] = useState('');
+    const [isCreatingProject, setIsCreatingProject] = useState(false);
+
+
     useEffect(() => {
         const fetchProjects = async () => {
             setIsLoadingProjects(true);
             try {
-                const response = await mockFetchUserProjects(user?.userId);
-                if (response.success) setUserProjects(response.data);
+                const response = await mockFetchUserProjects(user?.userid);
+                if (response.success) setUserProjects(response.projects);
             } catch (error) {
                 console.error("Failed to fetch projects", error);
             } finally {
@@ -45,7 +51,7 @@ const UserPortal = () => {
 
     const filteredProjects = projectSearch.length >= 2
         ? userProjects.filter(proj =>
-            proj.id.toLowerCase().includes(projectSearch.toLowerCase()) ||
+            proj.projectId.toLowerCase().includes(projectSearch.toLowerCase()) ||
             proj.name.toLowerCase().includes(projectSearch.toLowerCase())
         )
         : [];
@@ -70,16 +76,49 @@ const UserPortal = () => {
         setCurrentView(VIEWS.PROJECT_INFO);
     };
 
+    const handleCreateProject = async () => {
+        if (!newProjectId.trim() || !newProjectName.trim()) {
+            alert("Project ID and Name are required.");
+            return;
+        }
+        setIsCreatingProject(true);
+        try {
+            const response = await mockCreateProject(
+                { projectID: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() },
+                user?.userid
+            );
+            if (response.success) {
+                alert(`Project "${response.data.name}" created successfully!`);
+                setNewProjectId('');
+                setNewProjectName('');
+                setNewProjectDescription('');
+                setUserProjects(prev => [...prev, { projectId: response.data.projectId, name: response.data.name }]);
+            } else {
+                alert(response.error || "Failed to create project.");
+            }
+        } catch (error) {
+            console.error("Failed to create project", error);
+            alert("An unexpected error occurred.");
+        } finally {
+            setIsCreatingProject(false);
+        }
+    };
+
     const goToDashboard = () => setCurrentView(VIEWS.DASHBOARD);
+
+    const handleOpenProject = (projectId) => {
+        setActiveProjectId(projectId);
+        setCurrentView(VIEWS.PROJECT_INFO);
+    };
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
-            <h2 style={{margin: 0}}>Welcome {user?.userName || '<Guest>'}</h2>
+            <h2 style={{margin: 0}}>Welcome {user?.username || '<Guest>'}</h2>
             <div style={UserProfileStyle.profileContainer}>
                 <div
                     style={UserProfileStyle.profileCircle}
                     onClick={() => setIsProfileOpen(prev => !prev)}
                 >
-                    {user?.userName ? user.userName.charAt(0).toUpperCase() : '?'}
+                    {user?.username ? user.username.charAt(0).toUpperCase() : '?'}
                 </div>
                 {isProfileOpen && (
                     <div style={UserProfileStyle.dropdownMenu}>
@@ -90,6 +129,16 @@ const UserPortal = () => {
             </div>
         </div>
     );
+
+    if (currentView === VIEWS.PROJECT_INFO) {
+        return (
+            <div style={UserProfileStyle.container}>
+                <div style={UserProfileStyle.topTrim}></div>
+                <ProjectInfoPage projectId={activeProjectId} userId={user?.userid} onBack={goToDashboard}/>
+                <div style={UserProfileStyle.bottomTrim}></div>
+            </div>
+        );
+    }
 
     return (
         <div style={UserProfileStyle.container}>
@@ -141,11 +190,11 @@ const UserPortal = () => {
                                             {filteredProjects.length > 0 ? (
                                                 filteredProjects.map((proj) => (
                                                     <div
-                                                        key={proj.id}
+                                                        key={proj.projectId}
                                                         style={UserProfileStyle.searchDropdownItem}
-                                                        onMouseDown={() => handleProjectSelect(proj.id)}
+                                                        onMouseDown={() => handleProjectSelect(proj.projectId)}
                                                     >
-                                                        <strong>{proj.id}</strong> - {proj.name}
+                                                        <strong>{proj.projectId}</strong> - {proj.name}
                                                     </div>
                                                 ))
                                             ) : (
@@ -168,19 +217,40 @@ const UserPortal = () => {
                         </strong>
                         <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                             <span style={{...UserProfileStyle.label, marginTop: '10px'}}>Name:</span>
-                            <input style={UserProfileStyle.createProjectInput}/>
+                            <input
+                                style={UserProfileStyle.createProjectInput}
+                                value={newProjectName}
+                                onChange={(e) => setNewProjectName(e.target.value)}
+                                disabled={isCreatingProject}
+                            />
                             <span style={UserProfileStyle.label}>Description:</span>
-                            <input style={UserProfileStyle.createProjectInput}/>
+                            <input
+                                style={UserProfileStyle.createProjectInput}
+                                value={newProjectDescription}
+                                onChange={(e) => setNewProjectDescription(e.target.value)}
+                                disabled={isCreatingProject}
+                            />
                             <span style={UserProfileStyle.label}>Project ID:</span>
-                            <input style={UserProfileStyle.createProjectInput}/>
-                            <button style={{...UserProfileStyle.submitBtn, alignSelf: 'flex-end'}}>Create</button>
+                            <input
+                                style={UserProfileStyle.createProjectInput}
+                                value={newProjectId}
+                                onChange={(e) => setNewProjectId(e.target.value)}
+                                disabled={isCreatingProject}
+                            />
+                            <button
+                                style={{...UserProfileStyle.submitBtn, alignSelf: 'flex-end'}}
+                                onClick={handleCreateProject}
+                                disabled={isCreatingProject}
+                            >
+                                {isCreatingProject ? 'Creating...' : 'Create'}
+                            </button>
                         </div>
                     </div>
                 )}
 
                 {/* ── ALL PROJECTS PAGE ── */}
                 {currentView === VIEWS.ALL_PROJECTS && (
-                    <AllProjectsPage onBack={goToDashboard}/>
+                    <AllProjectsPage userId={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
                 )}
 
                 {/* ── ALL HARDWARE PAGE ── */}
@@ -188,10 +258,7 @@ const UserPortal = () => {
                     <AllHardwarePage onBack={goToDashboard}/>
                 )}
 
-                {/* ── PROJECT INFO PAGE ── */}
-                {currentView === VIEWS.PROJECT_INFO && (
-                    <ProjectInfoPage projectId={activeProjectId} onBack={goToDashboard}/>
-                )}
+
             </div>
 
             <div style={UserProfileStyle.bottomTrim}></div>

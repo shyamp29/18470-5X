@@ -3,15 +3,10 @@ import { useAuth } from "../Auth/authHandler";
 import { AUTH_ACTIONS } from "../Auth/authActions";
 import LoginStyle from "../AppStyle/login";
 
-/*TODO
-  ADD username and USer ID to sigup page 
-  check if user ID exist already before creating profile
-*/
-
-
 const SignupPage = () => {
   const { handleAuthAction } = useAuth();
   const [signupProps, setSignupProps] = useState({
+    userId: "",
     userName: "",
     email: "",
     password: "",
@@ -45,6 +40,18 @@ const SignupPage = () => {
         <h1 style={LoginStyle.header}>Sign Up</h1>
 
         <form onSubmit={handleSignup} style={LoginStyle.form}>
+          <div style={LoginStyle.inputGroup}>
+            <label>User ID</label>
+            <input
+              name="userId"
+              type="text"
+              value={signupProps.userId}
+              onChange={handleChange}
+              style={LoginStyle.input}
+              required
+            />
+          </div>
+
           <div style={LoginStyle.inputGroup}>
             <label>User Name</label>
             <input

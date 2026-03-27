@@ -147,12 +147,17 @@ const mockHardwareDB = [
 
 /**
  * POST /api/users/register
- * Request body : { userName, email, password }
- * Response 200 : { message, userId }
- * Response 409 : { error }  — duplicate userName or email
+ * Request body : { userId, userName, email, password }
+ * Response 200 : { message }
+ * Response 409 : { error }  — duplicate userId, userName, or email
  */
-const mockRegister = async ({ userName, email, password }) => {
+const mockRegister = async ({ userId, userName, email, password }) => {
     await delay(1200);
+
+    const dupUserId = mockUsersDB.find(u => u.userId === userId);
+    if (dupUserId) {
+        return { success: false, status: 409, error: "userId already exists." };
+    }
 
     const dupUserName = mockUsersDB.find(u => u.userName === userName);
     if (dupUserName) {
@@ -166,7 +171,7 @@ const mockRegister = async ({ userName, email, password }) => {
 
     const newUser = {
         _id:          `usr_${Date.now()}`,
-        userId:       userName.toLowerCase().replace(/\s+/g, "_"),
+        userId,
         userName,
         email,
         passwordHash: `hashed_${password}`,   // SIMULATION ONLY
@@ -179,14 +184,13 @@ const mockRegister = async ({ userName, email, password }) => {
         success: true,
         status:  200,
         message: "Account created successfully.",
-        userId:  newUser.userId,
     };
 };
 
 /**
  * POST /api/users/login
  * Request body : { userId, password }
- * Response 200 : { token, userId, userName }
+ * Response 200 : { token, userid, username }
  * Response 401 : { error }  — invalid credentials
  */
 const mockLogin = async ({ userId, password }) => {
@@ -205,8 +209,8 @@ const mockLogin = async ({ userId, password }) => {
         success:  true,
         status:   200,
         token:    makeToken(user.userId),
-        userId:   user.userId,
-        userName: user.userName,
+        userid:   user.userId,
+        username: user.userName,
     };
 };
 
@@ -246,7 +250,7 @@ const mockForgotPassword = async ({ email }) => {
 
 /**
  * GET /api/projects/  (scoped to the logged-in user)
- * Response 200 : [{ projectID, name }]
+ * Response 200 : { message, projects: [{ projectId, name, description, ownerUserId, checkedOut, members, createdAt }] }
  */
 const mockFetchUserProjects = async (userId) => {
     await delay(800);
@@ -258,22 +262,31 @@ const mockFetchUserProjects = async (userId) => {
 
     const projects = mockProjectsDB
         .filter(p => user.projects.includes(p.projectID))
-        .map(p => ({ projectID: p.projectID, name: p.name }));
+        .map(p => ({
+            projectId:   p.projectID,
+            name:        p.name,
+            description: p.description,
+            ownerUserId: p.ownerUserId,
+            checkedOut:  p.checkedOut,
+            members:     p.members,
+            createdAt:   p.createdAt,
+        }));
 
-    return { success: true, status: 200, data: projects };
+    return { success: true, status: 200, projects };
 };
 
 /**
- * GET /api/projects/  (all projects — admin/global view)
- * Response 200 : [{ projectID, name, description }]
+ * GET /api/projects/  (all projects — global view for AllProjectsPage)
+ * Response 200 : { data: [{ projectId, name, description }] }
  */
 const mockFetchAllProjects = async () => {
     await delay(1000);
 
     const data = mockProjectsDB.map(p => ({
-        projectID:   p.projectID,
-        projectName: p.name,
+        projectId:   p.projectID,
+        name:        p.name,
         description: p.description,
+        ownerUserId: p.ownerUserId,
     }));
 
     return { success: true, status: 200, data };
@@ -306,8 +319,8 @@ const mockFetchProjectInfo = async (projectID) => {
         success: true,
         status:  200,
         data: {
-            projectID:   project.projectID,
-            projectName: project.name,
+            projectId:   project.projectID,
+            name:        project.name,
             description: project.description,
             hardware,
         },
@@ -352,7 +365,7 @@ const mockCreateProject = async ({ projectID, name, description = "" }, ownerUse
         success: true,
         status:  200,
         message: "Project created successfully.",
-        data:    { projectID: newProject.projectID, name: newProject.name },
+        data:    { projectId: newProject.projectID, name: newProject.name },
     };
 };
 
@@ -382,6 +395,51 @@ const mockJoinProject = async ({ projectID }, userId) => {
     return { success: true, status: 200, message: "Joined project successfully." };
 };
 
+
+/**
+ * POST /api/projects/exit
+ * Response 200 : { message }
+ * Response 400 : { error }  — owner cannot exit, must delete
+ * Response 404 : { error }
+ */
+const mockExitProject = async ({ projectID }, userId) => {
+    await delay(800);
+
+    const project = mockProjectsDB.find(p => p.projectID === projectID);
+    if (!project) return { success: false, status: 404, error: "Project not found." };
+
+    if (project.ownerUserId === userId) {
+        return { success: false, status: 400, error: "Owner cannot exit a project. Delete it instead." };
+    }
+
+    project.members = project.members.filter(m => m !== userId);
+    const user = mockUsersDB.find(u => u.userId === userId);
+    if (user) user.projects = user.projects.filter(id => id !== projectID);
+
+    return { success: true, status: 200, message: "You have exited the project." };
+};
+
+/**
+ * DELETE /api/projects/:projectID
+ * Response 200 : { message }
+ * Response 403 : { error }  — only owner can delete
+ * Response 404 : { error }
+ */
+const mockDeleteProject = async ({ projectID }, userId) => {
+    await delay(800);
+
+    const projectIdx = mockProjectsDB.findIndex(p => p.projectID === projectID);
+    if (projectIdx === -1) return { success: false, status: 404, error: "Project not found." };
+
+    if (mockProjectsDB[projectIdx].ownerUserId !== userId) {
+        return { success: false, status: 403, error: "Only the project owner can delete this project." };
+    }
+
+    mockProjectsDB.splice(projectIdx, 1);
+    mockUsersDB.forEach(u => { u.projects = u.projects.filter(id => id !== projectID); });
+
+    return { success: true, status: 200, message: "Project deleted successfully." };
+};
 
 // ══════════════════════════════════════════════════════════════════════════
 //  HARDWARE API  (Section 4.3)
@@ -494,8 +552,8 @@ const mockCheckin = async ({ projectID, setName, qty }) => {
         return {
             success: false,
             status:  400,
-            error:   "Cannot check in more than what is currently checked out by this project.",
-            error_code: -1,
+            message: "Cannot check in more than what is currently checked out by this project.",
+            error:   -1,
         };
     }
 
@@ -531,6 +589,8 @@ export {
     mockFetchProjectInfo,
     mockCreateProject,
     mockJoinProject,
+    mockExitProject,
+    mockDeleteProject,
 
     // Hardware (Section 4.3)
     mockFetchAllHardware,

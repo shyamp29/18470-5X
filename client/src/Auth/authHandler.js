@@ -2,7 +2,7 @@ import {useNavigate} from 'react-router-dom';
 import {APP_ROUTES, AUTH_ACTIONS} from '../Auth/authActions';
 import {createContext, useContext, useState} from 'react';
 import {ErrorPopup, ForgetPopup, LoadingPopup, SuccessPopup} from "../components/popupModular";
-import {mockLogin} from "./serverSimulation.js";
+import {mockLogin, mockRegister, mockLogout, mockForgotPassword} from "./serverSimulation.js";
 
 //TODO: update import later + update all mock server calls.
 
@@ -19,7 +19,14 @@ export const useAuth = () => {
 
 const AuthProvider = ({children}) => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        try {
+            const saved = localStorage.getItem('user');
+            return saved ? JSON.parse(saved) : null;
+        } catch {
+            return null;
+        }
+    });
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorInfo, setErrorInfo] = useState({show: false, msg: ""});
@@ -35,14 +42,16 @@ const AuthProvider = ({children}) => {
             case AUTH_ACTIONS.LOGIN:
                 setIsLoading(true);
                 try {
-                    const [authResponse] = await Promise.all([mockLogin(payload), minWait]);
+                    const [response] = await Promise.all([mockLogin(payload), minWait()]);
 
-                    if (authResponse.success) {
-                        setUser({
-                            userId: response.userId,
-                            userName: response.userName,
+                    if (response.success) {
+                        const userData = {
+                            userid: response.userid,
+                            username: response.username,
                             token: response.token,
-                        });
+                        };
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        setUser(userData);
                         navigate(APP_ROUTES.PROFILE);
                     } else {
                         showError(
@@ -67,7 +76,7 @@ const AuthProvider = ({children}) => {
                     if (response.success) {
                         setSuccessInfo({
                             show: true,
-                            msg: `Account created! Your user ID is: ${response.userId}`,
+                            msg: `Account created! Your user ID is: ${payload.userId}`,
                         });
                     } else {
                         // 409 — duplicate userName or email
@@ -89,7 +98,7 @@ const AuthProvider = ({children}) => {
                     console.error("LOGOUT error:", err);
                 } finally {
                     setUser(null);
-                    localStorage.removeItem('userToken');
+                    localStorage.removeItem('user');
                     navigate(APP_ROUTES.LOGIN);
                 }
                 break;
@@ -124,24 +133,22 @@ const AuthProvider = ({children}) => {
             case AUTH_ACTIONS.REQUEST_RESET:
                 setIsLoading(true);
                 try {
-                    const minWait = new Promise((resolve) => setTimeout(resolve, 10000));
-                    const [response] = await Promise.all([mockRequestResetApi(payload), minWait]);
-                    setIsLoading(false);
+                    const [response] = await Promise.all([
+                        mockForgotPassword({ email: payload }),
+                        minWait(),
+                    ]);
 
                     if (response.success) {
-                        setForgetInfo({show: false, type: ""});
-                        setSuccessInfo({
-                            show: true,
-                            email: payload,
-                            userId: "RESET LINK SENT"
-                        });
+                        setForgetInfo({show: false, type: "", content: ""});
+                        setSuccessInfo({show: true, msg: response.message});
                     } else {
-                        setErrorInfo({show: true, msg: response.message});
+                        showError(response.message ?? "Recovery service is currently offline.");
                     }
-
                 } catch (err) {
+                    console.error("REQUEST_RESET error:", err);
+                    showError("Recovery service is currently offline.");
+                } finally {
                     setIsLoading(false);
-                    setErrorInfo({show: true, msg: "Recovery service is currently offline."});
                 }
                 break;
 
