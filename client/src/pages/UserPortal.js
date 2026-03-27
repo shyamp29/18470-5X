@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import {useAuth} from '../Auth/authHandler';
 import {AUTH_ACTIONS} from '../Auth/authActions';
-import {mockFetchUserProjects, mockCreateProject} from '../Auth/serverSimulation';
+import {mockFetchUserProjects, mockCreateProject} from '../Auth/apiCalls';
+import {SuccessPopup} from '../components/popupModular';
 import AllHardwarePage from '../pages/AllHardwarePage';
 import AllProjectsPage from '../pages/AllProjectsPage';
 import ProjectInfoPage from '../pages/ProjectInfoPage';
@@ -32,6 +33,7 @@ const UserPortal = () => {
     const [newProjectDescription, setNewProjectDescription] = useState('');
     const [newProjectId, setNewProjectId] = useState('');
     const [isCreatingProject, setIsCreatingProject] = useState(false);
+    const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
 
 
     useEffect(() => {
@@ -88,7 +90,7 @@ const UserPortal = () => {
                 user?.userid
             );
             if (response.success) {
-                alert(`Project "${response.data.name}" created successfully!`);
+                setSuccessMsg({show: true, msg: `Project "${response.data.name}" created successfully!`});
                 setNewProjectId('');
                 setNewProjectName('');
                 setNewProjectDescription('');
@@ -114,7 +116,6 @@ const UserPortal = () => {
         <div style={UserProfileStyle.navBar}>
             <h1 style={{margin: 0}}>Welcome {user?.username || '<Guest>'}</h1>
             <div style={UserProfileStyle.profileContainer}>
-                <button onClick={handleSignOut} style={UserProfileStyle.dropdownItem}>Sign Out</button>
                 <div
                     style={UserProfileStyle.profileCircle}
                     onClick={() => setIsProfileOpen(prev => !prev)}
@@ -263,6 +264,11 @@ const UserPortal = () => {
             </div>
 
             <div style={UserProfileStyle.bottomTrim}></div>
+            <SuccessPopup
+                showPopup={successMsg.show}
+                message={successMsg.msg}
+                onClose={() => setSuccessMsg({show: false, msg: ""})}
+            />
         </div>
     );
 };

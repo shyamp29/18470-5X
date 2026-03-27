@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {mockFetchAllProjects, mockFetchUserProjects, mockJoinProject, mockExitProject, mockDeleteProject} from "../Auth/serverSimulation.js";
+import {useEffect, useState} from "react";
+import {mockFetchAllProjects, mockFetchUserProjects, mockJoinProject} from "../Auth/apiCalls.js";
+// mockExitProject and mockDeleteProject excluded — buttons disabled until server implements these routes (TODO §8, §9)
 import UserProfileStyle from "../AppStyle/userProfile.js";
 
 const sectionHeader = {
@@ -17,7 +18,6 @@ const AllProjectsPage = ({ userId, onBack }) => {
     const [myProjectIDs, setMyProjectIDs] = useState(new Set());
     const [loading, setLoading]           = useState(true);
     const [joiningId, setJoiningId]       = useState(null);
-    const [actionId, setActionId]         = useState(null);
 
     const load = async () => {
         setLoading(true);
@@ -32,32 +32,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
 
     useEffect(() => { load(); }, [userId]);
 
-    const handleExit = async (projectId) => {
-        if (!window.confirm("Are you sure you want to exit this project?")) return;
-        setActionId(projectId);
-        const res = await mockExitProject({ projectID: projectId }, userId);
-        if (res.success) {
-            setMyProjectIDs(prev => { const s = new Set(prev); s.delete(projectId); return s; });
-            alert(res.message);
-        } else {
-            alert(res.error || "Failed to exit project.");
-        }
-        setActionId(null);
-    };
-
-    const handleDelete = async (projectId) => {
-        if (!window.confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
-        setActionId(projectId);
-        const res = await mockDeleteProject({ projectID: projectId }, userId);
-        if (res.success) {
-            setMyProjectIDs(prev => { const s = new Set(prev); s.delete(projectId); return s; });
-            setAllProjects(prev => prev.filter(p => p.projectId !== projectId));
-            alert(res.message);
-        } else {
-            alert(res.error || "Failed to delete project.");
-        }
-        setActionId(null);
-    };
+    // handleExit and handleDelete removed — pending backend implementation (TODO §8, §9, §13)
 
     const handleJoin = async (projectID) => {
         setJoiningId(projectID);
@@ -99,20 +74,22 @@ const AllProjectsPage = ({ userId, onBack }) => {
                         <td style={UserProfileStyle.td}>
                             <div style={{display: 'flex', gap: '6px', justifyContent: 'center'}}>
                                 {isOwner ? (
+                                    // Delete — not yet implemented on server (TODO §8, §13)
                                     <button
-                                        style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#c0392b', color: '#fff'}}
-                                        onClick={() => handleDelete(proj.projectId)}
-                                        disabled={actionId === proj.projectId}
+                                        style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#c0392b', color: '#fff', opacity: 0.4, cursor: 'not-allowed'}}
+                                        disabled
+                                        title="Not yet implemented — pending backend support"
                                     >
-                                        {actionId === proj.projectId ? 'Deleting...' : 'Delete'}
+                                        Delete
                                     </button>
                                 ) : (
+                                    // Exit — not yet implemented on server (TODO §9, §13)
                                     <button
-                                        style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#7f8c8d', color: '#fff'}}
-                                        onClick={() => handleExit(proj.projectId)}
-                                        disabled={actionId === proj.projectId}
+                                        style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#7f8c8d', color: '#fff', opacity: 0.4, cursor: 'not-allowed'}}
+                                        disabled
+                                        title="Not yet implemented — pending backend support"
                                     >
-                                        {actionId === proj.projectId ? 'Exiting...' : 'Exit Project'}
+                                        Leave
                                     </button>
                                 )}
                             </div>
