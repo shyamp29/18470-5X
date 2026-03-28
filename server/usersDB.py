@@ -1,11 +1,10 @@
 # Import necessary libraries and modules
-# from pymongo import MongoClient
 import projectsDB
 
 '''
 Structure of User entry:
 User = {
-    'username': username,
+    'userName': userName,
     'userId': userId,
     'password': password,
     'projects': [project1_ID, project2_ID, ...],
@@ -14,40 +13,45 @@ User = {
 '''
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 # Function to add a new user
-def addUser(client, username, userId, password):
+def register(client, userName, userId, emailId, password):
     # Add a new user to the database
     db = client.myapp_database
     users_col = db.users
     if users_col.find_one({"userId": userId}):
-        return False, "UserID already exists"
+        return False, "userId already exists"
+    elif users_col.find_one({"emailId": emailId}):
+        return False, "emailId already exists"
     else:
         # Hash the password with a salt before storing it
         hashed_password = generate_password_hash(password)
         
         new_user = {
-            'username': username,
+            'userName': userName,
             'userId': userId,
-            'password': hashed_password,
+            'emailId': emailId,
+            'passwordHash': hashed_password,
+            'createdAt': datetime.now(),
             'projects': [],
             'isAdmin': False
         }
         users_col.insert_one(new_user)
-        return True, "User added successfully, Please login"
+        return True, f"{userName} registered successfully, Please login"
 
-# Helper function to query a user by username and userId
-def __queryUser(client, username, userId):
+# Helper function to query a user by userName and userId
+def __queryUser(client, userName, userId):
     # Query and return a user from the database
     db = client.myapp_database
     users_col = db.users
     user = users_col.find_one({"userId": userId})
     if not user:
         return False, "User not found", None
-    elif user['userId'] == userId and user['username'] == username:
+    elif user['userId'] == userId and user['userName'] == userName:
         return True,"User credentials match", user
     else:
-        return False, "UserId and username do not match", None
+        return False, "userId and userName do not match", None
 
 # Function to log in a user
 def login(client, userId, password):
@@ -59,29 +63,32 @@ def login(client, userId, password):
     user = users_col.find_one({"userId": userId})
     
     if not user:
-        return False, "User ID does not exist\nPlease check and try again"
+        return False, "userId does not exist\nPlease check and try again", None, None
         
-    # 2. Check if the provided password matches the stored hash
-    if check_password_hash(user['password'], password):
-        return True, "Login successful"
+    # 2. Check if the provided passwordHash matches the stored hash
+    if check_password_hash(user['passwordHash'], password):
+        return True, f"{user['userName']} logged in successfully", user["userId"], user["userName"]
     else:
-        return False, "Incorrect password\nPlease check and try again"
+        return False, "Incorrect password\nPlease check and try again", None, None
 
 # Function to reset password
-def resetPassword(client, userId, username, password):
+def resetPassword(client, userId, oldPassword, newPassword):
     db = client.myapp_database
     users_col = db.users
 
-    success, message, user = __queryUser(client, username, userId)    
-    if not success:
-        return False, message 
-    elif user:
-        # Hash the new password
-        new_hashed_password = generate_password_hash(password)
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found"
+
+    if check_password_hash(user['passwordHash'], oldPassword):    
+        # Hash the new passwordHash
+        new_hashed_password = generate_password_hash(newPassword)
         users_col.update_one(
         {"userId": userId}, # 1. Find the user with this ID
-        {"$set": {"password": new_hashed_password}})
-        return True, "Password reset successful"
+        {"$set": {"passwordHash": new_hashed_password}})
+        return True, "password reset successful"
+    else:
+        return False, "Incorrect password\nPlease check and try again"
 
 
 # Function to add a user to a project
