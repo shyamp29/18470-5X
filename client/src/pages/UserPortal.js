@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import {useAuth} from '../Auth/authHandler';
 import {AUTH_ACTIONS} from '../Auth/authActions';
-import {apiFetchUserProjects, apiCreateProject} from '../Auth/apiCalls';
+import {apiFetchAllProjects, apiCreateProject} from '../Auth/apiCalls';
 import {SuccessPopup} from '../components/popupModular';
 import AllHardwarePage from '../pages/AllHardwarePage';
 import AllProjectsPage from '../pages/AllProjectsPage';
@@ -40,8 +40,8 @@ const UserPortal = () => {
         const fetchProjects = async () => {
             setIsLoadingProjects(true);
             try {
-                const response = await apiFetchUserProjects(user?.userid);
-                if (response.status === 200) setUserProjects(response.projectsList ?? []);
+                const response = await apiFetchAllProjects();
+                if (response.status === 200) setUserProjects(response.projectslist ?? []);
             } catch (error) {
                 console.error("Failed to fetch projects", error);
             } finally {
@@ -53,7 +53,7 @@ const UserPortal = () => {
 
     const filteredProjects = projectSearch.length >= 2
         ? userProjects.filter(proj =>
-            proj.projectId.toLowerCase().includes(projectSearch.toLowerCase()) ||
+            proj.projectid.toLowerCase().includes(projectSearch.toLowerCase()) ||
             proj.name.toLowerCase().includes(projectSearch.toLowerCase())
         )
         : [];
@@ -94,7 +94,7 @@ const UserPortal = () => {
                 setNewProjectId('');
                 setNewProjectName('');
                 setNewProjectDescription('');
-                setUserProjects(prev => [...prev, { projectId: response.projectId, name: response.name }]);
+                setUserProjects(prev => [...prev, { projectid: response.projectid, name: response.name }]);
             } else {
                 alert(response.message || "Failed to create project.");
             }
@@ -192,11 +192,11 @@ const UserPortal = () => {
                                             {filteredProjects.length > 0 ? (
                                                 filteredProjects.map((proj) => (
                                                     <div
-                                                        key={proj.projectId}
+                                                        key={proj.projectid}
                                                         style={UserProfileStyle.searchDropdownItem}
-                                                        onMouseDown={() => handleProjectSelect(proj.projectId)}
+                                                        onMouseDown={() => handleProjectSelect(proj.projectid)}
                                                     >
-                                                        <strong>{proj.projectId}</strong> - {proj.name}
+                                                        <strong>{proj.projectid}</strong> - {proj.name}
                                                     </div>
                                                 ))
                                             ) : (
@@ -208,7 +208,7 @@ const UserPortal = () => {
                                     )}
                                 </div>
                                 <button style={UserProfileStyle.submitBtn} onClick={handleGoToProjectInfo}>
-                                    Submit
+                                    Open
                                 </button>
                             </div>
                         </div>

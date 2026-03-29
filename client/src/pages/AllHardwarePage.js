@@ -10,7 +10,7 @@ const AllHardwarePage = ({onBack}) => {
     useEffect(() => {
         apiFetchAllHardware()
             .then((res) => {
-                if (res.status === 200) setData(res.hardwareSets);
+                if (res.status === 200) setData(res.hardwaresets);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
@@ -27,15 +27,15 @@ const AllHardwarePage = ({onBack}) => {
                 <p>Failed to load hardware.</p>
             ) : (
                 data.map((hw) => (
-                    <div key={hw.setName} style={{marginBottom: '10px'}}>
+                    <div key={hw.setname} style={{marginBottom: '10px'}}>
                         <h4
                             style={{cursor: 'pointer', textDecoration: 'underline', color: '#000'}}
-                            onClick={() => setExpandedId(expandedId === hw.setName ? null : hw.setName)}
+                            onClick={() => setExpandedId(expandedId === hw.setname ? null : hw.setname)}
                         >
-                            {hw.setName} {expandedId === hw.setName ? '▲' : '▼'}
+                            {hw.setname} {expandedId === hw.setname ? '▲' : '▼'}
                         </h4>
 
-                        {expandedId === hw.setName && (
+                        {expandedId === hw.setname && (
                             <table style={{...UserProfileStyle.table, width: '70%', marginLeft: '20px'}}>
                                 <tbody>
                                 <tr>

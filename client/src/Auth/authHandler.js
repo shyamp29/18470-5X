@@ -46,7 +46,7 @@ const AuthProvider = ({children}) => {
 
                     if (response.status === 200) {
                         const userData = {
-                            userid: response.userId,
+                            userid: response.userid,
                             username: response.username,
                         };
                         localStorage.setItem('user', JSON.stringify(userData));

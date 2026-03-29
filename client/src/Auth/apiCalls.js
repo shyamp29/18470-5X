@@ -24,10 +24,21 @@ const _headers = (extra = {}) => ({
     ...extra,
 });
 
+// Recursively lowercase all keys in a JSON response to avoid case-mismatch bugs.
+const _normalizeKeys = (val) => {
+    if (Array.isArray(val)) return val.map(_normalizeKeys);
+    if (val !== null && typeof val === 'object') {
+        return Object.fromEntries(
+            Object.entries(val).map(([k, v]) => [k.toLowerCase(), _normalizeKeys(v)])
+        );
+    }
+    return val;
+};
+
 const _parseResponse = async (res) => {
     try {
         const data = await res.json();
-        return { ...data, status: res.status };
+        return { ..._normalizeKeys(data), status: res.status };
     } catch {
         return { success: false, status: res.status, error: `Server error ${res.status}` };
     }
@@ -35,17 +46,19 @@ const _parseResponse = async (res) => {
 
 const post = async (path, body = {}) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
-        method:  'POST',
-        headers: _headers(),
-        body:    JSON.stringify(body),
+        method:      'POST',
+        headers:     _headers(),
+        credentials: 'include',
+        body:        JSON.stringify(body),
     });
     return _parseResponse(res);
 };
 
 const get = async (path) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
-        method:  'GET',
-        headers: _headers(),
+        method:      'GET',
+        headers:     _headers(),
+        credentials: 'include',
     });
     return _parseResponse(res);
 };
@@ -96,8 +109,10 @@ const apiFetchUserProjects = async () => {
     return get('/api/projects/');
 };
 
-// Alias used by pages that list all visible projects for the current user.
-const apiFetchAllProjects = apiFetchUserProjects;
+// GET /api/projects/all → { message, projectslist: [...all projects...] }
+const apiFetchAllProjects = async () => {
+    return get('/api/projects/all');
+};
 
 // GET /api/projects/:projectId → { message, project: { ... } }
 const apiFetchProjectInfo = async (projectId) => {
