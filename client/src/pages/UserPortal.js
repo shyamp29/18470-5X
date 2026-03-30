@@ -33,6 +33,8 @@ const UserPortal = () => {
     const [newProjectDescription, setNewProjectDescription] = useState('');
     const [newProjectId, setNewProjectId] = useState('');
     const [isCreatingProject, setIsCreatingProject] = useState(false);
+    const projectIdTaken = newProjectId.trim().length > 0 &&
+        userProjects.some(p => p.projectid.toLowerCase() === newProjectId.trim().toLowerCase());
     const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
 
 
@@ -234,15 +236,20 @@ const UserPortal = () => {
                             />
                             <span style={UserProfileStyle.label}>Project ID:</span>
                             <input
-                                style={UserProfileStyle.createProjectInput}
+                                style={{...UserProfileStyle.createProjectInput, borderColor: projectIdTaken ? '#c0392b' : undefined}}
                                 value={newProjectId}
                                 onChange={(e) => setNewProjectId(e.target.value)}
                                 disabled={isCreatingProject}
                             />
+                            {projectIdTaken && (
+                                <span style={{color: '#c0392b', fontSize: '13px', marginTop: '-6px'}}>
+                                    Project ID already exists.
+                                </span>
+                            )}
                             <button
                                 style={{...UserProfileStyle.submitBtn, alignSelf: 'flex-end'}}
                                 onClick={handleCreateProject}
-                                disabled={isCreatingProject}
+                                disabled={isCreatingProject || projectIdTaken}
                             >
                                 {isCreatingProject ? 'Creating...' : 'Create'}
                             </button>
