@@ -61,14 +61,14 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
 
     const handleCheckoutAll = async () => {
         const entries = data.hardware
-            .map((hw, idx) => ({ setName: hw.setname, qty: qtys[idx] }))
+            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.availability) }))
             .filter(e => e.qty > 0);
         if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
         setBusy(true);
         const errors = [];
         for (const { setName, qty } of entries) {
             const res = await apiCheckout({ projectID: projectId, setName, qty });
-            if (res.status !== 200 && res.status !== 206) errors.push(`${setName}: ${res.message || "Unknown error."}`);
+            if (res.status !== 200) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();
@@ -78,14 +78,14 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
 
     const handleCheckinAll = async () => {
         const entries = data.hardware
-            .map((hw, idx) => ({ setName: hw.setname, qty: qtys[idx] }))
+            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.allocated) }))
             .filter(e => e.qty > 0);
         if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
         setBusy(true);
         const errors = [];
         for (const { setName, qty } of entries) {
             const res = await apiCheckin({ projectID: projectId, setName, qty });
-            if (res.status !== 200) errors.push(`${setName}: ${res.message || "Unknown error."}`);
+            if (res.status !== 200 && res.status !== 206) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);
         loadProject();
