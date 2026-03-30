@@ -2,8 +2,6 @@ import React, {useEffect, useState} from "react";
 import {apiFetchProjectInfo, apiFetchAllHardware, apiCheckout, apiCheckin, apiJoinProject} from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
 import {SuccessPopup, ErrorPopup} from "../components/popupModular.js";
-import {useAuth} from "../Auth/authHandler.js";
-
 const pageBox = {
     ...UserProfileStyle.profileBox,
     maxWidth: '800px',
@@ -12,7 +10,6 @@ const pageBox = {
 };
 
 const ProjectInfoPage = ({ projectId, userId, onBack }) => {
-    const { user } = useAuth();
     const [data, setData]       = useState(null);
     const [loading, setLoading] = useState(true);
     const [qtys, setQtys]       = useState([]);
@@ -127,7 +124,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                     <p><strong>Description:</strong> {data.description}</p>
                     <p>
                         <strong>Project Owner:</strong>{' '}
-                        {isOwner ? user?.username : data.owneruserid}
+                        {data.ownerusername ?? data.owneruserid}
                         {isOwner && <span style={{ color: '#5b9bd5', marginLeft: '6px' }}>(You)</span>}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -193,18 +190,18 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
 
                     <div style={{ display: 'flex', gap: '16px', marginTop: '20px', justifyContent: 'flex-end' }}>
                         <button
-                            style={{ ...UserProfileStyle.submitBtn, fontSize: '14px' }}
-                            onClick={handleCheckoutAll}
-                            disabled={busy}
-                        >
-                            Check Out
-                        </button>
-                        <button
                             style={{ ...UserProfileStyle.submitBtn, fontSize: '14px', backgroundColor: '#4a90d9', color: '#fff' }}
                             onClick={handleCheckinAll}
                             disabled={busy}
                         >
                             Check In
+                        </button>
+                        <button
+                            style={{ ...UserProfileStyle.submitBtn, fontSize: '14px' }}
+                            onClick={handleCheckoutAll}
+                            disabled={busy}
+                        >
+                            Check Out
                         </button>
                     </div>
                 </>
