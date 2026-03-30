@@ -159,8 +159,8 @@ const AuthProvider = ({children}) => {
             <SuccessPopup showPopup={successInfo.show}
                           message={successInfo.msg}
                           title="New User Sign-up"
-                          btnLabel="Login"
-                          onClose={() => setSuccessInfo({show: false, msg: ""})}
+                          btnLabel="Go to Login"
+                          onClose={() => { setSuccessInfo({show: false, msg: ""}); navigate(APP_ROUTES.LOGIN); }}
             />
             <ErrorPopup showPopup={errorInfo.show}
                         message={errorInfo.msg}
