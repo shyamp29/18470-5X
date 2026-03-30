@@ -73,14 +73,13 @@ const AuthProvider = ({children}) => {
                 try {
                     const [response] = await Promise.all([apiRegister(payload), minWait()]);
 
-                    if (response.success) {
+                    if (response.status === 200) {
                         setSuccessInfo({
                             show: true,
                             msg: "User added successfully, Please login",
                         });
                     } else {
-                        // 409 — duplicate userName or email
-                        showError(response.error ?? "Registration failed. Please try again.");
+                        showError(response.message ?? "Registration failed. Please try again.");
                     }
                 } catch (err) {
                     console.error("SIGNUP error:", err);
