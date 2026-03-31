@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { apiJoinProject } from '../Auth/apiCalls';
 import UserProfileStyle from '../AppStyle/userProfile';
+import ProjectInfoStyle from '../AppStyle/projectInfo';
 
 const AddUserForm = ({ projectId, onSuccess, onError }) => {
     const [newUserId, setNewUserId] = useState('');
@@ -17,20 +18,15 @@ const AddUserForm = ({ projectId, onSuccess, onError }) => {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+        <div style={ProjectInfoStyle.addUserFormRow}>
             <input
-                style={{ ...UserProfileStyle.selectInput, flex: 1 }}
+                style={UserProfileStyle.selectInput}
                 placeholder="Enter User ID"
                 value={newUserId}
                 onChange={e => setNewUserId(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleAddUser()}
             />
-            <button
-                style={{ ...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 14px' }}
-                onClick={handleAddUser}
-            >
-                Add
-            </button>
+            <button style={ProjectInfoStyle.smallBtn} onClick={handleAddUser}>Add</button>
         </div>
     );
 };

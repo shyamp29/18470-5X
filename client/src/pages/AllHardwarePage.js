@@ -19,7 +19,7 @@ const AllHardwarePage = ({onBack}) => {
     return (
         <div style={UserProfileStyle.profileBox}>
             <button style={UserProfileStyle.backBtnStyle} onClick={onBack}>← Back</button>
-            <h2 style={{textAlign: 'center', textDecoration: 'underline'}}>All Hardware List</h2>
+            <h2 style={UserProfileStyle.pageHeading}>All Hardware List</h2>
 
             {loading ? (
                 <p>Loading...</p>

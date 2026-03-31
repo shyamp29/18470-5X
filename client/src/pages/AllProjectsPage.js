@@ -29,7 +29,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
     return (
         <div style={UserProfileStyle.profileBox}>
             <button style={UserProfileStyle.backBtnStyle} onClick={onBack}>← Back</button>
-            <h2 style={{ textAlign: 'center', textDecoration: 'underline' }}>All Projects</h2>
+            <h2 style={UserProfileStyle.pageHeading}>All Projects</h2>
 
             {loading ? <p>Loading...</p> : (
                 <>

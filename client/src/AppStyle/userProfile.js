@@ -222,6 +222,10 @@ const UserProfileStyle = {
         cursor: 'pointer',
         color: '#888',
     },
+    pageHeading: {
+        textAlign: 'center',
+        textDecoration: 'underline',
+    },
     table: {
         width: '100%',
         borderCollapse: 'collapse',
