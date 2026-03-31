@@ -1,7 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {apiFetchProjectInfo, apiFetchAllHardware, apiCheckout, apiCheckin, apiJoinProject} from "../Auth/apiCalls.js";
+import React, { useState } from "react";
+import useProjectData from "../hooks/useProjectData";
+import useHardwareOps from "../hooks/useHardwareOps";
+import AddUserForm from "../components/AddUserForm";
 import UserProfileStyle from "../AppStyle/userProfile.js";
-import {SuccessPopup, ErrorPopup} from "../components/popupModular.js";
+import { SuccessPopup, ErrorPopup } from "../components/popupModular.js";
+
 const pageBox = {
     ...UserProfileStyle.profileBox,
     maxWidth: '800px',
@@ -10,88 +13,17 @@ const pageBox = {
 };
 
 const ProjectInfoPage = ({ projectId, userId, onBack }) => {
-    const [data, setData]       = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [qtys, setQtys]       = useState([]);
-    const [busy, setBusy]       = useState(false);
-    const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
-    const [errorMsg, setErrorMsg]     = useState({show: false, msg: ""});
+    const [successMsg, setSuccessMsg] = useState({ show: false, msg: "" });
+    const [errorMsg,   setErrorMsg]   = useState({ show: false, msg: "" });
     const [addingUser, setAddingUser] = useState(false);
-    const [newUserId, setNewUserId]   = useState('');
 
-    const loadProject = async () => {
-        setLoading(true);
-        const [projRes, hwRes] = await Promise.all([
-            apiFetchProjectInfo(projectId),
-            apiFetchAllHardware(),
-        ]);
-        if (projRes.status === 200) {
-            const project = projRes.project;
-            const checkedout = project.checkedout ?? {};
-            const hardware = (hwRes.hardwaresets ?? []).map(hw => ({
-                setname: hw.setname,
-                capacity: hw.capacity,
-                availability: hw.availability,
-                allocated: checkedout[hw.setname.toLowerCase()] ?? 0,
-            }));
-            setData({ ...project, hardware });
-            setQtys(hardware.map(() => 0));
-        }
-        setLoading(false);
-    };
+    const showSuccess = (msg) => setSuccessMsg({ show: true, msg });
+    const showError   = (msg) => setErrorMsg({ show: true, msg });
 
-    useEffect(() => { loadProject(); }, [projectId]);
-
-    const handleAddUser = async () => {
-        if (!newUserId.trim()) return;
-        const res = await apiJoinProject(projectId, newUserId.trim());
-        if (res.status === 200) {
-            setSuccessMsg({ show: true, msg: `User "${newUserId.trim()}" added to project.` });
-            setNewUserId('');
-            setAddingUser(false);
-            loadProject();
-        } else {
-            setErrorMsg({ show: true, msg: res.message || "Failed to add user." });
-        }
-    };
-
-    const handleQtyChange = (idx, value) => {
-        setQtys(prev => prev.map((q, i) => i === idx ? Math.max(0, Number(value)) : q));
-    };
-
-    const handleCheckoutAll = async () => {
-        const entries = data.hardware
-            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.availability) }))
-            .filter(e => e.qty > 0);
-        if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
-        setBusy(true);
-        const errors = [];
-        for (const { setName, qty } of entries) {
-            const res = await apiCheckout({ setName, qty });
-            if (res.status !== 200) errors.push(`${setName}: ${res.message || "Unknown error."}`);
-        }
-        setBusy(false);
-        loadProject();
-        if (errors.length > 0) setErrorMsg({show: true, msg: `Check Out failed — ${errors.join(", ")}`});
-        else setSuccessMsg({show: true, msg: "Check Out successful!"});
-    };
-
-    const handleCheckinAll = async () => {
-        const entries = data.hardware
-            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.allocated) }))
-            .filter(e => e.qty > 0);
-        if (entries.length === 0) { setErrorMsg({show: true, msg: "Enter a quantity greater than 0 for at least one HW Set."}); return; }
-        setBusy(true);
-        const errors = [];
-        for (const { setName, qty } of entries) {
-            const res = await apiCheckin({ setName, qty });
-            if (res.status !== 200 && res.status !== 206) errors.push(`${setName}: ${res.message || "Unknown error."}`);
-        }
-        setBusy(false);
-        loadProject();
-        if (errors.length > 0) setErrorMsg({show: true, msg: `Check In failed — ${errors.join(", ")}`});
-        else setSuccessMsg({show: true, msg: "Check In successful!"});
-    };
+    const { data, loading, qtys, handleQtyChange, reload } = useProjectData(projectId);
+    const { busy, handleCheckoutAll, handleCheckinAll }     = useHardwareOps(
+        data, qtys, reload, showSuccess, showError
+    );
 
     const isOwner = data && data.owneruserid === userId;
 
@@ -134,7 +66,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                         </p>
                         {isOwner && (
                             <button
-                                onClick={() => { setAddingUser(v => !v); setNewUserId(''); }}
+                                onClick={() => setAddingUser(v => !v)}
                                 style={{ background: 'none', border: '1px solid #c65c1a', borderRadius: '50%',
                                     width: '22px', height: '22px', cursor: 'pointer', fontSize: '16px',
                                     color: '#c65c1a', lineHeight: '1', padding: 0 }}
@@ -143,17 +75,11 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                         )}
                     </div>
                     {addingUser && (
-                        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                            <input
-                                style={{ ...UserProfileStyle.selectInput, flex: 1 }}
-                                placeholder="Enter User ID"
-                                value={newUserId}
-                                onChange={e => setNewUserId(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && handleAddUser()}
-                            />
-                            <button style={{ ...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 14px' }}
-                                onClick={handleAddUser}>Add</button>
-                        </div>
+                        <AddUserForm
+                            projectId={projectId}
+                            onSuccess={(msg) => { showSuccess(msg); setAddingUser(false); reload(); }}
+                            onError={showError}
+                        />
                     )}
 
                     <table style={{ ...UserProfileStyle.table, marginTop: '20px' }}>
@@ -206,17 +132,19 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                     </div>
                 </>
             )}
-        <SuccessPopup
-            showPopup={successMsg.show}
-            message={successMsg.msg}
-            onClose={() => setSuccessMsg({show: false, msg: ""})}
-        />
-        <ErrorPopup
-            showPopup={errorMsg.show}
-            message={errorMsg.msg}
-            closePopup={() => setErrorMsg({show: false, msg: ""})}
-        />
+
+            <SuccessPopup
+                showPopup={successMsg.show}
+                message={successMsg.msg}
+                onClose={() => setSuccessMsg({ show: false, msg: "" })}
+            />
+            <ErrorPopup
+                showPopup={errorMsg.show}
+                message={errorMsg.msg}
+                closePopup={() => setErrorMsg({ show: false, msg: "" })}
+            />
         </div>
     );
 };
+
 export default ProjectInfoPage;

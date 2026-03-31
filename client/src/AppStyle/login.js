@@ -15,7 +15,7 @@ const LoginStyle = {
   topTrim: {
     width: "100%",
     height: "35px",
-    backgroundColor: "#c65c1a",
+    backgroundColor: "#792ee9",
     position: "absolute",
     top: 0,
     left: 0,
