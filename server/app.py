@@ -255,6 +255,11 @@ def create_hardware_set():
     if not all([setName, capacity, userId]):
         return jsonify({"message": "Missing required fields"}), 400
     
+    # Check if user is an admin
+    success_check, message_check, is_admin = usersDB.isAdminUser(client, userId)
+    if not success_check or not is_admin:
+        return jsonify({"success": False, "message": "Admin privileges required to create hardware"}), 403
+    
     # Attempt to create the hardware set using the hardwareDB module
     success, message = hardwareDB.createHardwareSet(client, setName, capacity)
 
@@ -263,6 +268,36 @@ def create_hardware_set():
         return jsonify({"message": message}), 201
     else:
         return jsonify({"message": message}), 400
+
+
+# Route for updating hardware capacity (scaling)
+@app.route('/update_hardware_capacity', methods=['POST'])
+def update_hardware_capacity():
+    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
+
+    hwName = data.get('hwName')
+    newCapacity = data.get('newCapacity')
+    userId = session.get('user_id')
+
+    if not all([hwName, newCapacity, userId]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
+    
+    # Check if user is an admin
+    success_check, message_check, is_admin = usersDB.isAdminUser(client, userId)
+    if not success_check or not is_admin:
+        return jsonify({"success": False, "message": "Admin privileges required to update hardware"}), 403
+    
+    # Attempt to update the hardware capacity using the hardwareDB module
+    success, message = hardwareDB.updateCapacity(client, hwName, newCapacity)
+
+    # Return a JSON response
+    if success:
+        return jsonify({"success": True, "message": message}), 200
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 
 # Route for getting hardware information

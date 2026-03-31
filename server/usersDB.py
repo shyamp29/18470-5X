@@ -6,10 +6,9 @@ Structure of User entry:
 User = {
     'userName': userName,
     'userId': userId,
-    'emailId': emailId,
-    'passwordHash': passwordHash,
-    'createdAt': createdAt,
-    'projects': [project1_ID, project2_ID, ...]
+    'password': password,
+    'projects': [project1_ID, project2_ID, ...],
+    'isAdmin': False
 }
 '''
 
@@ -35,7 +34,8 @@ def register(client, userName, userId, emailId, password):
             'emailId': emailId,
             'passwordHash': hashed_password,
             'createdAt': datetime.now(),
-            'projects': []
+            'projects': [],
+            'isAdmin': False
         }
         users_col.insert_one(new_user)
         return True, f"{userName} registered successfully, Please login"
@@ -110,15 +110,43 @@ def getUserProjectsList(client, userId):
     # Get and return the list of projects a user is part of
     db = client.myapp_database
     users_col = db.users
-    user = users_col.find_one({"userId": userId})
-    projectsList = []
-    if user['projects']:
-        for projectId in user['projects']:
-            success, msg, project_data = projectsDB.queryProject(client, projectId)
-            if success and project_data:
-                projectsList.append(project_data)
-    else:
-        return False, "No projects found", None
+    projects_col = db.Projects
     
-    return True, "Projects fetched successfully", projectsList 
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found", None
+    
+    projectsList = []
+    for projectId in user['projects']:
+        project = projects_col.find_one({"projectId": projectId})
+        if project:
+            project['_id'] = str(project['_id'])
+            projectsList.append(project)
+    
+    return True, "Projects retrieved successfully", projectsList
+
+# Function to check if a user is an admin
+def isAdminUser(client, userId):
+    # Check if the user has admin privileges
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found", False
+    else:
+        is_admin = user.get('isAdmin', False)
+        return True, "User found", is_admin
+
+# Function to set a user as admin
+def setAdminUser(client, userId, isAdminFlag):
+    # Set admin privileges for a user
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found"
+    else:
+        users_col.update_one({"userId": userId}, {"$set": {"isAdmin": isAdminFlag}})
+        status = "promoted to admin" if isAdminFlag else "removed from admin"
+        return True, f"User {status} successfully"
 
