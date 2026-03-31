@@ -110,10 +110,20 @@ def getUserProjectsList(client, userId):
     # Get and return the list of projects a user is part of
     db = client.myapp_database
     users_col = db.users
+    projects_col = db.Projects
+    
     user = users_col.find_one({"userId": userId})
-    if user:
-        return True, user['projects']
-    return False, "User not found"
+    if not user:
+        return False, "User not found", None
+    
+    projectsList = []
+    for projectId in user['projects']:
+        project = projects_col.find_one({"projectId": projectId})
+        if project:
+            project['_id'] = str(project['_id'])
+            projectsList.append(project)
+    
+    return True, "Projects retrieved successfully", projectsList
 
 # Function to check if a user is an admin
 def isAdminUser(client, userId):
