@@ -88,8 +88,7 @@ const UserPortal = () => {
         setIsCreatingProject(true);
         try {
             const response = await apiCreateProject(
-                { projectID: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() },
-                user?.userid
+                { projectId: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() }
             );
             if (response.status === 200) {
                 setSuccessMsg({show: true, msg: `Project "${response.name}" created successfully!`});

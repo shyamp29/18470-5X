@@ -68,14 +68,14 @@ const get = async (path) => {
 //  AUTH  —  /api/users/*
 // ══════════════════════════════════════════════════════════════════════════
 
-// POST /api/users/login → { token, userid, username }
+// POST /api/users/login → { message, userid, username }
 const apiLogin = async ({ userId, password }) => {
     return post('/api/users/login', { userId, password });
 };
 
 // POST /api/users/register → { message }
-const apiRegister = async ({ userId, userName, email, password }) => {
-    return post('/api/users/register', { userId, username: userName, email, password });
+const apiRegister = async ({ userId, username, email, password }) => {
+    return post('/api/users/register', { userId, username, email, password });
 };
 
 // POST /api/users/logout  (Bearer token sent via header)
@@ -93,9 +93,9 @@ const apiForgotPassword = async ({ email }) => {
     return post('/api/users/forgotpassword', { email });
 };
 
-// POST /api/users/resetpassword → { message }
+// POST /api/users/reset-password → { message }
 const apiResetPassword = async ({ oldPassword, newPassword }) => {
-    return post('/api/users/resetpassword', { oldPassword, newPassword });
+    return post('/api/users/reset-password', { oldPassword, newPassword });
 };
 
 
@@ -103,8 +103,8 @@ const apiResetPassword = async ({ oldPassword, newPassword }) => {
 //  PROJECTS  —  /api/projects/*
 // ══════════════════════════════════════════════════════════════════════════
 
-// GET /api/projects/ → { message, projects: [{ projectId, name, description,
-//                         ownerUserid, checkedOut, members, createdAt, updatedAt }] }
+// GET /api/projects/ → { message, projectslist: [{ projectid, name, description,
+//                         owneruserid, checkedout, members, createdat, updatedat }] }
 const apiFetchUserProjects = async () => {
     return get('/api/projects/');
 };
@@ -119,41 +119,28 @@ const apiFetchProjectInfo = async (projectId) => {
     return get(`/api/projects/${encodeURIComponent(projectId)}`);
 };
 
-// POST /api/projects/create → { message, projectId, name }
-const apiCreateProject = async ({ projectId, projectID, name, description = '' }) => {
-    return post('/api/projects/create', {
-        projectId:   projectId ?? projectID,
-        name,
-        description,
-    });
+// POST /api/projects/create → { message, projectid, name }
+const apiCreateProject = async ({ projectId, name, description = '' }) => {
+    return post('/api/projects/create', { projectId, name, description });
 };
 
 // POST /api/projects/add_user_to_project → { message }
-const apiJoinProject = async ({ projectId, projectID }, userId) => {
-    return post('/api/projects/add_user_to_project', {
-        projectId: projectId ?? projectID,
-        userId,
-    });
+const apiJoinProject = async (projectId, userId) => {
+    return post('/api/projects/add_user_to_project', { projectId, userId });
 };
 
-// POST /api/projects/checkout → { message, availability, checkedOut, error }
+// POST /api/projects/checkout → { message, availability, checkedout, error }
 // 200 OK on full checkout; 206 Partial if qty > availability (error: -1).
-const apiCheckout = async ({ projectID, projectId, setName, qty }) => {
-    return post('/api/projects/checkout', {
-        projectID: projectID ?? projectId,
-        setName,
-        qty,
-    });
+// projectId is read from the server session (set by GET /api/projects/:id).
+const apiCheckout = async ({ setName, qty }) => {
+    return post('/api/projects/checkout', { setName, qty });
 };
 
-// POST /api/projects/checkin → { message, availability, checkedOut, error }
-// 400 Bad Request if qty > project's checkedOut for that set (error: -1).
-const apiCheckin = async ({ projectID, projectId, setName, qty }) => {
-    return post('/api/projects/checkin', {
-        projectID: projectID ?? projectId,
-        setName,
-        qty,
-    });
+// POST /api/projects/checkin → { message, availability, checkedin, error }
+// 206 Partial if qty > project's checkedout for that set (error: -1).
+// projectId is read from the server session (set by GET /api/projects/:id).
+const apiCheckin = async ({ setName, qty }) => {
+    return post('/api/projects/checkin', { setName, qty });
 };
 
 
@@ -161,12 +148,12 @@ const apiCheckin = async ({ projectID, projectId, setName, qty }) => {
 //  HARDWARE  —  /api/hardware/*
 // ══════════════════════════════════════════════════════════════════════════
 
-// GET /api/hardware/ → [{ setName, capacity, availability, checkedOutBy }, ...]
+// GET /api/hardware → { message, hardwaresets: [{ setname, capacity, availability, checkedoutby }] }
 const apiFetchAllHardware = async () => {
     return get('/api/hardware');
 };
 
-// GET /api/hardware/:setName → { setName, capacity, availability, checkedOutBy }
+// GET /api/hardware/:setName → { message, hardwareset: { setname, capacity, availability, checkedoutby } }
 const apiFetchHardwareSet = async (setName) => {
     return get(`/api/hardware/${encodeURIComponent(setName)}`);
 };

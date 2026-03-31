@@ -44,7 +44,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
 
     const handleAddUser = async () => {
         if (!newUserId.trim()) return;
-        const res = await apiJoinProject({ projectId }, newUserId.trim());
+        const res = await apiJoinProject(projectId, newUserId.trim());
         if (res.status === 200) {
             setSuccessMsg({ show: true, msg: `User "${newUserId.trim()}" added to project.` });
             setNewUserId('');
@@ -67,7 +67,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         setBusy(true);
         const errors = [];
         for (const { setName, qty } of entries) {
-            const res = await apiCheckout({ projectID: projectId, setName, qty });
+            const res = await apiCheckout({ setName, qty });
             if (res.status !== 200) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);
@@ -84,7 +84,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         setBusy(true);
         const errors = [];
         for (const { setName, qty } of entries) {
-            const res = await apiCheckin({ projectID: projectId, setName, qty });
+            const res = await apiCheckin({ setName, qty });
             if (res.status !== 200 && res.status !== 206) errors.push(`${setName}: ${res.message || "Unknown error."}`);
         }
         setBusy(false);

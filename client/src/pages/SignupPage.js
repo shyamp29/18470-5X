@@ -7,7 +7,7 @@ const SignupPage = () => {
   const { handleAuthAction } = useAuth();
   const [signupProps, setSignupProps] = useState({
     userId: "",
-    userName: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
@@ -51,9 +51,9 @@ const SignupPage = () => {
           <div style={LoginStyle.inputGroup}>
             <label>user name</label>
             <input
-              name="userName"
+              name="username"
               type="text"
-              value={signupProps.userName}
+              value={signupProps.username}
               onChange={handleChange}
               style={LoginStyle.input}
               required
