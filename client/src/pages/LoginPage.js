@@ -69,7 +69,7 @@ const LoginPage = () => {
 
         <ErrorPopup
           showPopup={showErrPopup}
-          closePopup={() => setShowErrPopup(false)}
+          onClose={() => setShowErrPopup(false)}
           message={message}
         >
           <h2 style={{ color: '#d9534f' }}>Login Error</h2>

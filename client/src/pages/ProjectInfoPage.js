@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useProjectData from "../hooks/useProjectData";
 import useHardwareOps from "../hooks/useHardwareOps";
 import AddUserForm from "../components/AddUserForm";
@@ -119,7 +119,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
             <ErrorPopup
                 showPopup={errorMsg.show}
                 message={errorMsg.msg}
-                closePopup={() => setErrorMsg({ show: false, msg: "" })}
+                onClose={() => setErrorMsg({ show: false, msg: "" })}
             />
         </div>
     );

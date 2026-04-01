@@ -129,7 +129,7 @@ const AuthProvider = ({ children }) => {
             <ErrorPopup
                 showPopup={errorInfo.show}
                 message={errorInfo.msg}
-                closePopup={() => setErrorInfo({ show: false, msg: "" })}
+                onClose={() => setErrorInfo({ show: false, msg: "" })}
             />
         </AuthContext.Provider>
     );
