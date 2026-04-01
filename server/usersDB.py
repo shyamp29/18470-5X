@@ -23,7 +23,7 @@ def register(client, userName, userId, emailId, password):
     users_col = db.users
     if users_col.find_one({"userId": userId}):
         return False, "userId already exists"
-    elif users_col.find_one({"emailId": emailId}):
+    elif emailId and users_col.find_one({"emailId": emailId}):
         return False, "emailId already exists"
     else:
         # Hash the password with a salt before storing it
@@ -105,12 +105,23 @@ def joinProject(client, userId, projectId):
         return True, "Project joined successfully"
     return False, "User not found"
 
+# Function to get username by userId
+def getUsernameById(client, userId):
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userId": userId}, {"userName": 1})
+    if user:
+        return user.get("userName")
+    return None
+
 # Function to get the list of projects for a user
 def getUserProjectsList(client, userId):
     # Get and return the list of projects a user is part of
     db = client.myapp_database
     users_col = db.users
     user = users_col.find_one({"userId": userId})
+    if not user:
+        return False, "User not found", None
     projectsList = []
     if user['projects']:
         for projectId in user['projects']:
