@@ -1,3 +1,5 @@
+@import './theme.css';
+
 .nav-title {
   margin: 0;
 }
@@ -14,7 +16,7 @@
 }
 
 .dropdown-empty {
-  color: #999;
+  color: var(--color-text-muted);
 }
 
 .create-form {
@@ -24,8 +26,8 @@
 }
 
 .project-id-error {
-  color: #c0392b;
-  font-size: 13px;
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
   margin-top: -6px;
 }
 

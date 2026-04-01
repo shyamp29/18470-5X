@@ -1,3 +1,5 @@
+@import './theme.css';
+
 .hw-set-item {
   margin-bottom: 10px;
 }
@@ -5,7 +7,7 @@
 .hw-set-toggle {
   cursor: pointer;
   text-decoration: underline;
-  color: #000;
+  color: var(--color-text-near-black);
 }
 
 .hw-detail-table {

@@ -1,3 +1,5 @@
+@import './theme.css';
+
 .login-error-heading {
-  color: #d9534f;
+  color: var(--color-danger);
 }

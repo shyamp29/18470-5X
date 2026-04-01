@@ -1,14 +1,16 @@
+@import './theme.css';
+
 .section-header {
   font-size: 17px;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin-top: 24px;
   margin-bottom: 8px;
   padding-bottom: 6px;
-  border-bottom: 2px solid #c65c1a;
-  color: #333;
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-text-primary);
 }
 
 .td-muted {
-  color: #999;
+  color: var(--color-text-muted);
   font-style: italic;
 }

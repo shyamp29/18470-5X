@@ -10,7 +10,7 @@ export const brand = {
 export const colors = {
 
     // Primary — brand orange used for buttons, trims, borders, and shadows
-    primary:        '#c65c1a',
+    primary:        '#52e0d9',
 
     // Semantic actions
     danger:         '#c0392b',    // destructive actions (delete, remove)

@@ -1,4 +1,6 @@
+@import './theme.css';
+
 .password-error {
-  color: red;
-  font-size: 12px;
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
 }

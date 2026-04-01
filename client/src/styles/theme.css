@@ -1,0 +1,71 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   theme.css — CSS custom properties mirroring src/AppStyle/theme.js
+   Imported once via global.css.  All other CSS files consume var(--*).
+   Keep in sync with theme.js whenever a token value changes.
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* ── Colors ──────────────────────────────────────────────────────────────── */
+  --color-primary:         #52e0d9;
+  --color-danger:          #c0392b;
+  --color-checkin:         #4a90d9;
+  --color-link:            #3498db;
+  --color-menu-link:       #6eb6ff;
+  --color-owner-badge:     #5b9bd5;
+  --color-disabled:        #7f8c8d;
+
+  /* Surfaces */
+  --color-page-bg:         #f4f7f9;
+  --color-card-bg:         #ffffff;
+  --color-table-header-bg: #f9f9f9;
+  --color-input-bg:        #eed2c0;
+  --color-input-border:    #dcbfae;
+
+  /* Text */
+  --color-text-primary:    #333333;
+  --color-text-dark:       #2c3e50;
+  --color-text-near-black: #121111;
+  --color-text-muted:      #999999;
+  --color-text-on-dark:    #888888;
+
+  /* Borders & dividers */
+  --color-border-strong:   #aaaaaa;
+  --color-border:          #cccccc;
+  --color-border-light:    #dddddd;
+  --color-border-lighter:  #eeeeee;
+
+  /* Overlays */
+  --color-overlay-light:   rgba(0, 0, 0, 0.5);
+  --color-overlay-dark:    rgba(0, 0, 0, 0.7);
+
+  /* ── Typography ──────────────────────────────────────────────────────────── */
+  --font-family:       Arial, sans-serif;
+  --font-size-xs:      12px;
+  --font-size-sm:      13px;
+  --font-size-md:      14px;
+  --font-size-base:    15px;
+  --font-size-lg:      16px;
+  --font-size-xl:      18px;
+  --font-size-2xl:     20px;
+  --font-size-3xl:     24px;
+  --font-size-4xl:     28px;
+  --font-weight-normal: normal;
+  --font-weight-bold:   bold;
+
+  /* ── Shape ───────────────────────────────────────────────────────────────── */
+  --radius-sm:    4px;
+  --radius-md:    6px;
+  --radius-lg:    8px;
+  --radius-xl:    12px;
+  --radius-round: 50%;
+
+  /* ── Shadows ─────────────────────────────────────────────────────────────── */
+  --shadow-card:         0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-popup:        0 4px 15px rgba(0, 0, 0, 0.3);
+  --shadow-popup-large:  0 4px 20px rgba(0, 0, 0, 0.2);
+  --shadow-login-card:   0 8px 20px var(--color-primary);
+
+  /* ── Trim ────────────────────────────────────────────────────────────────── */
+  --trim-height: 40px;
+}
