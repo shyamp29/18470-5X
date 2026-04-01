@@ -1,0 +1,14 @@
+.section-header {
+  font-size: 17px;
+  font-weight: bold;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #c65c1a;
+  color: #333;
+}
+
+.td-muted {
+  color: #999;
+  font-style: italic;
+}

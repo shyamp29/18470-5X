@@ -1,0 +1,33 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   global.css — Shared utility classes
+   Import once in main.js; never import per-component.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Disabled action buttons (Delete Project / Leave Project) ────────────── */
+/* Use: className="btn-action btn-action--danger" or "btn-action btn-action--neutral" */
+.btn-action {
+  padding: 6px 14px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 13px;
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-action--sm      { padding: 6px 12px; }
+.btn-action--danger  { background-color: #c0392b; }
+.btn-action--neutral { background-color: #7f8c8d; }
+
+/* ── Text utilities ──────────────────────────────────────────────────────── */
+.text-muted  { color: #999; }
+.text-italic { font-style: italic; }
+.text-error  { color: #c0392b; font-size: 13px; }
+
+/* ── Input state ─────────────────────────────────────────────────────────── */
+/* Applied conditionally when a field has a validation error. */
+.input-error { border-color: #c0392b !important; }
+
+/* ── Layout utilities ────────────────────────────────────────────────────── */
+.m-0        { margin: 0; }
+.align-end  { align-self: flex-end; }

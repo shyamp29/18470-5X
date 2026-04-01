@@ -1,0 +1,18 @@
+.hw-set-item {
+  margin-bottom: 10px;
+}
+
+.hw-set-toggle {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #000;
+}
+
+.hw-detail-table {
+  width: 70%;
+  margin-left: 20px;
+}
+
+.col-half {
+  width: 50%;
+}
