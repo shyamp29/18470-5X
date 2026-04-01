@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useAuth } from "../Auth/authHandler";
-import { AUTH_ACTIONS } from "../Auth/authActions";
 import LoginStyle from "../AppStyle/login";
 
 const SignupPage = () => {
-  const { handleAuthAction } = useAuth();
+  const { register, goToLogin } = useAuth();
   const [signupProps, setSignupProps] = useState({
     userId: "",
     username: "",
@@ -33,11 +32,11 @@ const SignupPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (isFormBlocked) return;
-    await handleAuthAction(AUTH_ACTIONS.SIGNUP, signupProps);
+    await register(signupProps);
   };
 
   const handleRedirect = () => {
-    handleAuthAction(AUTH_ACTIONS.BACK_TO_LOGIN);
+    goToLogin();
   }
 
   return (

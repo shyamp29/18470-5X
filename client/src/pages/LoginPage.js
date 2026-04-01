@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import LoginStyle from "../AppStyle/login";
-import { AUTH_ACTIONS } from "../Auth/authActions";
 import { useAuth } from "../Auth/authHandler";
 import { ErrorPopup} from "../components/popupModular";
 
 const LoginPage = () => {
-  const { handleAuthAction } = useAuth();
+  const { login, goToSignup, showForgotPassword } = useAuth();
   const [loginProps, setLoginProps] = useState({ userId: '', password: '' });
   
   const [showErrPopup, setShowErrPopup] = useState(false);
@@ -34,28 +33,9 @@ const LoginPage = () => {
       return;
     }
 
-    const usr = await handleAuthAction(AUTH_ACTIONS.LOGIN, loginProps);
-    if (usr?.error) {
-      setMessage(usr.error);
-      setShowErrPopup(true);
-    }
+    await login(loginProps);
   };
 
-  const handleRedirect = (type) => {
-    switch(type)
-    {
-      case 'PASSWORD':
-       handleAuthAction(AUTH_ACTIONS.FORGOT_PASSWORD, loginProps);
-        break;
-
-      case 'SIGNUP':
-        handleAuthAction(AUTH_ACTIONS.SIGNUP_REDIRECT);
-        break;
-      
-      default: 
-         console.log('Unknown redirect type');
-    }
-  };
 
   return (
     <div style={LoginStyle.container}>
@@ -100,13 +80,13 @@ const LoginPage = () => {
             <p>New User?</p>
             <span
               style={LoginStyle.link}
-              onClick={() => handleRedirect('SIGNUP')}
+              onClick={goToSignup}
             >
               <strong>Sign-up</strong>
             </span>
           </div>
           <div style={LoginStyle.footerRight}>
-            <p onClick={() => handleRedirect('PASSWORD')} style={LoginStyle.link}>
+            <p onClick={showForgotPassword} style={LoginStyle.link}>
               Forgot password?
             </p>
           </div>

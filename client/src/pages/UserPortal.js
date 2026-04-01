@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import {useAuth} from '../Auth/authHandler';
-import {AUTH_ACTIONS} from '../Auth/authActions';
 import {apiFetchAllProjects, apiCreateProject} from '../Auth/apiCalls';
 import {SuccessPopup} from '../components/popupModular';
 import AllHardwarePage from '../pages/AllHardwarePage';
@@ -16,7 +15,7 @@ const VIEWS = {
 };
 
 const UserPortal = () => {
-    const {user, handleAuthAction} = useAuth();
+    const {user, signout} = useAuth();
 
     const [currentView, setCurrentView] = useState(VIEWS.DASHBOARD);
     const [activeProjectId, setActiveProjectId] = useState('');
@@ -62,7 +61,7 @@ const UserPortal = () => {
 
     const showDropdown = isProjectDropdownOpen && projectSearch.length >= 2 && !isLoadingProjects;
 
-    const handleSignOut = () => handleAuthAction(AUTH_ACTIONS.SIGNOUT);
+    const handleSignOut = () => signout();
     const handleAccountClick = () => setIsProfileOpen(false);
 
     const handleProjectSelect = (projectId) => {
