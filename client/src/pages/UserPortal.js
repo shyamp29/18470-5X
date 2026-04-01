@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
+import '../styles/UserPortal.css';
 import {useAuth} from '../Auth/authHandler';
 import {apiFetchAllProjects, apiCreateProject} from '../Auth/apiCalls';
 import {SuccessPopup} from '../components/popupModular';
@@ -114,7 +115,7 @@ const UserPortal = () => {
     };
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
-            <h1 style={{margin: 0}}>Welcome {user?.username || '<Guest>'}</h1>
+            <h1 className="nav-title">Welcome {user?.username || '<Guest>'}</h1>
             <div style={UserProfileStyle.profileContainer}>
                 <div
                     style={UserProfileStyle.profileCircle}
@@ -150,7 +151,7 @@ const UserPortal = () => {
 
                 {/* ── DASHBOARD ── */}
                 {currentView === VIEWS.DASHBOARD && (
-                    <div style={{marginTop: '20px'}}>
+                    <div className="dashboard-section">
                         <button
                             style={UserProfileStyle.menuLink}
                             onClick={() => setCurrentView(VIEWS.ALL_PROJECTS)}
@@ -165,18 +166,14 @@ const UserPortal = () => {
                         </button>
 
                         {/* Use Existing Project */}
-                        <div style={{marginTop: '20px'}}>
-                            <strong style={{...UserProfileStyle.label, fontWeight: 'bold'}}>Use Existing
-                                Project</strong>
+                        <div className="dashboard-section">
+                            <strong style={UserProfileStyle.label}>Use Existing Project</strong>
                             <div style={UserProfileStyle.actionGroup}>
                                 <span style={UserProfileStyle.label}>Project ID:</span>
-                                <div style={{position: 'relative', flex: 1}}>
+                                <div className="search-wrapper">
                                     <input
-                                        style={{
-                                            ...UserProfileStyle.selectInput,
-                                            width: '100%',
-                                            boxSizing: 'border-box'
-                                        }}
+                                        style={UserProfileStyle.selectInput}
+                                        className="full-width-input"
                                         placeholder={isLoadingProjects ? "Loading projects..." : "Search Project ID or Name..."}
                                         value={projectSearch}
                                         disabled={isLoadingProjects}
@@ -200,7 +197,7 @@ const UserPortal = () => {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div style={{...UserProfileStyle.searchDropdownItem, color: '#999'}}>
+                                                <div style={UserProfileStyle.searchDropdownItem} className="dropdown-empty">
                                                     No projects found
                                                 </div>
                                             )}
@@ -214,11 +211,9 @@ const UserPortal = () => {
                         </div>
 
                         {/* Create New Project */}
-                        <strong style={{...UserProfileStyle.label, marginTop: '10px', fontWeight: 'bold'}}>
-                            Create New Project
-                        </strong>
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                            <span style={{...UserProfileStyle.label, marginTop: '10px'}}>Name:</span>
+                        <strong style={UserProfileStyle.label}>Create New Project</strong>
+                        <div className="create-form">
+                            <span style={UserProfileStyle.label}>Name:</span>
                             <input
                                 style={UserProfileStyle.createProjectInput}
                                 value={newProjectName}
@@ -234,18 +229,18 @@ const UserPortal = () => {
                             />
                             <span style={UserProfileStyle.label}>Project ID:</span>
                             <input
-                                style={{...UserProfileStyle.createProjectInput, borderColor: projectIdTaken ? '#c0392b' : undefined}}
+                                style={UserProfileStyle.createProjectInput}
+                                className={projectIdTaken ? 'input-error' : ''}
                                 value={newProjectId}
                                 onChange={(e) => setNewProjectId(e.target.value)}
                                 disabled={isCreatingProject}
                             />
                             {projectIdTaken && (
-                                <span style={{color: '#c0392b', fontSize: '13px', marginTop: '-6px'}}>
-                                    Project ID already exists.
-                                </span>
+                                <span className="project-id-error">Project ID already exists.</span>
                             )}
                             <button
-                                style={{...UserProfileStyle.submitBtn, alignSelf: 'flex-end'}}
+                                style={UserProfileStyle.submitBtn}
+                                className="align-end"
                                 onClick={handleCreateProject}
                                 disabled={isCreatingProject || projectIdTaken}
                             >

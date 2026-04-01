@@ -12,15 +12,6 @@ const ProjectInfoStyle = {
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    // Delete / Leave button — always disabled; caller spreads backgroundColor dynamically
-    disabledActionBtn: {
-        ...UserProfileStyle.submitBtn,
-        fontSize: '13px',
-        padding: '6px 14px',
-        color: '#fff',
-        opacity: 0.4,
-        cursor: 'not-allowed',
-    },
     ownerBadge: {
         color: '#5b9bd5',
         marginLeft: '6px',

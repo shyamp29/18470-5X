@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../Auth/authHandler";
 import LoginStyle from "../AppStyle/login";
+import '../styles/SignupPage.css';
 
 const SignupPage = () => {
   const { register, goToLogin } = useAuth();
@@ -94,7 +95,7 @@ const SignupPage = () => {
               style={LoginStyle.input}
               required
             />
-            {passwordError && <span style={{color: "red", fontSize: "12px"}}>{passwordError}</span>}
+            {passwordError && <span className="password-error">{passwordError}</span>}
           </div>
 
           <button type="submit" style={LoginStyle.submitBtn} disabled={isFormBlocked}>

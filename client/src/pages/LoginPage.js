@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LoginStyle from "../AppStyle/login";
 import { useAuth } from "../Auth/authHandler";
+import '../styles/LoginPage.css';
 import { ErrorPopup} from "../components/popupModular";
 
 const LoginPage = () => {
@@ -72,7 +73,7 @@ const LoginPage = () => {
           onClose={() => setShowErrPopup(false)}
           message={message}
         >
-          <h2 style={{ color: '#d9534f' }}>Login Error</h2>
+          <h2 className="login-error-heading">Login Error</h2>
         </ErrorPopup>
 
         <div style={LoginStyle.footer}>

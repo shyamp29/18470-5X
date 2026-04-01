@@ -4,6 +4,7 @@ import useHardwareOps from "../hooks/useHardwareOps";
 import AddUserForm from "../components/AddUserForm";
 import UserProfileStyle from "../AppStyle/userProfile.js";
 import ProjectInfoStyle from "../AppStyle/projectInfo.js";
+import '../styles/global.css';
 import { SuccessPopup, ErrorPopup } from "../components/popupModular.js";
 
 const ProjectInfoPage = ({ projectId, userId, onBack }) => {
@@ -27,7 +28,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                 <button style={UserProfileStyle.backBtnStyle} onClick={onBack}>← Back</button>
                 {data && (
                     <button
-                        style={{ ...ProjectInfoStyle.disabledActionBtn, backgroundColor: isOwner ? '#c0392b' : '#7f8c8d' }}
+                        className={`btn-action ${isOwner ? 'btn-action--danger' : 'btn-action--neutral'}`}
                         disabled
                         title="Not yet implemented — pending backend support"
                     >
@@ -52,7 +53,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
                         {isOwner && <span style={ProjectInfoStyle.ownerBadge}>(You)</span>}
                     </p>
                     <div style={ProjectInfoStyle.membersRow}>
-                        <p style={{ margin: 0 }}>
+                        <p className="m-0">
                             <strong>Members:</strong>{' '}
                             {(data.members ?? []).join(', ') || 'None'}
                         </p>

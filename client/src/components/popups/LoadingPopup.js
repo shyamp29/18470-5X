@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import PopupStyles from '../../AppStyle/popup';
+import '../../styles/LoadingPopup.css';
 
 const AnimatedDots = () => {
     const [dots, setDots] = useState('');
@@ -20,7 +21,7 @@ const LoadingPopup = ({ showPopup, message }) => {
     return (
         <div style={PopupStyles.overlay}>
             <div style={{ ...PopupStyles.content, ...PopupStyles.loadingContent }}>
-                <p style={{ fontWeight: 'bold' }}>{message || "Loading "}<AnimatedDots /></p>
+                <p className="loading-text">{message || "Loading "}<AnimatedDots /></p>
             </div>
         </div>
     );

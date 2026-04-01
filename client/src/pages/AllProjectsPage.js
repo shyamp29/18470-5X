@@ -1,16 +1,7 @@
-import {useEffect, useState} from "react";
-import {apiFetchUserProjects} from "../Auth/apiCalls.js";
+import { useEffect, useState } from "react";
+import { apiFetchUserProjects } from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
-
-const sectionHeader = {
-    fontSize: '17px',
-    fontWeight: 'bold',
-    marginTop: '24px',
-    marginBottom: '8px',
-    paddingBottom: '6px',
-    borderBottom: '2px solid #c65c1a',
-    color: '#333',
-};
+import '../styles/AllProjectsPage.css';
 
 const AllProjectsPage = ({ userId, onBack }) => {
     const [myProjects, setMyProjects] = useState([]);
@@ -33,7 +24,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
 
             {loading ? <p>Loading...</p> : (
                 <>
-                    <div style={sectionHeader}>My Projects</div>
+                    <div className="section-header">My Projects</div>
                     <table style={UserProfileStyle.table}>
                         <thead>
                         <tr>
@@ -46,7 +37,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
                         <tbody>
                         {myProjects.length === 0 ? (
                             <tr>
-                                <td colSpan={4} style={{...UserProfileStyle.td, color: '#999', fontStyle: 'italic'}}>None</td>
+                                <td colSpan={4} style={UserProfileStyle.td} className="td-muted">None</td>
                             </tr>
                         ) : myProjects.map((proj) => {
                             const isOwner = proj.owneruserid === userId;
@@ -56,23 +47,13 @@ const AllProjectsPage = ({ userId, onBack }) => {
                                     <td style={UserProfileStyle.td}>{proj.name}</td>
                                     <td style={UserProfileStyle.td}>{proj.description}</td>
                                     <td style={UserProfileStyle.td}>
-                                        {isOwner ? (
-                                            <button
-                                                style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#c0392b', color: '#fff', opacity: 0.4, cursor: 'not-allowed'}}
-                                                disabled
-                                                title="Not yet implemented — pending backend support"
-                                            >
-                                                Delete
-                                            </button>
-                                        ) : (
-                                            <button
-                                                style={{...UserProfileStyle.submitBtn, fontSize: '13px', padding: '6px 12px', backgroundColor: '#7f8c8d', color: '#fff', opacity: 0.4, cursor: 'not-allowed'}}
-                                                disabled
-                                                title="Not yet implemented — pending backend support"
-                                            >
-                                                Leave
-                                            </button>
-                                        )}
+                                        <button
+                                            className={`btn-action btn-action--sm ${isOwner ? 'btn-action--danger' : 'btn-action--neutral'}`}
+                                            disabled
+                                            title="Not yet implemented — pending backend support"
+                                        >
+                                            {isOwner ? 'Delete' : 'Leave'}
+                                        </button>
                                     </td>
                                 </tr>
                             );

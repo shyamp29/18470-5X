@@ -1,10 +1,11 @@
-import {useEffect, useState} from "react";
-import {apiFetchAllHardware} from "../Auth/apiCalls.js";
+import { useEffect, useState } from "react";
+import { apiFetchAllHardware } from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
+import '../styles/AllHardwarePage.css';
 
-const AllHardwarePage = ({onBack}) => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+const AllHardwarePage = ({ onBack }) => {
+    const [data, setData]           = useState(null);
+    const [loading, setLoading]     = useState(true);
     const [expandedId, setExpandedId] = useState(null);
 
     useEffect(() => {
@@ -27,19 +28,19 @@ const AllHardwarePage = ({onBack}) => {
                 <p>Failed to load hardware.</p>
             ) : (
                 data.map((hw) => (
-                    <div key={hw.setname} style={{marginBottom: '10px'}}>
+                    <div key={hw.setname} className="hw-set-item">
                         <h4
-                            style={{cursor: 'pointer', textDecoration: 'underline', color: '#000'}}
+                            className="hw-set-toggle"
                             onClick={() => setExpandedId(expandedId === hw.setname ? null : hw.setname)}
                         >
                             {hw.setname} {expandedId === hw.setname ? '▲' : '▼'}
                         </h4>
 
                         {expandedId === hw.setname && (
-                            <table style={{...UserProfileStyle.table, width: '70%', marginLeft: '20px'}}>
+                            <table style={UserProfileStyle.table} className="hw-detail-table">
                                 <tbody>
                                 <tr>
-                                    <th style={{...UserProfileStyle.th, width: '50%'}}>Capacity</th>
+                                    <th style={UserProfileStyle.th} className="col-half">Capacity</th>
                                     <td style={UserProfileStyle.td}>{hw.capacity}</td>
                                 </tr>
                                 <tr>
