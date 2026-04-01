@@ -8,14 +8,14 @@ const LoginStyle = {
     minHeight: "100dvh",
     width: "100vw",
     margin: 0,
-    backgroundColor: "#f4f6f9",
+    backgroundColor: "#f4f7f9",
     fontFamily: "Arial, sans-serif",
   },
 
   topTrim: {
     width: "100%",
-    height: "35px",
-    backgroundColor: "#792ee9",
+    height: "40px",
+    backgroundColor: "#c65c1a",
     position: "absolute",
     top: 0,
     left: 0,
@@ -23,7 +23,7 @@ const LoginStyle = {
 
   bottomTrim: {
     width: "100%",
-    height: "50px",
+    height: "40px",
     backgroundColor: "#c65c1a",
     position: "absolute",
     bottom: 0,
@@ -62,7 +62,7 @@ const LoginStyle = {
     marginTop: "6px",
     padding: "10px",
     borderRadius: "6px",
-    backgroundColor: "#ede4de",
+    backgroundColor: "#eed2c0",
     border: "1px solid #ccc",
     fontSize: "14px",
     outline: "none",
