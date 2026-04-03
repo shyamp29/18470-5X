@@ -38,21 +38,25 @@ const LoginPage = () => {
           <img src="/logo.png" alt="5X HaaS Portal" style={LoginStyle.logo} />
           <form onSubmit={handleLogin} style={LoginStyle.form}>
             <div style={LoginStyle.inputGroup}>
-              <label>User ID</label>
+              <label htmlFor="userid">User ID</label>
               <input
+                id="userid"
                 type="text"
                 name="userid"
                 value={loginProps.userid}
                 onChange={handleChange}
+                autoComplete="username"
                 style={LoginStyle.input}
               />
             </div>
             <div style={LoginStyle.inputGroup}>
-              <label>Password</label>
+              <label htmlFor="password">Password</label>
               <PasswordInput
+                id="password"
                 name="password"
                 value={loginProps.password}
                 onChange={handleChange}
+                autoComplete="current-password"
               />
             </div>
             <span

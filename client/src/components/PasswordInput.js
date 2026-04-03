@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-const PasswordInput = ({ name, value, onChange, placeholder, style = {}, inputStyle = {} }) => {
+const PasswordInput = ({ id, name, value, onChange, placeholder, autoComplete, style = {}, inputStyle = {} }) => {
   const [visible, setVisible] = useState(false);
 
   const wrapper = {
@@ -31,11 +31,13 @@ const PasswordInput = ({ name, value, onChange, placeholder, style = {}, inputSt
     <div style={wrapper}>
       <FaLock size={16} color="var(--color-text-muted)" title="Password" />
       <input
+        id={id}
         type={visible ? "text" : "password"}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         style={field}
       />
       <span
