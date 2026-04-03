@@ -162,7 +162,6 @@ export {
     apiLogin,
     apiRegister,
     apiLogout,
-    apiForgotId,
     apiForgotPassword,
     apiResetPassword,
 
