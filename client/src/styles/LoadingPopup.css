@@ -1,0 +1,5 @@
+@import './theme.css';
+
+.loading-text {
+  font-weight: var(--font-weight-bold);
+}

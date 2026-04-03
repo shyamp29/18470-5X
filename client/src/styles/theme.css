@@ -1,0 +1,112 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   theme.css — CSS custom properties mirroring src/AppStyle/theme.js
+   Imported once via global.css.  All other CSS files consume var(--*).
+   Keep in sync with theme.js whenever a token value changes.
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* ── Colors ──────────────────────────────────────────────────────────────── */
+  --color-primary:         #2563eb;
+  --color-primary-tint:    rgba(37, 99, 235, 0.15);
+  --color-danger:          #c0392b;
+  --color-checkin:         #4a90d9;
+  --color-link:            #2ea7cc;
+  --color-menu-link:       #60a5fa;
+  --color-owner-badge:     #5b9bd5;
+  --color-disabled:        #7f8c8d;
+  --color-primary-transparent: #d7dfef;
+
+  /* Surfaces */
+  --color-page-bg:         #eff6ff;
+  --color-card-bg:         #ffffff;
+  --color-table-header-bg: #f0f7ff;
+  --color-input-bg:        #f1f5f9;
+  --color-input-border:    #cbd5e1;
+
+  /* Text */
+  --color-text-primary:    #333333;
+  --color-text-dark:       #1e3a5f;
+  --color-text-near-black: #121111;
+  --color-text-muted:      #999999;
+  --color-text-on-dark:    #888888;
+
+  /* Borders & dividers */
+  --color-border-strong:   #aaaaaa;
+  --color-border:          #cccccc;
+  --color-border-light:    #dddddd;
+  --color-border-lighter:  #eeeeee;
+
+  /* Overlays */
+  --color-overlay-light:   rgba(0, 0, 0, 0.5);
+  --color-overlay-dark:    rgba(0, 0, 0, 0.7);
+
+  /* ── Typography ──────────────────────────────────────────────────────────── */
+  --font-family:    Arial, Helvetica, sans-serif;
+  --font-size-xs:      12px;
+  --font-size-sm:      13px;
+  --font-size-md:      14px;
+  --font-size-base:    15px;
+  --font-size-lg:      16px;
+  --font-size-xl:      18px;
+  --font-size-2xl:     20px;
+  --font-size-3xl:     24px;
+  --font-size-4xl:     28px;
+  --font-weight-normal: normal;
+  --font-weight-bold:   bold;
+  --font-weight-semibold: 600;
+
+  /* ── Shape ───────────────────────────────────────────────────────────────── */
+  --radius-sm:    6px;
+  --radius-md:    8px;
+  --radius-lg:    16px;
+  --radius-xl:    30px;
+  --radius-round: 60%;
+
+  /* ── Shadows ─────────────────────────────────────────────────────────────── */
+  --shadow-card:         0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-popup:        0 4px 15px rgba(0, 0, 0, 0.3);
+  --shadow-popup-large:  0 4px 20px rgba(0, 0, 0, 0.2);
+  --shadow-login-card:   0 8px 20px rgba(37, 99, 235, 0.35);
+
+  /* ── Trim ────────────────────────────────────────────────────────────────── */
+  --trim-height: 40px;
+}
+
+/* ── Dark mode overrides ──────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Accent — green */
+  --color-primary:             #2c8a7f;
+  --color-primary-tint:        rgba(34, 197, 94, 0.15);
+  --color-primary-transparent: rgba(34, 197, 94, 0.1);
+  --color-checkin:             #2d948b;
+  --color-link:                #2d948b;
+  --color-menu-link:           #2d948b;
+  --color-owner-badge:         #2d948b;
+
+  /* Surfaces — dark navy/grey */
+  --color-page-bg:         #1a2035;
+  --color-card-bg:         #252d45;
+  --color-table-header-bg: #1e2843;
+  --color-input-bg:        #16192e;
+  --color-input-border:    #2d3a56;
+
+  /* Text — white */
+  --color-text-primary:    #f1f5f9;
+  --color-text-dark:       #257b74;
+  --color-text-near-black: #ffffff;
+  --color-text-muted:      #94a3b8;
+  --color-text-on-dark:    #94a3b8;
+
+  /* Borders */
+  --color-border-strong:   #3d4f6e;
+  --color-border:          #2d3a56;
+  --color-border-light:    #2a364f;
+  --color-border-lighter:  #222d44;
+
+  /* Shadows */
+  --shadow-card:         0 4px 15px rgba(0, 0, 0, 0.5);
+  --shadow-popup:        0 4px 15px rgba(0, 0, 0, 0.7);
+  --shadow-popup-large:  0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-login-card:   0 8px 20px rgba(34, 197, 94, 0.25);
+}

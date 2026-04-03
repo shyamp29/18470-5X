@@ -1,0 +1,177 @@
+@import './theme.css';
+
+/* ── Back button (filled) ──────────────────────────────────────────────────── */
+.back-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.back-btn-filled:hover {
+  opacity: 0.88;
+}
+
+/* ── Page title ────────────────────────────────────────────────────────────── */
+.projects-page-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+
+.title-icon {
+  font-size: var(--font-size-md);
+  opacity: 0.7;
+}
+
+/* ── Section header ────────────────────────────────────────────────────────── */
+.section-header {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-top: 16px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+/* ── Project card ──────────────────────────────────────────────────────────── */
+.project-card {
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  margin-top: 15px;
+  box-shadow: var(--shadow-card);
+}
+
+.project-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.project-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-icon {
+  font-size: 20px;
+  opacity: 0.85;
+}
+
+.project-card-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.project-id {
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+}
+
+/* ── Active badge ──────────────────────────────────────────────────────────── */
+.badge-active {
+  background-color:var(--color-primary-transparent);
+  color: #4ade80;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: 3px 10px;
+  border-radius: var(--radius-xl);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+/* ── Card body ─────────────────────────────────────────────────────────────── */
+.project-card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.project-card-details {
+  flex: 1;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 16px;
+  row-gap: 8px;
+  align-items: baseline;
+}
+
+.project-field {
+  display: contents;
+  color: var(--color-text-primary);
+}
+
+.field-label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.field-value {
+  color: var(--color-text-primary);
+}
+
+/* ── Action column ─────────────────────────────────────────────────────────── */
+.project-card-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.btn-delete-project,
+.btn-leave-project {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-delete-project {
+  background-color: #c0392b;
+  color: #0f172a;
+}
+
+.btn-leave-project {
+  background-color: #6d4fc2;
+  color: #ffffff;
+}
+
+.btn-delete-project:disabled,
+.btn-leave-project:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── Empty state ───────────────────────────────────────────────────────────── */
+.no-projects {
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: 12px;
+}

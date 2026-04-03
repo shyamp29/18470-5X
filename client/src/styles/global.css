@@ -1,0 +1,49 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   global.css — Shared utility classes
+   Import once in main.js; never import per-component.
+───────────────────────────────────────────────────────────────────────────── */
+@import './theme.css';
+
+/* ── Disabled action buttons (Delete Project / Leave Project) ────────────── */
+/* Use: className="btn-action btn-action--danger" or "btn-action btn-action--neutral" */
+.btn-action {
+  padding: 6px 14px;
+  color: var(--color-card-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-action--sm      { padding: 6px 12px; }
+.btn-action--danger  { background-color: var(--color-danger); }
+.btn-action--neutral { background-color: var(--color-disabled); }
+
+/* ── Text utilities ──────────────────────────────────────────────────────── */
+.text-muted  { color: var(--color-text-muted); }
+.text-italic { font-style: italic; }
+.text-error  { color: var(--color-danger); font-size: var(--font-size-sm); }
+
+/* ── Input state ─────────────────────────────────────────────────────────── */
+.input-error { border-color: var(--color-danger) !important; }
+
+/* ── Layout utilities ────────────────────────────────────────────────────── */
+.m-0       { margin: 0; }
+.align-end { align-self: flex-end; }
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}

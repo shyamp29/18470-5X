@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+dist
+dist-ssr
+
+# Logs
+*.pdf
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Vite cache
+.vite/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+#Testing
+/.jest/
+/junit.xml
+/test-report.html
+/coverage/
+/playwright-report/
+/test-results/
+/playwright/.cache/
+*.lcov
+*.pyc
+# Test JSON files
+test-results/**/*.json
+playwright-report/**/*.json
