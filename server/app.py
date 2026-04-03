@@ -31,12 +31,25 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 # Allow local dev and deployed frontend origin(s)
-# In production, use the exact deployed frontend URL for security.
-CORS(app, supports_credentials=True, origins=[
-    "http://localhost:5173",
-    "https://backend-xxtr.onrender.com",
-    "https://*.onrender.com"
-])
+# In production, use exact deployed frontend URLs or an allowed hosts policy.
+# Using regex for onrender.com subdomains; explicit listing for known hostnames.
+CORS(
+    app,
+    supports_credentials=True,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173",
+                "https://localhost:5173",
+                "https://backend-xxtr.onrender.com",
+                "https://fivex-haas-rd6a.onrender.com",
+                r"https?://.*\.onrender\.com",
+            ]
+        }
+    },
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
 
 
 def lowercase_project(project):
