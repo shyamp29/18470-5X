@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PopupStyles from '../../AppStyle/popup';
 
-const EMPTY_FIELDS = { userId: "", userName: "", newPassword: "" };
+const EMPTY_FIELDS = { userid: "", userName: "", newPassword: "" };
 
 const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
     const [fields, setFields] = useState(EMPTY_FIELDS);
@@ -18,7 +18,7 @@ const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
         setFields(EMPTY_FIELDS);
     };
 
-    const isReady = fields.userId.trim() && fields.userName.trim() && fields.newPassword.trim();
+    const isReady = fields.userid.trim() && fields.userName.trim() && fields.newPassword.trim();
 
     return (
         <div style={PopupStyles.overlay}>
@@ -28,9 +28,9 @@ const ForgetPopup = ({ showPopup, onClose, onSubmit }) => {
                 <div style={PopupStyles.formRow}>
                     <input
                         type="text"
-                        name="userId"
+                        name="userid"
                         placeholder="User ID"
-                        value={fields.userId}
+                        value={fields.userid}
                         onChange={handleChange}
                         style={PopupStyles.formInput}
                     />

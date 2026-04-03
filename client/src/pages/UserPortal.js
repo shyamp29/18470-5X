@@ -156,7 +156,7 @@ const UserPortal = () => {
         return (
             <div style={UserProfileStyle.container}>
                 <div style={UserProfileStyle.topTrim}></div>
-                <ProjectInfoPage projectId={activeProjectId} userId={user?.userid} onBack={goToDashboard}/>
+                <ProjectInfoPage projectId={activeProjectId} userid={user?.userid} onBack={goToDashboard}/>
                 <div style={UserProfileStyle.bottomTrim}></div>
             </div>
         );
@@ -271,7 +271,7 @@ const UserPortal = () => {
 
                 {/* ── ALL PROJECTS PAGE ── */}
                 {currentView === VIEWS.ALL_PROJECTS && (
-                    <AllProjectsPage userId={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
+                    <AllProjectsPage userid={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
                 )}
 
                 {/* ── ALL HARDWARE PAGE ── */}

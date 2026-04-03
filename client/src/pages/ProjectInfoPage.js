@@ -7,7 +7,7 @@ import ProjectInfoStyle from "../AppStyle/projectInfo.js";
 import '../styles/global.css';
 import { SuccessPopup, ErrorPopup } from "../components/popups";
 
-const ProjectInfoPage = ({ projectId, userId, onBack }) => {
+const ProjectInfoPage = ({ projectId, userid, onBack }) => {
     const [successMsg, setSuccessMsg] = useState({ show: false, msg: "" });
     const [errorMsg,   setErrorMsg]   = useState({ show: false, msg: "" });
     const [addingUser, setAddingUser] = useState(false);
@@ -20,7 +20,7 @@ const ProjectInfoPage = ({ projectId, userId, onBack }) => {
         data, qtys, reload, showSuccess, showError
     );
 
-    const isOwner = data && data.owneruserid === userId;
+    const isOwner = data && data.owneruserid === userid;
 
     return (
         <div style={ProjectInfoStyle.pageBox}>

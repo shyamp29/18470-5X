@@ -7,7 +7,7 @@ import PasswordInput from "../components/PasswordInput";
 
 const LoginPage = () => {
   const { login, goToSignup, showForgotPassword } = useAuth();
-  const [loginProps, setLoginProps] = useState({ userId: '', password: '' });
+  const [loginProps, setLoginProps] = useState({ userid: '', password: '' });
 
   const [showErrPopup, setShowErrPopup] = useState(false);
   const [message, setMessage] = useState("");
@@ -19,8 +19,8 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!loginProps.userId && !loginProps.password) return;
-    if (loginProps.userId && !loginProps.password) {
+    if (!loginProps.userid && !loginProps.password) return;
+    if (loginProps.userid && !loginProps.password) {
       setMessage("Password field cannot be empty.");
       setShowErrPopup(true);
       return;
@@ -42,7 +42,7 @@ const LoginPage = () => {
               <input
                 type="text"
                 name="userid"
-                value={loginProps.userId}
+                value={loginProps.userid}
                 onChange={handleChange}
                 style={LoginStyle.input}
               />

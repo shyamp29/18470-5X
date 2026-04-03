@@ -13,7 +13,7 @@ test.describe('Login Validation Logic', () => {
   });
 
   test('should show error if password is empty but ID is filled', async ({ page }) => {
-    await page.fill('input[name="userId"]', 'Adetayo');
+    await page.fill('input[name="userid"]', 'Adetayo');
     await page.click('button[type="submit"]');
     
     // Verifies the specific error message you set

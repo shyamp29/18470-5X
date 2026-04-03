@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
             } else {
                 showError(
                     response.status === 409 || response.status === 401
-                        ? "Invalid userId or password. Please try again."
+                        ? "Invalid userid or password. Please try again."
                         : "Login failed. Please try again."
                 );
             }

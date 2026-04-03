@@ -3,7 +3,7 @@ import { apiFetchUserProjects } from "../Auth/apiCalls.js";
 import UserProfileStyle from "../AppStyle/userProfile.js";
 import '../styles/AllProjectsPage.css';
 
-const AllProjectsPage = ({ userId, onBack }) => {
+const AllProjectsPage = ({ userid, onBack }) => {
     const [myProjects, setMyProjects] = useState([]);
     const [loading, setLoading]       = useState(true);
 
@@ -15,7 +15,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
             setLoading(false);
         };
         load();
-    }, [userId]);
+    }, [userid]);
 
     return (
         <div style={UserProfileStyle.profileBox}>
@@ -40,7 +40,7 @@ const AllProjectsPage = ({ userId, onBack }) => {
                                 <td colSpan={4} style={UserProfileStyle.td} className="td-muted">None</td>
                             </tr>
                         ) : myProjects.map((proj) => {
-                            const isOwner = proj.owneruserid === userId;
+                            const isOwner = proj.owneruserid === userid;
                             return (
                                 <tr key={proj.projectid}>
                                     <td style={UserProfileStyle.td}>{proj.projectid}</td>

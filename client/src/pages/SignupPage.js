@@ -7,7 +7,7 @@ import PasswordInput from "../components/PasswordInput";
 const SignupPage = () => {
   const { register, goToLogin } = useAuth();
   const [signupProps, setSignupProps] = useState({
-    userId: "",
+    userid: "",
     username: "",
     password: "",
     confirmPassword: "",
@@ -17,19 +17,21 @@ const SignupPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSignupProps((prev) => ({ ...prev, [name]: value }));
-    if (name === "password" || name === "confirmPassword") setPasswordError("");
-  };
+    const updated = { ...signupProps, [name]: value };
+    setSignupProps(updated);
 
-  const handleConfirmPasswordBlur = () => {
-    if (signupProps.confirmPassword && signupProps.password !== signupProps.confirmPassword) {
-      setPasswordError("passwords do not match");
-    } else {
-      setPasswordError("");
+    if (name === "confirmPassword" || name === "password") {
+      const confirm = name === "confirmPassword" ? value : updated.confirmPassword;
+      if (confirm.length >= 2) {
+        setPasswordError(updated.password !== updated.confirmPassword ? "Passwords do not match" : "");
+      } else {
+        setPasswordError("");
+      }
     }
   };
 
-  const isFormBlocked = !!passwordError;
+  const hasEmptyFields = !signupProps.username || !signupProps.userid || !signupProps.password || !signupProps.confirmPassword;
+  const isFormBlocked = !!passwordError || hasEmptyFields;
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -48,11 +50,11 @@ const SignupPage = () => {
       <div style={LoginStyle.loginBox}>
         <div style={LoginStyle.loginBody}>
         <img src="/logo.png" alt="5X HaaS Portal" style={LoginStyle.logo} />
-        <h1 style={LoginStyle.header}>New User Sign-in</h1>
+        <h1 style={LoginStyle.header}>New User</h1>
 
         <form onSubmit={handleSignup} style={LoginStyle.form}>
           <div style={LoginStyle.inputGroup}>
-            <label>user name</label>
+            <label>User Name</label>
             <input
               name="username"
               type="text"
@@ -64,11 +66,11 @@ const SignupPage = () => {
           </div>
 
           <div style={LoginStyle.inputGroup}>
-            <label>userID</label>
+            <label>User ID</label>
             <input
-              name="userId"
+              name="userid"
               type="text"
-              value={signupProps.userId}
+              value={signupProps.userid}
               onChange={handleChange}
               style={LoginStyle.input}
               required
@@ -76,7 +78,7 @@ const SignupPage = () => {
           </div>
 
           <div style={LoginStyle.inputGroup}>
-            <label>password</label>
+            <label>Password</label>
             <PasswordInput
               name="password"
               value={signupProps.password}
@@ -85,17 +87,23 @@ const SignupPage = () => {
           </div>
 
           <div style={LoginStyle.inputGroup}>
-            <label>confirm password</label>
+            <label>Confirm Password</label>
             <PasswordInput
               name="confirmPassword"
               value={signupProps.confirmPassword}
               onChange={handleChange}
-              onBlur={handleConfirmPasswordBlur}
             />
             {passwordError && <span className="password-error">{passwordError}</span>}
           </div>
 
-          <button type="submit" style={LoginStyle.submitBtn} disabled={isFormBlocked}>
+          <button
+            type="submit"
+            style={{
+              ...LoginStyle.submitBtn,
+              ...(isFormBlocked && { backgroundColor: "var(--color-disabled)", cursor: "not-allowed" }),
+            }}
+            disabled={isFormBlocked}
+          >
             Create Account
           </button>
         </form>

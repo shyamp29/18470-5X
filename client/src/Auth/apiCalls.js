@@ -69,13 +69,13 @@ const get = async (path) => {
 // ══════════════════════════════════════════════════════════════════════════
 
 // POST /api/users/login → { message, userid, username }
-const apiLogin = async ({ userId, password }) => {
-    return post('/api/users/login', { userId, password });
+const apiLogin = async ({ userid, password }) => {
+    return post('/api/users/login', { userid, password });
 };
 
 // POST /api/users/register → { message }
-const apiRegister = async ({ userId, username, email, password }) => {
-    return post('/api/users/register', { userId, username, email, password });
+const apiRegister = async ({ userid, username, email, password }) => {
+    return post('/api/users/register', { userid, username, email, password });
 };
 
 // POST /api/users/logout  (Bearer token sent via header)
@@ -83,7 +83,7 @@ const apiLogout = async () => {
     return post('/api/users/logout');
 };
 
-// POST /api/users/forgotid → { message }  (sends userId to the given email)
+// POST /api/users/forgotid → { message }  (sends userid to the given email)
 const apiForgotId = async ({ email }) => {
     return post('/api/users/forgotid', { email });
 };
@@ -125,8 +125,8 @@ const apiCreateProject = async ({ projectId, name, description = '' }) => {
 };
 
 // POST /api/projects/add_user_to_project → { message }
-const apiJoinProject = async (projectId, userId) => {
-    return post('/api/projects/add_user_to_project', { projectId, userId });
+const apiJoinProject = async (projectId, userid) => {
+    return post('/api/projects/add_user_to_project', { projectId, userid });
 };
 
 // POST /api/projects/checkout → { message, availability, checkedout, error }

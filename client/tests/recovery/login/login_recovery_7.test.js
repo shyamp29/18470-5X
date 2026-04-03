@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 test('login recovery 7: localStorage is set on login and cleared on logout', async ({ page }) => {
   // ── Login ──────────────────────────────────────────────────────────────
   await page.goto('/');
-  await page.fill('input[name="userId"]', 'admin');
+  await page.fill('input[name="userid"]', 'admin');
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
   await expect(page).toHaveURL(/.*profile/);
