@@ -39,3 +39,9 @@
 .dashboard-section {
   margin-top: 20px;
 }
+
+.scroll-view {
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+  padding-right: 4px;
+}

@@ -3,7 +3,7 @@ import UserProfileStyle from "../AppStyle/userProfile";
 import '../styles/UserPortal.css';
 import {useAuth} from '../Auth/authHandler';
 import useTheme from '../hooks/useTheme';
-import {apiFetchAllProjects, apiCreateProject} from '../Auth/apiCalls';
+import {apiFetchUserProjects, apiCreateProject} from '../Auth/apiCalls';
 import { SuccessPopup } from '../components/popups';
 import AllHardwarePage from '../pages/AllHardwarePage';
 import AllProjectsPage from '../pages/AllProjectsPage';
@@ -44,7 +44,7 @@ const UserPortal = () => {
         const fetchProjects = async () => {
             setIsLoadingProjects(true);
             try {
-                const response = await apiFetchAllProjects();
+                const response = await apiFetchUserProjects();
                 if (response.status === 200) setUserProjects(response.projectslist ?? []);
             } catch (error) {
                 console.error("Failed to fetch projects", error);
@@ -271,12 +271,16 @@ const UserPortal = () => {
 
                 {/* ── ALL PROJECTS PAGE ── */}
                 {currentView === VIEWS.ALL_PROJECTS && (
-                    <AllProjectsPage userid={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
+                    <div className="scroll-view">
+                        <AllProjectsPage userid={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
+                    </div>
                 )}
 
                 {/* ── ALL HARDWARE PAGE ── */}
                 {currentView === VIEWS.ALL_HARDWARE && (
-                    <AllHardwarePage onBack={goToDashboard}/>
+                    <div className="scroll-view">
+                        <AllHardwarePage onBack={goToDashboard}/>
+                    </div>
                 )}
 
 

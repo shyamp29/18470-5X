@@ -35,8 +35,8 @@ const UserProfileStyle = {
         padding: '40px',
         boxShadow: 'var(--shadow-card)',
         borderRadius: 'var(--radius-lg)',
-        marginTop: '60px',
-        marginBottom: '60px',
+        marginTop: '20px',
+        marginBottom: '20px',
         boxSizing: 'border-box',
     },
     header: {
