@@ -75,32 +75,38 @@
 
 /* ── Dark mode overrides ──────────────────────────────────────────────────── */
 [data-theme="dark"] {
-  --color-primary:         #3b82f6;
-  --color-primary-tint:    rgba(59, 130, 246, 0.2);
+  /* Accent — green */
+  --color-primary:             #2d948b;
+  --color-primary-tint:        rgba(34, 197, 94, 0.15);
+  --color-primary-transparent: rgba(34, 197, 94, 0.1);
+  --color-checkin:             #2d948b;
+  --color-link:                #2d948b;
+  --color-menu-link:           #2d948b;
+  --color-owner-badge:         #2d948b;
 
-  /* Surfaces */
-  --color-page-bg:         #0f172a;
-  --color-card-bg:         #1e293b;
-  --color-table-header-bg: #263148;
-  --color-input-bg:        #334155;
-  --color-input-border:    #475569;
+  /* Surfaces — dark navy/grey */
+  --color-page-bg:         #1a2035;
+  --color-card-bg:         #252d45;
+  --color-table-header-bg: #1e2843;
+  --color-input-bg:        #16192e;
+  --color-input-border:    #2d3a56;
 
-  /* Text */
+  /* Text — white */
   --color-text-primary:    #f1f5f9;
   --color-text-dark:       #e2e8f0;
-  --color-text-near-black: #f8fafc;
+  --color-text-near-black: #ffffff;
   --color-text-muted:      #94a3b8;
   --color-text-on-dark:    #94a3b8;
 
-  /* Borders & dividers */
-  --color-border-strong:   #64748b;
-  --color-border:          #334155;
-  --color-border-light:    #475569;
-  --color-border-lighter:  #2d3f55;
+  /* Borders */
+  --color-border-strong:   #3d4f6e;
+  --color-border:          #2d3a56;
+  --color-border-light:    #2a364f;
+  --color-border-lighter:  #222d44;
 
-  /* Shadows soften in dark mode */
-  --shadow-card:         0 4px 15px rgba(0, 0, 0, 0.4);
-  --shadow-popup:        0 4px 15px rgba(0, 0, 0, 0.6);
-  --shadow-popup-large:  0 4px 20px rgba(0, 0, 0, 0.5);
-  --shadow-login-card:   0 8px 20px rgba(59, 130, 246, 0.4);
+  /* Shadows */
+  --shadow-card:         0 4px 15px rgba(0, 0, 0, 0.5);
+  --shadow-popup:        0 4px 15px rgba(0, 0, 0, 0.7);
+  --shadow-popup-large:  0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-login-card:   0 8px 20px rgba(34, 197, 94, 0.25);
 }
