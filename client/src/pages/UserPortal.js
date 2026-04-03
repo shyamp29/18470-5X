@@ -2,8 +2,9 @@ import {useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import '../styles/UserPortal.css';
 import {useAuth} from '../Auth/authHandler';
+import useTheme from '../hooks/useTheme';
 import {apiFetchAllProjects, apiCreateProject} from '../Auth/apiCalls';
-import {SuccessPopup} from '../components/popupModular';
+import { SuccessPopup } from '../components/popups';
 import AllHardwarePage from '../pages/AllHardwarePage';
 import AllProjectsPage from '../pages/AllProjectsPage';
 import ProjectInfoPage from '../pages/ProjectInfoPage';
@@ -17,6 +18,7 @@ const VIEWS = {
 
 const UserPortal = () => {
     const {user, signout} = useAuth();
+    const {theme, toggleTheme} = useTheme();
 
     const [currentView, setCurrentView] = useState(VIEWS.DASHBOARD);
     const [activeProjectId, setActiveProjectId] = useState('');
@@ -116,19 +118,36 @@ const UserPortal = () => {
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
             <h1 className="nav-title">Welcome {user?.username || '<Guest>'}</h1>
-            <div style={UserProfileStyle.profileContainer}>
-                <div
-                    style={UserProfileStyle.profileCircle}
-                    onClick={() => setIsProfileOpen(prev => !prev)}
+            <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                <button
+                    onClick={toggleTheme}
+                    title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                    style={{
+                        background: 'none',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-sm)',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '4px 8px',
+                        color: 'var(--color-text-primary)',
+                    }}
                 >
-                    {user?.username ? user.username.charAt(0).toUpperCase() : '?'}
-                </div>
-                {isProfileOpen && (
-                    <div style={UserProfileStyle.dropdownMenu}>
-                        <div style={UserProfileStyle.dropdownItem} onClick={handleAccountClick}>Account</div>
-                        <div style={UserProfileStyle.dropdownItem} onClick={handleSignOut}>Sign Out</div>
+                    {theme === 'light' ? '🌙' : '☀️'}
+                </button>
+                <div style={UserProfileStyle.profileContainer}>
+                    <div
+                        style={UserProfileStyle.profileCircle}
+                        onClick={() => setIsProfileOpen(prev => !prev)}
+                    >
+                        {user?.username ? user.username.charAt(0).toUpperCase() : '?'}
                     </div>
-                )}
+                    {isProfileOpen && (
+                        <div style={UserProfileStyle.dropdownMenu}>
+                            <div style={UserProfileStyle.dropdownItem} onClick={handleAccountClick}>Account</div>
+                            <div style={UserProfileStyle.dropdownItem} onClick={handleSignOut}>Sign Out</div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

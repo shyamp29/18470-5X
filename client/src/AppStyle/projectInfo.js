@@ -13,7 +13,7 @@ const ProjectInfoStyle = {
         alignItems: 'center',
     },
     ownerBadge: {
-        color: '#5b9bd5',
+        color: 'var(--color-owner-badge)',
         marginLeft: '6px',
     },
     membersRow: {
@@ -24,13 +24,13 @@ const ProjectInfoStyle = {
     },
     addUserBtn: {
         background: 'none',
-        border: '1px solid #c65c1a',
-        borderRadius: '50%',
+        border: '1px solid var(--color-primary)',
+        borderRadius: 'var(--radius-round)',
         width: '22px',
         height: '22px',
         cursor: 'pointer',
-        fontSize: '16px',
-        color: '#c65c1a',
+        fontSize: 'var(--font-size-lg)',
+        color: 'var(--color-primary)',
         lineHeight: '1',
         padding: 0,
     },
@@ -47,6 +47,10 @@ const ProjectInfoStyle = {
         width: '70px',
         padding: '5px',
         textAlign: 'center',
+        backgroundColor: 'var(--color-input-bg)',
+        border: '1px solid var(--color-input-border)',
+        borderRadius: 'var(--radius-sm)',
+        color: 'var(--color-text-primary)',
     },
     actionRow: {
         display: 'flex',
@@ -56,17 +60,17 @@ const ProjectInfoStyle = {
     },
     checkinBtn: {
         ...UserProfileStyle.submitBtn,
-        fontSize: '14px',
-        backgroundColor: '#4a90d9',
+        fontSize: 'var(--font-size-md)',
+        backgroundColor: 'var(--color-checkin)',
         color: '#fff',
     },
     checkoutBtn: {
         ...UserProfileStyle.submitBtn,
-        fontSize: '14px',
+        fontSize: 'var(--font-size-md)',
     },
     smallBtn: {
         ...UserProfileStyle.submitBtn,
-        fontSize: '13px',
+        fontSize: 'var(--font-size-sm)',
         padding: '6px 14px',
     },
 };

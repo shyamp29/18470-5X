@@ -5,7 +5,7 @@ const PopupStyles = {
         position: 'fixed',
         top: 0, left: 0,
         width: '100%', height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: 'var(--color-overlay-dark)',
         backdropFilter: 'blur(2px)',
         display: 'flex',
         justifyContent: 'center',
@@ -13,17 +13,17 @@ const PopupStyles = {
         zIndex: 1000,
     },
     content: {
-        backgroundColor: '#fff',
+        backgroundColor: 'var(--color-card-bg)',
         padding: '30px',
-        borderRadius: '8px',
+        borderRadius: 'var(--radius-lg)',
         maxWidth: '400px',
         width: '90%',
         textAlign: 'center',
         position: 'relative',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+        boxShadow: 'var(--shadow-popup)',
     },
     loadingContent: {
-        backgroundColor: '#c65c1a26',
+        backgroundColor: 'var(--color-primary-tint)',
     },
 
     // ── Chrome ────────────────────────────────────────────────────────────────
@@ -33,22 +33,23 @@ const PopupStyles = {
         background: 'none',
         border: 'none',
         fontSize: '28px',
-        color: '#c65c1a',
+        color: 'var(--color-primary)',
         padding: '0',
         lineHeight: '1',
         cursor: 'pointer',
-        fontWeight: 'bold',
+        fontWeight: 'var(--font-weight-bold)',
     },
 
     // ── Typography ────────────────────────────────────────────────────────────
     title: {
-        color: '#111010',
+        color: 'var(--color-text-near-black)',
         margin: '0 0 10px 0',
     },
     description: {
         marginTop: '15px',
         fontSize: '0.9rem',
         lineHeight: '1.5',
+        color: 'var(--color-text-primary)',
     },
     bodyPadding: {
         padding: '10px',
@@ -56,6 +57,7 @@ const PopupStyles = {
     bodyText: {
         fontSize: '1.2rem',
         margin: 0,
+        color: 'var(--color-text-primary)',
     },
 
     // ── Action button ─────────────────────────────────────────────────────────
@@ -63,13 +65,13 @@ const PopupStyles = {
         marginTop: '20px',
         padding: '12px',
         width: '100%',
-        backgroundColor: '#c65c1a',
+        backgroundColor: 'var(--color-primary)',
         color: '#ffffff',
         border: 'none',
-        borderRadius: '6px',
+        borderRadius: 'var(--radius-md)',
         cursor: 'pointer',
-        fontSize: '15px',
-        fontWeight: 'bold',
+        fontSize: 'var(--font-size-base)',
+        fontWeight: 'var(--font-weight-bold)',
     },
 
     // ── Form (ForgetPopup) ────────────────────────────────────────────────────
@@ -80,22 +82,24 @@ const PopupStyles = {
     },
     formInput: {
         padding: '10px',
-        borderRadius: '6px',
-        backgroundColor: '#eed2c0',
-        border: '1px solid #ccc',
-        fontSize: '14px',
+        borderRadius: 'var(--radius-md)',
+        backgroundColor: 'var(--color-input-bg)',
+        border: '1px solid var(--color-input-border)',
+        fontSize: 'var(--font-size-md)',
         outline: 'none',
         flex: 1,
+        color: 'var(--color-text-near-black)',
     },
     formInputFull: {
         padding: '10px',
-        borderRadius: '6px',
-        backgroundColor: '#eed2c0',
-        border: '1px solid #ccc',
-        fontSize: '14px',
+        borderRadius: 'var(--radius-md)',
+        backgroundColor: 'var(--color-input-bg)',
+        border: '1px solid var(--color-input-border)',
+        fontSize: 'var(--font-size-md)',
         outline: 'none',
         width: '100%',
         boxSizing: 'border-box',
+        color: 'var(--color-text-near-black)',
     },
     spacer: {
         height: '20px',

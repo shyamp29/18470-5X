@@ -5,7 +5,7 @@ import AddUserForm from "../components/AddUserForm";
 import UserProfileStyle from "../AppStyle/userProfile.js";
 import ProjectInfoStyle from "../AppStyle/projectInfo.js";
 import '../styles/global.css';
-import { SuccessPopup, ErrorPopup } from "../components/popupModular.js";
+import { SuccessPopup, ErrorPopup } from "../components/popups";
 
 const ProjectInfoPage = ({ projectId, userId, onBack }) => {
     const [successMsg, setSuccessMsg] = useState({ show: false, msg: "" });

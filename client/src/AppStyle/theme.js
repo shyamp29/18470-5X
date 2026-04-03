@@ -1,55 +1,43 @@
-
-// ── Brand / Logo ─────────────────────────────────────────────────────────────
 export const brand = {
-    appName:    '5X Haas Portal',    // TODO: replace with final product name
-    logoPath:   null,                    // TODO: set to '/assets/logo.svg' once available
+    appName:    '5X Haas Portal',
+    logoPath:   null,
     fontFamily: 'Arial, sans-serif',
 };
 
-// ── Color palette ─────────────────────────────────────────────────────────────
 export const colors = {
+    primary:        '#2563eb',
 
-    // Primary — brand orange used for buttons, trims, borders, and shadows
-    primary:        '#52e0d9',
+    danger:         '#c0392b',
+    checkin:        '#4a90d9',
+    link:           '#2563eb',
+    menuLink:       '#60a5fa',
+    ownerBadge:     '#5b9bd5',
+    disabled:       '#7f8c8d',
 
-    // Semantic actions
-    danger:         '#c0392b',    // destructive actions (delete, remove)
-    checkin:        '#4a90d9',    // check-in action button
-    link:           '#3498db',    // inline / footer links
-    menuLink:       '#6eb6ff',    // sidebar menu links
-    ownerBadge:     '#5b9bd5',    // "owner" label / badge
-    disabled:       '#7f8c8d',    // disabled state (buttons, leave action)
+    pageBg:         '#eff6ff',
+    cardBg:         '#ffffff',
+    tableHeaderBg:  '#f0f7ff',
+    inputBg:        '#f1f5f9',
+    inputBorder:    '#cbd5e1',
 
-    // Surfaces
-    pageBg:         '#f4f7f9',    // page / app background
-    cardBg:         '#ffffff',    // white cards and modal boxes
-    tableHeaderBg:  '#f9f9f9',   // table <th> fill
-    inputBg:        '#eed2c0',    // form input background (warm cream)
-    inputBorder:    '#dcbfae',    // form input border
+    textPrimary:    '#333333',
+    textDark:       '#1e3a5f',
+    textNearBlack:  '#121111',
+    textMuted:      '#999999',
+    textOnDark:     '#888888',
 
-    // Text
-    textPrimary:    '#333333',    // default body text
-    textDark:       '#2c3e50',    // headings, footer labels
-    textNearBlack:  '#121111',    // high-contrast labels (login form)
-    textMuted:      '#999999',    // placeholder / empty-state text
-    textOnDark:     '#888888',    // icons / close button on white backgrounds
+    borderStrong:   '#aaaaaa',
+    border:         '#cccccc',
+    borderLight:    '#dddddd',
+    borderLighter:  '#eeeeee',
 
-    // Borders & dividers
-    borderStrong:   '#aaaaaa',    // back-button outline
-    border:         '#cccccc',    // general input / card borders
-    borderLight:    '#dddddd',    // nav bar divider
-    borderLighter:  '#eeeeee',    // table row / dropdown item dividers
-
-    // Overlays
-    overlayLight:   'rgba(0, 0, 0, 0.5)',   // modal backdrop (lighter)
-    overlayDark:    'rgba(0, 0, 0, 0.7)',    // modal backdrop (heavier)
+    overlayLight:   'rgba(0, 0, 0, 0.5)',
+    overlayDark:    'rgba(0, 0, 0, 0.7)',
 };
 
-// ── Typography ────────────────────────────────────────────────────────────────
 export const typography = {
     fontFamily: 'Arial, sans-serif',
 
-    // Scale (px)
     fontSizeXs:   '12px',
     fontSizeSm:   '13px',
     fontSizeMd:   '14px',
@@ -64,29 +52,25 @@ export const typography = {
     fontWeightBold:   'bold',
 };
 
-// ── Shape ─────────────────────────────────────────────────────────────────────
 export const shape = {
-    radiusSm:    '4px',     // buttons, inputs (portal)
-    radiusMd:    '6px',     // buttons, inputs (login page)
-    radiusLg:    '8px',     // cards, modals
-    radiusXl:    '12px',    // login card
-    radiusRound: '50%',     // avatar circle, add-user (+) button
+    radiusSm:    '4px',
+    radiusMd:    '6px',
+    radiusLg:    '8px',
+    radiusXl:    '12px',
+    radiusRound: '50%',
 };
 
-// ── Shadows ───────────────────────────────────────────────────────────────────
 export const shadows = {
-    card:       '0 4px 15px rgba(0, 0, 0, 0.1)',   // portal cards
-    popup:      '0 4px 15px rgba(0, 0, 0, 0.3)',   // confirmation popups
-    popupLarge: '0 4px 20px rgba(0, 0, 0, 0.2)',   // large modals
-    loginCard:  '0 8px 20px #c65c1a',              // login box (branded shadow)
+    card:       '0 4px 15px rgba(0, 0, 0, 0.1)',
+    popup:      '0 4px 15px rgba(0, 0, 0, 0.3)',
+    popupLarge: '0 4px 20px rgba(0, 0, 0, 0.2)',
+    loginCard:  '0 8px 20px rgba(37, 99, 235, 0.35)',
 };
 
-// ── Trim (top / bottom decorative bars) ──────────────────────────────────────
 export const trim = {
     color:  colors.primary,
     height: '40px',
 };
 
-// ── Convenience default export (all tokens in one object) ─────────────────────
 const Theme = { brand, colors, typography, shape, shadows, trim };
 export default Theme;

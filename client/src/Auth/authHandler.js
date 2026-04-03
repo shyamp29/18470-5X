@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../Auth/authActions';
 import { createContext, useContext, useState } from 'react';
-import { ErrorPopup, ForgetPopup, LoadingPopup, SuccessPopup } from "../components/popupModular";
+import { ErrorPopup, ForgetPopup, LoadingPopup, SuccessPopup } from "../components/popups";
 import { apiLogin, apiRegister, apiLogout, apiForgotPassword, clearAuthToken } from "./apiCalls.js";
 
 const MIN_WAIT_MS = 3000;
