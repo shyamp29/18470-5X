@@ -7,7 +7,7 @@ import ProjectInfoStyle from "../AppStyle/projectInfo.js";
 import '../styles/global.css';
 import { ErrorPopup } from "../components/popups";
 
-const ProjectInfoPage = ({ projectId, userid, onBack }) => {
+const ProjectInfoPage = ({ projectid, userid, onBack }) => {
     const [successMessages, setSuccessMessages] = useState([]);
     const [errorMsg, setErrorMsg] = useState({ show: false, msg: "" });
     const [addingUser, setAddingUser] = useState(false);
@@ -15,8 +15,8 @@ const ProjectInfoPage = ({ projectId, userid, onBack }) => {
     const showSuccess = (msgs) => {
         const lines = Array.isArray(msgs) ? msgs : String(msgs).split(' | ').map(s => s.trim()).filter(Boolean);
         const timestamp = new Date().toLocaleTimeString();
-        const createdAt = Date.now();
-        const newMessages = lines.map(line => ({ text: line, timestamp, id: Date.now() + Math.random(), createdAt }));
+        const createdat = Date.now();
+        const newMessages = lines.map(line => ({ text: line, timestamp, id: Date.now() + Math.random(), createdat }));
 
         setSuccessMessages(prev => {
             const updated = [...newMessages, ...prev];
@@ -34,13 +34,13 @@ const ProjectInfoPage = ({ projectId, userid, onBack }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             const now = Date.now();
-            setSuccessMessages(prev => prev.filter(msg => now - msg.createdAt < 60000)); // 60 seconds
+            setSuccessMessages(prev => prev.filter(msg => now - msg.createdat < 60000)); // 60 seconds
         }, 10000); // Check every 10 seconds
 
         return () => clearInterval(interval);
     }, []);
 
-    const { data, loading, qtys, handleQtyChange, reload, setData } = useProjectData(projectId);
+    const { data, loading, qtys, handleQtyChange, reload, setData } = useProjectData(projectid);
     const { busy, handleCheckout, handleCheckin } = useHardwareOps(
         data, qtys, reload, showSuccess, showError, setData
 
@@ -92,7 +92,7 @@ const ProjectInfoPage = ({ projectId, userid, onBack }) => {
                     </div>
                     {addingUser && (
                         <AddUserForm
-                            projectId={projectId}
+                            projectid={projectid}
                             onSuccess={(msg) => { showSuccess(msg); setAddingUser(false); reload(); }}
                             onError={showError}
                         />

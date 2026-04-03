@@ -35,7 +35,7 @@ const UserPortal = () => {
     const [newProjectDescription, setNewProjectDescription] = useState('');
     const [newProjectId, setNewProjectId] = useState('');
     const [isCreatingProject, setIsCreatingProject] = useState(false);
-    const projectIdTaken = newProjectId.trim().length > 0 &&
+    const projectidTaken = newProjectId.trim().length > 0 &&
         userProjects.some(p => p.projectid.toLowerCase() === newProjectId.trim().toLowerCase());
     const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
 
@@ -67,9 +67,9 @@ const UserPortal = () => {
     const handleSignOut = () => signout();
     const handleAccountClick = () => setIsProfileOpen(false);
 
-    const handleProjectSelect = (projectId) => {
-        setProjectSearch(projectId);
-        setSelectedProjectId(projectId);
+    const handleProjectSelect = (projectid) => {
+        setProjectSearch(projectid);
+        setSelectedProjectId(projectid);
         setIsProjectDropdownOpen(false);
     };
 
@@ -90,7 +90,7 @@ const UserPortal = () => {
         setIsCreatingProject(true);
         try {
             const response = await apiCreateProject(
-                { projectId: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() }
+                { projectid: newProjectId.trim(), name: newProjectName.trim(), description: newProjectDescription.trim() }
             );
             if (response.status === 200) {
                 setSuccessMsg({show: true, msg: `Project "${response.name}" created successfully!`});
@@ -111,8 +111,8 @@ const UserPortal = () => {
 
     const goToDashboard = () => setCurrentView(VIEWS.DASHBOARD);
 
-    const handleOpenProject = (projectId) => {
-        setActiveProjectId(projectId);
+    const handleOpenProject = (projectid) => {
+        setActiveProjectId(projectid);
         setCurrentView(VIEWS.PROJECT_INFO);
     };
     const renderNavBar = () => (
@@ -156,7 +156,7 @@ const UserPortal = () => {
         return (
             <div style={UserProfileStyle.container}>
                 <div style={UserProfileStyle.topTrim}></div>
-                <ProjectInfoPage projectId={activeProjectId} userid={user?.userid} onBack={goToDashboard}/>
+                <ProjectInfoPage projectid={activeProjectId} userid={user?.userid} onBack={goToDashboard}/>
                 <div style={UserProfileStyle.bottomTrim}></div>
             </div>
         );
@@ -249,19 +249,19 @@ const UserPortal = () => {
                             <span style={UserProfileStyle.label}>Project ID:</span>
                             <input
                                 style={UserProfileStyle.createProjectInput}
-                                className={projectIdTaken ? 'input-error' : ''}
+                                className={projectidTaken ? 'input-error' : ''}
                                 value={newProjectId}
                                 onChange={(e) => setNewProjectId(e.target.value)}
                                 disabled={isCreatingProject}
                             />
-                            {projectIdTaken && (
+                            {projectidTaken && (
                                 <span className="project-id-error">Project ID already exists.</span>
                             )}
                             <button
                                 style={UserProfileStyle.submitBtn}
                                 className="align-end"
                                 onClick={handleCreateProject}
-                                disabled={isCreatingProject || projectIdTaken}
+                                disabled={isCreatingProject || projectidTaken}
                             >
                                 {isCreatingProject ? 'Creating...' : 'Create'}
                             </button>

@@ -1,31 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiFetchProjectInfo, apiFetchAllHardware } from '../Auth/apiCalls';
 
-const useProjectData = (projectId) => {
-    const [data, setData]       = useState(null);
+const useProjectData = (projectid) => {
+    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [qtys, setQtys]       = useState([]);
+    const [qtys, setQtys] = useState([]);
 
     const load = useCallback(async () => {
         setLoading(true);
         const [projRes, hwRes] = await Promise.all([
-            apiFetchProjectInfo(projectId),
+            apiFetchProjectInfo(projectid),
             apiFetchAllHardware(),
         ]);
         if (projRes.status === 200) {
-            const project    = projRes.project;
+            const project = projRes.project;
             const checkedout = project.checkedout ?? {};
-            const hardware   = (hwRes.hardwaresets ?? []).map(hw => ({
-                setname:      hw.setname,
-                capacity:     hw.capacity,
+            const hardware = (hwRes.hardwaresets ?? []).map(hw => ({
+                setname: hw.setname,
+                capacity: hw.capacity,
                 availability: hw.availability,
-                allocated:    checkedout[hw.setname.toLowerCase()] ?? 0,
+                allocated: checkedout[hw.setname.toLowerCase()] ?? 0,
             }));
             setData({ ...project, hardware });
             setQtys(hardware.map(() => 0));
         }
         setLoading(false);
-    }, [projectId]);
+    }, [projectid]);
 
     useEffect(() => { load(); }, [load]);
 

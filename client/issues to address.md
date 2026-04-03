@@ -7,7 +7,7 @@ Derived from audit against the Technical Contract & Schema Reference and `app.py
 ## <span style="color:#7ec8e3">(Contract)</span> 1. Register is missing `email` field
 **Files:** `src/pages/SignupPage.js`, `src/Auth/apiCalls.js`, `server/app.py`
 
-`SignupPage` has no email input. The contract requires `{ userId, userName, email, password }` for register, and the `users` schema requires `emailId`. Neither the frontend form, `apiRegister`, nor `app.py /api/add_user` collects or stores email — so `emailId` is never populated in the DB.
+`SignupPage` has no email input. The contract requires `{ userid, userName, email, password }` for register, and the `users` schema requires `emailId`. Neither the frontend form, `apiRegister`, nor `app.py /api/add_user` collects or stores email — so `emailId` is never populated in the DB.
 
 **Fix:** Add email input to `SignupPage`, pass it through `apiRegister`, and update `app.py /api/add_user` to accept and store it.
 
@@ -34,16 +34,16 @@ Derived from audit against the Technical Contract & Schema Reference and `app.py
 ## <span style="color:#7ec8e3">(Contract)</span> 4. `ownerUserId` derived from wrong source
 **Files:** `src/Auth/apiCalls.js`, `src/pages/AllProjectsPage.js`
 
-`_fetchAllProjectsFull` sets `ownerUserId: p.users?.[0]`, assuming the first array element is the owner. This breaks the owner-detection logic in `AllProjectsPage` (`proj.ownerUserId === userId`), which determines whether a user sees a Delete or Leave button. Blocked on backend adding an explicit `ownerUserId` field to the `Projects` schema (see server TODO §11).
+`_fetchAllProjectsFull` sets `ownerUserId: p.users?.[0]`, assuming the first array element is the owner. This breaks the owner-detection logic in `AllProjectsPage` (`proj.ownerUserId === userid`), which determines whether a user sees a Delete or Leave button. Blocked on backend adding an explicit `ownerUserId` field to the `Projects` schema (see server TODO §11).
 
 ---
 
 ## <span style="color:#7ec8e3">(Contract)</span> 5. Creating a project with an empty description returns 400
 **Files:** `server/app.py` (line 226)
 
-`app.py /api/create_project` uses `if not all([projectName, projectId, description, userId])`. In Python, an empty string is falsy, so submitting `description: ""` triggers `400 Missing required fields`, even though the contract marks description as optional.
+`app.py /api/create_project` uses `if not all([projectName, projectid, description, userid])`. In Python, an empty string is falsy, so submitting `description: ""` triggers `400 Missing required fields`, even though the contract marks description as optional.
 
-**Fix (backend):** Change the validation to only check required fields: `if not all([projectName, projectId, userId])`.
+**Fix (backend):** Change the validation to only check required fields: `if not all([projectName, projectid, userid])`.
 
 ---
 
@@ -68,9 +68,9 @@ The contract specifies the login response as `{ token, userid, username }`. `app
 ## 8. `create_hardware_set` passes wrong number of arguments — TypeError crash
 **Files:** `server/app.py` (line 349), `server/hardwareDB.py`
 
-`app.py` calls `hardwareDB.createHardwareSet(client, hwName, qty, userId)` — 4 arguments. The function signature is `createHardwareSet(client, hwSetName, initCapacity)` — only 3. Every call to `/api/create_hardware_set` crashes with a `TypeError`.
+`app.py` calls `hardwareDB.createHardwareSet(client, hwName, qty, userid)` — 4 arguments. The function signature is `createHardwareSet(client, hwSetName, initCapacity)` — only 3. Every call to `/api/create_hardware_set` crashes with a `TypeError`.
 
-**Fix (backend):** Remove the `userId` argument from the call, or add it to the `hardwareDB.createHardwareSet` signature if ownership tracking is needed.
+**Fix (backend):** Remove the `userid` argument from the call, or add it to the `hardwareDB.createHardwareSet` signature if ownership tracking is needed.
 
 ---
 
@@ -86,7 +86,7 @@ The following routes exist in `app.py` under non-contract paths. Client is consi
 | `POST /api/users/forgot-password` | `POST /api/forgot_password` |
 | `POST /api/users/reset-password` | `POST /api/reset_password` |
 | `POST /api/projects/create` | `POST /api/create_project` |
-| `GET /api/projects/:projectId` | `POST /api/get_project_info` |
+| `GET /api/projects/:projectid` | `POST /api/get_project_info` |
 | `GET /api/projects/` | `POST /api/get_all_projects` + `POST /api/get_user_projects_list` |
 | `POST /api/projects/checkout` | `POST /api/check_out` |
 | `POST /api/projects/checkin` | `POST /api/check_in` |
