@@ -36,13 +36,12 @@ const LoginPage = () => {
       <div style={LoginStyle.loginBox}>
         <div style={LoginStyle.loginBody}>
           <img src="/logo.png" alt="5X HaaS Portal" style={LoginStyle.logo} />
-          <h1 style={LoginStyle.header}>Login</h1>
           <form onSubmit={handleLogin} style={LoginStyle.form}>
             <div style={LoginStyle.inputGroup}>
               <label>User ID</label>
               <input
                 type="text"
-                name="userId"
+                name="userid"
                 value={loginProps.userId}
                 onChange={handleChange}
                 style={LoginStyle.input}
@@ -62,7 +61,7 @@ const LoginPage = () => {
             >
               Forgot password?
             </span>
-            <button type="submit" style={LoginStyle.submitBtn}>Submit</button>
+            <button type="submit" style={LoginStyle.submitBtn}>Sign In</button>
           </form>
         </div>
 
