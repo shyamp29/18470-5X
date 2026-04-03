@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../Auth/authHandler";
 import LoginStyle from "../AppStyle/login";
 import '../styles/SignupPage.css';
+import PasswordInput from "../components/PasswordInput";
 
 const SignupPage = () => {
   const { register, goToLogin } = useAuth();
@@ -45,6 +46,8 @@ const SignupPage = () => {
       <div style={LoginStyle.topTrim}></div>
 
       <div style={LoginStyle.loginBox}>
+        <div style={LoginStyle.loginBody}>
+        <img src="/logo.png" alt="5X HaaS Portal" style={LoginStyle.logo} />
         <h1 style={LoginStyle.header}>New User Sign-in</h1>
 
         <form onSubmit={handleSignup} style={LoginStyle.form}>
@@ -74,26 +77,20 @@ const SignupPage = () => {
 
           <div style={LoginStyle.inputGroup}>
             <label>password</label>
-            <input
+            <PasswordInput
               name="password"
-              type="password"
               value={signupProps.password}
               onChange={handleChange}
-              style={LoginStyle.input}
-              required
             />
           </div>
 
           <div style={LoginStyle.inputGroup}>
             <label>confirm password</label>
-            <input
+            <PasswordInput
               name="confirmPassword"
-              type="password"
               value={signupProps.confirmPassword}
               onChange={handleChange}
               onBlur={handleConfirmPasswordBlur}
-              style={LoginStyle.input}
-              required
             />
             {passwordError && <span className="password-error">{passwordError}</span>}
           </div>
@@ -102,6 +99,7 @@ const SignupPage = () => {
             Create Account
           </button>
         </form>
+        </div>
 
         <div style={LoginStyle.footer}>
           <div

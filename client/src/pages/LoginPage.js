@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import LoginStyle from "../AppStyle/login";
 import { useAuth } from "../Auth/authHandler";
 import '../styles/LoginPage.css';
-import { ErrorPopup} from "../components/popupModular";
+import { ErrorPopup } from "../components/popups";
+import PasswordInput from "../components/PasswordInput";
 
 const LoginPage = () => {
   const { login, goToSignup, showForgotPassword } = useAuth();
   const [loginProps, setLoginProps] = useState({ userId: '', password: '' });
-  
+
   const [showErrPopup, setShowErrPopup] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -18,15 +19,6 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    /*
-    * IF both the password + userID field are empty
-    * DON't do anything
-    * IF only the password field is empty 
-    * DO send error message
-    * IF the userID + password is not in the account
-    * DO send error message
-    */
-
     if (!loginProps.userId && !loginProps.password) return;
     if (loginProps.userId && !loginProps.password) {
       setMessage("Password field cannot be empty.");
@@ -42,31 +34,37 @@ const LoginPage = () => {
     <div style={LoginStyle.container}>
       <div style={LoginStyle.topTrim}></div>
       <div style={LoginStyle.loginBox}>
-        <h1 style={LoginStyle.header}>Login</h1>
-
-        <form onSubmit={handleLogin} style={LoginStyle.form}>
-          <div style={LoginStyle.inputGroup}>
-            <label>User ID</label>
-            <input
-              type="text"
-              name="userId"
-              value={loginProps.userId}
-              onChange={handleChange}
-              style={LoginStyle.input}
-            />
-          </div>
-          <div style={LoginStyle.inputGroup}>
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={loginProps.password}
-              onChange={handleChange}
-              style={LoginStyle.input}
-            />
-          </div>
-          <button type="submit" style={LoginStyle.submitBtn}>Submit</button>
-        </form>
+        <div style={LoginStyle.loginBody}>
+          <img src="/logo.png" alt="5X HaaS Portal" style={LoginStyle.logo} />
+          <h1 style={LoginStyle.header}>Login</h1>
+          <form onSubmit={handleLogin} style={LoginStyle.form}>
+            <div style={LoginStyle.inputGroup}>
+              <label>User ID</label>
+              <input
+                type="text"
+                name="userId"
+                value={loginProps.userId}
+                onChange={handleChange}
+                style={LoginStyle.input}
+              />
+            </div>
+            <div style={LoginStyle.inputGroup}>
+              <label>Password</label>
+              <PasswordInput
+                name="password"
+                value={loginProps.password}
+                onChange={handleChange}
+              />
+            </div>
+            <span
+              style={{ ...LoginStyle.link, textAlign: "right", marginTop: "6px" }}
+              onClick={showForgotPassword}
+            >
+              Forgot password?
+            </span>
+            <button type="submit" style={LoginStyle.submitBtn}>Submit</button>
+          </form>
+        </div>
 
         <ErrorPopup
           showPopup={showErrPopup}
@@ -77,20 +75,10 @@ const LoginPage = () => {
         </ErrorPopup>
 
         <div style={LoginStyle.footer}>
-          <div style={LoginStyle.footerLeft}>
-            <p>New User?</p>
-            <span
-              style={LoginStyle.link}
-              onClick={goToSignup}
-            >
-              <strong>Sign-up</strong>
-            </span>
-          </div>
-          <div style={LoginStyle.footerRight}>
-            <p onClick={showForgotPassword} style={LoginStyle.link}>
-              Forgot password?
-            </p>
-          </div>
+          <span style={{ color: "var(--color-text-dark)" }}>New User?&nbsp;</span>
+          <span style={LoginStyle.link} onClick={goToSignup}>
+            <strong>Create an account</strong>
+          </span>
         </div>
       </div>
       <div style={LoginStyle.bottomTrim}></div>
