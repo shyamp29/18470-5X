@@ -110,13 +110,10 @@ const SignupPage = () => {
         </div>
 
         <div style={LoginStyle.footer}>
-          <div
-            style={LoginStyle.footerLeft}
-            onClick={handleRedirect}
-          >
-            <p>Already have an account?</p>
-            <p><strong>Login</strong></p>
-          </div>
+          <span style={{ color: "var(--color-text-dark)" }}>Already have an account?&nbsp;</span>
+          <span style={LoginStyle.link} onClick={handleRedirect}>
+            <strong>Login</strong>
+          </span>
         </div>
       </div>
 

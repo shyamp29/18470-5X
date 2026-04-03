@@ -74,8 +74,8 @@ const apiLogin = async ({ userid, password }) => {
 };
 
 // POST /api/users/register → { message }
-const apiRegister = async ({ userid, username, email, password }) => {
-    return post('/api/users/register', { userid, username, email, password });
+const apiRegister = async ({ userid, username, password }) => {
+    return post('/api/users/register', { userid, username, password });
 };
 
 // POST /api/users/logout  (Bearer token sent via header)
@@ -83,14 +83,9 @@ const apiLogout = async () => {
     return post('/api/users/logout');
 };
 
-// POST /api/users/forgotid → { message }  (sends userid to the given email)
-const apiForgotId = async ({ email }) => {
-    return post('/api/users/forgotid', { email });
-};
-
-// POST /api/users/forgotpassword → { message }  (sends reset link to email)
-const apiForgotPassword = async ({ email }) => {
-    return post('/api/users/forgotpassword', { email });
+// POST /api/users/forgotpassword → { message }
+const apiForgotPassword = async (payload) => {
+    return post('/api/users/forgotpassword', payload);
 };
 
 // POST /api/users/reset-password → { message }
