@@ -81,9 +81,9 @@ export async function openProject(page, projectId) {
  * and click Check Out.
  */
 export async function checkoutHW(page, hwRowIndex, qty) {
-  const qtyInputs = page.locator('input[type="number"]');
-  await qtyInputs.nth(hwRowIndex).fill(String(qty));
-  await page.locator('button:has-text("Check Out")').click();
+  const row = page.locator('table tbody tr').nth(hwRowIndex);
+  await row.locator('input[type="number"]').fill(String(qty));
+  await page.locator('button:has-text("Check Out")').first().click();
 }
 
 /**
@@ -91,9 +91,9 @@ export async function checkoutHW(page, hwRowIndex, qty) {
  * and click Check In.
  */
 export async function checkinHW(page, hwRowIndex, qty) {
-  const qtyInputs = page.locator('input[type="number"]');
-  await qtyInputs.nth(hwRowIndex).fill(String(qty));
-  await page.locator('button:has-text("Check In")').click();
+  const row = page.locator('table tbody tr').nth(hwRowIndex);
+  await row.locator('input[type="number"]').fill(String(qty));
+  await page.locator('button:has-text("Check In")').first().click();
 }
 
 /**

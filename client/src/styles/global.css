@@ -31,3 +31,19 @@
 /* ── Layout utilities ────────────────────────────────────────────────────── */
 .m-0       { margin: 0; }
 .align-end { align-self: flex-end; }
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
