@@ -33,7 +33,7 @@ const useProjectData = (projectId) => {
         setQtys(prev => prev.map((q, i) => i === idx ? Math.max(0, Number(value)) : q));
     };
 
-    return { data, loading, qtys, handleQtyChange, reload: load };
+    return { data, loading, qtys, handleQtyChange, reload: load, setData };
 };
 
 export default useProjectData;
