@@ -26,7 +26,6 @@
 .text-error  { color: var(--color-danger); font-size: var(--font-size-sm); }
 
 /* ── Input state ─────────────────────────────────────────────────────────── */
-/* Applied conditionally when a field has a validation error. */
 .input-error { border-color: var(--color-danger) !important; }
 
 /* ── Layout utilities ────────────────────────────────────────────────────── */

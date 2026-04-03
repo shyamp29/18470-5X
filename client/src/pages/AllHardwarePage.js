@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { apiFetchAllHardware } from "../Auth/apiCalls.js";
-import UserProfileStyle from "../AppStyle/userProfile.js";
 import '../styles/AllHardwarePage.css';
 
 const AllHardwarePage = ({ onBack }) => {
@@ -18,34 +17,35 @@ const AllHardwarePage = ({ onBack }) => {
     }, []);
 
     return (
-        <div style={UserProfileStyle.profileBox}>
-            <button style={UserProfileStyle.backBtnStyle} onClick={onBack}>← Back</button>
-            <h2 style={UserProfileStyle.pageHeading}>All Hardware List</h2>
+        <>
+            <button className="back-btn-filled" onClick={onBack}>← Back to Home</button>
+            <h2 className="projects-page-title">ALL HARDWARE</h2>
 
             {loading ? (
-                <p>Loading...</p>
+                <p style={{ color: 'var(--color-text-muted)' }}>Loading...</p>
             ) : !data ? (
-                <p>Failed to load hardware.</p>
+                <p style={{ color: 'var(--color-text-muted)' }}>Failed to load hardware.</p>
             ) : (
                 data.map((hw) => (
-                    <div key={hw.setname} className="hw-set-item">
-                        <h4
+                    <div key={hw.setname} className="project-card hw-set-item">
+                        <div
                             className="hw-set-toggle"
                             onClick={() => setExpandedId(expandedId === hw.setname ? null : hw.setname)}
                         >
-                            {hw.setname} {expandedId === hw.setname ? '▲' : '▼'}
-                        </h4>
+                            <span className="project-card-name">{hw.setname}</span>
+                            <span className="hw-chevron">{expandedId === hw.setname ? '▲' : '▼'}</span>
+                        </div>
 
                         {expandedId === hw.setname && (
-                            <table style={UserProfileStyle.table} className="hw-detail-table">
+                            <table className="hw-detail-table">
                                 <tbody>
                                 <tr>
-                                    <th style={UserProfileStyle.th} className="col-half">Capacity</th>
-                                    <td style={UserProfileStyle.td}>{hw.capacity}</td>
+                                    <th className="hw-th">Capacity</th>
+                                    <td className="hw-td">{hw.capacity}</td>
                                 </tr>
                                 <tr>
-                                    <th style={UserProfileStyle.th}>Availability</th>
-                                    <td style={UserProfileStyle.td}>{hw.availability}</td>
+                                    <th className="hw-th">Availability</th>
+                                    <td className="hw-td">{hw.availability}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -53,7 +53,7 @@ const AllHardwarePage = ({ onBack }) => {
                     </div>
                 ))
             )}
-        </div>
+        </>
     );
 };
 export default AllHardwarePage;
