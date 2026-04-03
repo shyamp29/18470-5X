@@ -1,0 +1,4 @@
+flask>=2.0.0
+pymongo>=4.0.0
+python-dotenv>=1.0.0
+werkzeug>=2.0.0
