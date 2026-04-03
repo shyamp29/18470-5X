@@ -6,6 +6,7 @@ const ProjectInfoStyle = {
         maxWidth: '800px',
         width: '90%',
         margin: '60px auto',
+        color: 'var(--color-text-primary)',
     },
     headerRow: {
         display: 'flex',

@@ -231,6 +231,7 @@ const UserProfileStyle = {
     pageHeading: {
         textAlign: 'center',
         textDecoration: 'underline',
+        color: 'var(--color-text-primary)',
     },
     table: {
         width: '100%',
