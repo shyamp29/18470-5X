@@ -55,7 +55,6 @@ const LoginStyle = {
     display: "block",
     margin: "0 auto 10px auto",
     width: "120px",
-    mixBlendMode: "multiply",
   },
 
   header: {
