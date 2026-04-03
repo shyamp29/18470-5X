@@ -71,7 +71,7 @@ const AuthProvider = ({ children }) => {
         await withLoading(async () => {
             const [response] = await Promise.all([apiRegister(payload), minWait()]);
             if (response.status === 200) {
-                setSuccessInfo({ show: true, msg: "User added successfully, Please login" });
+                setSuccessInfo({ show: true, msg: "User added successfully, Please sign-in" });
             } else {
                 showError(response.message ?? "Registration failed. Please try again.");
             }
@@ -123,7 +123,7 @@ const AuthProvider = ({ children }) => {
                 showPopup={successInfo.show}
                 message={successInfo.msg}
                 title="New User Sign-up"
-                btnLabel="Go to Login"
+                btnLabel="Sign In"
                 onClose={() => { setSuccessInfo({ show: false, msg: "" }); navigate(APP_ROUTES.LOGIN); }}
             />
             <ErrorPopup

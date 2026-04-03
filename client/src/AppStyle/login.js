@@ -97,6 +97,15 @@ const LoginStyle = {
     cursor: "pointer",
     fontSize: "var(--font-size-lg)",
     fontWeight: "var(--font-weight-bold)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+
+  submitBtnArrow: {
+    position: "absolute",
+    right: "50px",
   },
 
   footer: {

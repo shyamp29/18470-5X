@@ -7,6 +7,7 @@ const PopupStyles = {
         width: '100%', height: '100%',
         backgroundColor: 'var(--color-overlay-dark)',
         backdropFilter: 'blur(2px)',
+        borderRadius: 'var(--radius-xl)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -24,6 +25,7 @@ const PopupStyles = {
     },
     loadingContent: {
         backgroundColor: 'var(--color-primary-tint)',
+        borderRadius: 'var(--radius-lg)',
     },
 
     // ── Chrome ────────────────────────────────────────────────────────────────
@@ -68,10 +70,18 @@ const PopupStyles = {
         backgroundColor: 'var(--color-primary)',
         color: '#ffffff',
         border: 'none',
-        borderRadius: 'var(--radius-md)',
+        borderRadius: 'var(--radius-xl)',
         cursor: 'pointer',
         fontSize: 'var(--font-size-base)',
         fontWeight: 'var(--font-weight-bold)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    actionBtnArrow: {
+        position: 'absolute',
+        right: '50px',
     },
 
     // ── Form (ForgetPopup) ────────────────────────────────────────────────────
@@ -105,7 +115,6 @@ const PopupStyles = {
         height: '20px',
     },
 
-    // ── Loading ───────────────────────────────────────────────────────────────
     animatedDots: {
         textAlign: 'left',
         display: 'inline-block',

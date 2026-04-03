@@ -61,7 +61,10 @@ const LoginPage = () => {
             >
               Forgot password?
             </span>
-            <button type="submit" style={LoginStyle.submitBtn}>Sign In</button>
+            <button type="submit" style={LoginStyle.submitBtn}>
+              Sign In
+              <span style={LoginStyle.submitBtnArrow}>→</span>
+            </button>
           </form>
         </div>
 

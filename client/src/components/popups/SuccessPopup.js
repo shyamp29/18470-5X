@@ -9,7 +9,10 @@ const SuccessPopup = ({ showPopup, message, onClose, title = "Success", btnLabel
                 <button onClick={onClose} style={PopupStyles.closeBtn}>&times;</button>
                 <h2 style={PopupStyles.title}>{title}</h2>
                 <p style={PopupStyles.description}>{message}</p>
-                <button onClick={onClose} style={PopupStyles.actionBtn}>{btnLabel}</button>
+                <button onClick={onClose} style={PopupStyles.actionBtn}>
+                    {btnLabel}
+                    <span style={PopupStyles.actionBtnArrow}>{"\u2192"}</span>
+                </button>
             </div>
         </div>
     );
