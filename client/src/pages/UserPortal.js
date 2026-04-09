@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import UserProfileStyle from "../AppStyle/userProfile";
 import '../styles/UserPortal.css';
 import {useAuth} from '../Auth/authHandler';
@@ -40,20 +40,24 @@ const UserPortal = () => {
     const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
 
 
+    const fetchProjects = useCallback(async () => {
+        setIsLoadingProjects(true);
+        try {
+            const response = await apiFetchUserProjects();
+            if (response.status === 200) setUserProjects(response.projectslist ?? []);
+        } catch (error) {
+            console.error("Failed to fetch projects", error);
+        } finally {
+            setIsLoadingProjects(false);
+        }
+    }, []);
+
+    useEffect(() => { fetchProjects(); }, [user, fetchProjects]);
+
+    // Re-fetch project list whenever the user returns to the dashboard
     useEffect(() => {
-        const fetchProjects = async () => {
-            setIsLoadingProjects(true);
-            try {
-                const response = await apiFetchUserProjects();
-                if (response.status === 200) setUserProjects(response.projectslist ?? []);
-            } catch (error) {
-                console.error("Failed to fetch projects", error);
-            } finally {
-                setIsLoadingProjects(false);
-            }
-        };
-        fetchProjects();
-    }, [user]);
+        if (currentView === VIEWS.DASHBOARD) fetchProjects();
+    }, [currentView, fetchProjects]);
 
     const filteredProjects = projectSearch.length >= 2
         ? userProjects.filter(proj =>
@@ -258,7 +262,13 @@ const UserPortal = () => {
                                 <span className="project-id-error">Project ID already exists.</span>
                             )}
                             <button
-                                style={UserProfileStyle.submitBtn}
+                                style={{
+                                    ...UserProfileStyle.submitBtn,
+                                    ...((isCreatingProject || projectIdTaken) && {
+                                        backgroundColor: 'var(--color-disabled)',
+                                        cursor: 'not-allowed',
+                                    }),
+                                }}
                                 className="align-end"
                                 onClick={handleCreateProject}
                                 disabled={isCreatingProject || projectIdTaken}

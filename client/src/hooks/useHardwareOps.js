@@ -82,7 +82,8 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
 
     const handleCheckout = async (hwIndex) => {
         const hw = data?.hardware?.[hwIndex];
-        const qty = Math.min(qtys[hwIndex] || 0, hw?.availability || 0);
+        const requested = qtys[hwIndex] || 0;
+        const qty = Math.min(requested, hw?.availability || 0);
         if (!hw || qty <= 0) {
             onError("No available hardware unit to check out.");
             return;
@@ -108,14 +109,13 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
             }));
         }
 
-        if (res.status === 200) {
+        if (res.status === 200 && requested <= qty) {
             onSuccess([`${hw.setname} checked out ${checkedOut}`]);
-        } else if (res.status === 206) {
-            const notChecked = qty - checkedOut;
-            onSuccess([`${hw.setname} checked out ${checkedOut}. Unable to check out ${notChecked}. ${res.message ?? ''}`.trim()]);
+        } else if (res.status === 200 || res.status === 206) {
+            onSuccess([`${hw.setname} couldn't check out ${requested}, checked out ${checkedOut}`]);
         } else {
             const errMsg = res.message || "Unknown error.";
-            onError(`${hw.setname} checked out 0. Unable to check out ${qty}. ${errMsg}`);
+            onError(`${hw.setname} checked out 0. Unable to check out ${requested}. ${errMsg}`);
         }
     };
 
