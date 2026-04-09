@@ -2,6 +2,7 @@
 from bson.objectid import ObjectId
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from pymongo import MongoClient
 
 # Import custom modules for database interactions
@@ -31,6 +32,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:5173"], async_mode="eventlet")
 
 
 def lowercase_project(project):
@@ -273,6 +275,7 @@ def check_out():
 
     # Return a JSON response
     if success and error == -1:
+        socketio.emit("hardware_update", {"setname": hwSetName.lower(), "availability": newAvailability})
         return (
             jsonify(
                 {
@@ -285,6 +288,7 @@ def check_out():
             206,
         )
     elif success:
+        socketio.emit("hardware_update", {"setname": hwSetName.lower(), "availability": newAvailability})
         return (
             jsonify(
                 {
@@ -323,6 +327,7 @@ def check_in():
 
     # Return a JSON response
     if success and error == -1:
+        socketio.emit("hardware_update", {"setname": hwSetName.lower(), "availability": newAvailability})
         return (
             jsonify(
                 {
@@ -335,6 +340,7 @@ def check_in():
             206,
         )
     elif success:
+        socketio.emit("hardware_update", {"setname": hwSetName.lower(), "availability": newAvailability})
         return (
             jsonify(
                 {
@@ -453,4 +459,4 @@ def add_capacity():
 
 # Main entry point for the application
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)
