@@ -168,7 +168,7 @@ const UserPortal = () => {
 
     if (currentView === VIEWS.PROJECT_INFO) {
         return (
-            <div style={UserProfileStyle.container}>
+            <div style={UserProfileStyle.container} className="portal-container">
                 <div style={UserProfileStyle.topTrim}></div>
                 <ProjectInfoPage projectid={activeProjectId} userid={user?.userid} onBack={goToDashboard}/>
                 <div style={UserProfileStyle.bottomTrim}></div>
@@ -177,7 +177,7 @@ const UserPortal = () => {
     }
 
     return (
-        <div style={UserProfileStyle.container}>
+        <div style={UserProfileStyle.container} className="portal-container">
             <div style={UserProfileStyle.topTrim}></div>
             <div style={UserProfileStyle.profileBox}>
                 {renderNavBar()}

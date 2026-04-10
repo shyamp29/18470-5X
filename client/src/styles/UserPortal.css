@@ -1,5 +1,12 @@
 @import './theme.css';
 
+/* Lock page scroll for portal — only the inner boxes scroll */
+html:has(.portal-container),
+body:has(.portal-container) {
+  overflow: hidden;
+  height: 100%;
+}
+
 .nav-title {
   margin: 0;
   color: var(--color-text-near-black);
@@ -41,7 +48,5 @@
 }
 
 .scroll-view {
-  overflow-y: auto;
-  max-height: calc(100vh - 220px);
   padding-right: 4px;
 }
