@@ -291,7 +291,10 @@ def get_project_info(projectid):
     if success:
         lp = lowercase_project(project)
         lp["ownerusername"] = usersDB.getUsernameById(client, lp["owneruserid"])
-        lp["members"] = [str(memberid) + ": " + str(usersDB.getUsernameById(client, str(memberid).strip())) for memberid in lp["members"]]
+        lp["members"] = [
+            f"{usersDB.getUsernameById(client, str(memberid).strip())} ({str(memberid).strip()})"
+            for memberid in lp["members"]
+        ]
         return jsonify({"message": message, "project": lp}), 200
     else:
         return jsonify({"message": message}), 404
