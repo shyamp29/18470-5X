@@ -31,9 +31,24 @@ app.secret_key = "encription_key"
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(
+    app,
+    supports_credentials=True,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173",
+                "https://localhost:5173",
+                "https://backend-xxtr.onrender.com",
+                "https://fivex-haas-rd6a.onrender.com",
+                r"https?://.*\.onrender\.com",
+            ]
+        }
+    },
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
 socketio = SocketIO(app, cors_allowed_origins=["http://localhost:5173"], async_mode="eventlet")
-
 
 def lowercase_project(project):
     if not project:
