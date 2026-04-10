@@ -155,20 +155,22 @@ const ProjectInfoPage = ({ projectid, userid, onBack }) => {
                                         />
                                     </td>
                                     <td style={UserProfileStyle.td}>
-                                        <button
-                                            style={{ ...ProjectInfoStyle.checkinBtn, marginRight: '4px' }}
-                                            onClick={() => handleCheckin(idx)}
-                                            disabled={busy}
-                                        >
-                                            Check In
-                                        </button>
-                                        <button
-                                            style={ProjectInfoStyle.checkoutBtn}
-                                            onClick={() => handleCheckout(idx)}
-                                            disabled={busy}
-                                        >
-                                            Check Out
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            <button
+                                                style={ProjectInfoStyle.checkinBtn}
+                                                onClick={() => handleCheckin(idx)}
+                                                disabled={busy}
+                                            >
+                                                Check In
+                                            </button>
+                                            <button
+                                                style={ProjectInfoStyle.checkoutBtn}
+                                                onClick={() => handleCheckout(idx)}
+                                                disabled={busy}
+                                            >
+                                                Check Out
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

@@ -9,6 +9,7 @@ from pymongo import MongoClient
 import usersDB
 import projectsDB
 import hardwareDB
+from health import health_bp
 
 import os
 from dotenv import load_dotenv
@@ -25,12 +26,16 @@ if not MONGODB_SERVER:
 
 client = MongoClient(MONGODB_SERVER)
 
-# Initialize a new Flask web application
+# Initialize a new Flask web application FIRST
 app = Flask(__name__)
 app.secret_key = "encription_key"
 app.config["SESSION_COOKIE_SAMESITE"] = "None"
 app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+# Now configure the app and register blueprints
+app.config["MONGO_CLIENT"] = client
+app.register_blueprint(health_bp)
 
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -85,47 +90,6 @@ def lowercase_hardware_set(hardware_set):
         "availability": hardware_set.get("availability"),
         "checkedoutby": hardware_set.get("checkedoutby", {}),
     }
-
-
-# Health check endpoint — used by Render and for manual diagnostics
-@app.route("/health", methods=["GET"])
-def health_check():
-    report = {}
-
-    # 1. MongoDB connectivity
-    try:
-        client.admin.command("ping")
-        report["mongo"] = "connected"
-    except Exception as e:
-        report["mongo"] = f"error: {e}"
-
-    # 2. Database name in use
-    db_name = os.getenv("DB_NAME")
-    report["db_name"] = db_name or "NOT SET"
-
-    # 3. Collection counts
-    if report["mongo"] == "connected" and db_name:
-        try:
-            db = client[db_name]
-            report["collections"] = {
-                "Users":    db.Users.count_documents({}),
-                "Projects": db.Projects.count_documents({}),
-                "Hardware": db.Hardware.count_documents({}),
-            }
-        except Exception as e:
-            report["collections"] = f"error: {e}"
-    else:
-        report["collections"] = "skipped"
-
-    # 4. Environment variables present (values hidden)
-    report["env"] = {
-        "MONGODB_URI": "set" if os.getenv("MONGODB_URI") else "MISSING",
-        "DB_NAME":     "set" if os.getenv("DB_NAME")     else "MISSING",
-        "FRONTEND_URL":"set" if os.getenv("FRONTEND_URL") else "MISSING",
-    }
-
-    report["status"] = "ok"
-    return jsonify(report), 200
 
 
 # Route for adding a new user
