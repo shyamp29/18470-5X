@@ -16,7 +16,7 @@ HardwareSet = {
 def createHardwareSet(client, hwSetName, capacity):
     # Create a new hardware set in the database
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
     if hardware_col.find_one({"setname": hwSetName}):
         return False, "Hardware set name already exists"
     else:
@@ -33,7 +33,7 @@ def createHardwareSet(client, hwSetName, capacity):
 def queryHardwareSet(client, hwSetName):
     # Query and return a hardware set from the database
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
     hardware_set = hardware_col.find_one({"setname": hwSetName})
     if not hardware_set:
         return False, "Hardware set not found", None
@@ -44,7 +44,7 @@ def queryHardwareSet(client, hwSetName):
 # Function to update the capacity of a hardware set
 def addCapacity(client, hwSetName, addCapacity):
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
     hardware_set = hardware_col.find_one({"setname": hwSetName})
     if not hardware_set:
         return False, "Hardware set not found"
@@ -61,7 +61,7 @@ def addCapacity(client, hwSetName, addCapacity):
 def requestSpace(client, hwSetName, qty, projectid):
     # Request a certain qty of hardware and update availability (reduces availability)
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
 
     # Atomically verify availability and update
     updated_hardware = hardware_col.find_one_and_update(
@@ -92,7 +92,7 @@ def requestSpace(client, hwSetName, qty, projectid):
 def returnSpace(client, hwSetName, qty, projectid):
     # Return hardware back to the set (increases availability)
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
 
     # Atomically verify they have enough checked out, and update
     query = {
@@ -128,7 +128,7 @@ def returnSpace(client, hwSetName, qty, projectid):
 def getAllHwInfo(client):
     # Get and return a list of all hardware set names
     db = client[os.getenv("DB_NAME")]
-    hardware_col = db.hardware
+    hardware_col = db.Hardware
     hardware_sets = list(hardware_col.find())
     hardware_sets_info = []
     if len(hardware_sets) == 0:

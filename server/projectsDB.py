@@ -91,7 +91,7 @@ def leaveProject(client, userid, projectid):
     # Add a project to the user's project list
     db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
-    users_col = db.users
+    users_col = db.Users
 
     project = projects_col.find_one({"projectid": projectid})
     if project:
@@ -112,7 +112,7 @@ def closeProject(client, userid, projectid):
     # Close a project in the database
     db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
-    users_col = db.users
+    users_col = db.Users
     project = projects_col.find_one({"projectid": projectid})
     if project:
         if userid != project['owneruserid']:

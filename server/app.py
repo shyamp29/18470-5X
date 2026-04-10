@@ -108,9 +108,9 @@ def health_check():
         try:
             db = client[db_name]
             report["collections"] = {
-                "users":    db.users.count_documents({}),
+                "Users":    db.Users.count_documents({}),
                 "Projects": db.Projects.count_documents({}),
-                "hardware": db.hardware.count_documents({}),
+                "Hardware": db.Hardware.count_documents({}),
             }
         except Exception as e:
             report["collections"] = f"error: {e}"
