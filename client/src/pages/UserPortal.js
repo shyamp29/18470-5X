@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import UserProfileStyle from "../AppStyle/userProfile";
 import '../styles/UserPortal.css';
 import {useAuth} from '../Auth/authHandler';
@@ -19,9 +20,26 @@ const VIEWS = {
 const UserPortal = () => {
     const {user, signout} = useAuth();
     const {theme, toggleTheme} = useTheme();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [currentView, setCurrentView] = useState(VIEWS.DASHBOARD);
-    const [activeProjectId, setActiveProjectId] = useState('');
+    // Derive current view and active project from URL
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+    const projectidParam = params.get('projectid');
+
+    const currentView = viewParam === 'hardware'                    ? VIEWS.ALL_HARDWARE
+        : viewParam === 'projects'                                  ? VIEWS.ALL_PROJECTS
+        : viewParam === 'project' && projectidParam                 ? VIEWS.PROJECT_INFO
+        : VIEWS.DASHBOARD;
+
+    const activeProjectId = projectidParam || '';
+
+    // Navigation helpers
+    const goToDashboard  = () => navigate('/profile');
+    const goToHardware   = () => navigate('/profile?view=hardware');
+    const goToProjects   = () => navigate('/profile?view=projects');
+    const goToProject    = (projectid) => navigate(`/profile?view=project&projectid=${encodeURIComponent(projectid)}`);
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -38,7 +56,6 @@ const UserPortal = () => {
     const projectidTaken = newProjectId.trim().length > 0 &&
         userProjects.some(p => p.projectid.toLowerCase() === newProjectId.trim().toLowerCase());
     const [successMsg, setSuccessMsg] = useState({show: false, msg: ""});
-
 
     const fetchProjects = useCallback(async () => {
         setIsLoadingProjects(true);
@@ -82,8 +99,7 @@ const UserPortal = () => {
             alert("Please select a Project ID first.");
             return;
         }
-        setActiveProjectId(selectedProjectId);
-        setCurrentView(VIEWS.PROJECT_INFO);
+        goToProject(selectedProjectId);
     };
 
     const handleCreateProject = async () => {
@@ -113,12 +129,6 @@ const UserPortal = () => {
         }
     };
 
-    const goToDashboard = () => setCurrentView(VIEWS.DASHBOARD);
-
-    const handleOpenProject = (projectid) => {
-        setActiveProjectId(projectid);
-        setCurrentView(VIEWS.PROJECT_INFO);
-    };
     const renderNavBar = () => (
         <div style={UserProfileStyle.navBar}>
             <h1 className="nav-title">Welcome {user?.username || '<Guest>'}</h1>
@@ -175,16 +185,10 @@ const UserPortal = () => {
                 {/* ── DASHBOARD ── */}
                 {currentView === VIEWS.DASHBOARD && (
                     <div className="dashboard-section">
-                        <button
-                            style={UserProfileStyle.menuLink}
-                            onClick={() => setCurrentView(VIEWS.ALL_PROJECTS)}
-                        >
+                        <button style={UserProfileStyle.menuLink} onClick={goToProjects}>
                             Get All Projects List
                         </button>
-                        <button
-                            style={UserProfileStyle.menuLink}
-                            onClick={() => setCurrentView(VIEWS.ALL_HARDWARE)}
-                        >
+                        <button style={UserProfileStyle.menuLink} onClick={goToHardware}>
                             Get All Hardware List
                         </button>
 
@@ -282,7 +286,7 @@ const UserPortal = () => {
                 {/* ── ALL PROJECTS PAGE ── */}
                 {currentView === VIEWS.ALL_PROJECTS && (
                     <div className="scroll-view">
-                        <AllProjectsPage userid={user?.userid} onBack={goToDashboard} onOpenProject={handleOpenProject}/>
+                        <AllProjectsPage userid={user?.userid} onBack={goToDashboard} onOpenProject={goToProject}/>
                     </div>
                 )}
 
@@ -292,7 +296,6 @@ const UserPortal = () => {
                         <AllHardwarePage onBack={goToDashboard}/>
                     </div>
                 )}
-
 
             </div>
 
