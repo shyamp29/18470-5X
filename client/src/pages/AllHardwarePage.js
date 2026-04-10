@@ -5,7 +5,7 @@ import '../styles/AllHardwarePage.css';
 const AllHardwarePage = ({ onBack }) => {
     const [data, setData]           = useState(null);
     const [loading, setLoading]     = useState(true);
-    const [expandedId, setExpandedId] = useState(null);
+    const [expandedIndex, setExpandedIndex] = useState(null);
 
     useEffect(() => {
         apiFetchAllHardware()
@@ -26,17 +26,17 @@ const AllHardwarePage = ({ onBack }) => {
             ) : !data ? (
                 <p style={{ color: 'var(--color-text-muted)' }}>Failed to load hardware.</p>
             ) : (
-                data.map((hw) => (
-                    <div key={hw.setname} className="project-card hw-set-item">
+                data.map((hw, index) => (
+                    <div key={hw.setname ?? index} className="project-card hw-set-item">
                         <div
                             className="hw-set-toggle"
-                            onClick={() => setExpandedId(expandedId === hw.setname ? null : hw.setname)}
+                            onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
                         >
                             <span className="project-card-name">{hw.setname}</span>
-                            <span className="hw-chevron">{expandedId === hw.setname ? '▲' : '▼'}</span>
+                            <span className="hw-chevron">{expandedIndex === index ? '▲' : '▼'}</span>
                         </div>
 
-                        {expandedId === hw.setname && (
+                        {expandedIndex === index && (
                             <table className="hw-detail-table">
                                 <tbody>
                                 <tr>

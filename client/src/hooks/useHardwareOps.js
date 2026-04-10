@@ -110,9 +110,9 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
         }
 
         if (res.status === 200 && requested <= qty) {
-            onSuccess([`${hw.setname} checked out ${checkedOut}`]);
+            onSuccess([`${hw.setname} checked out ${checkedout}`]);
         } else if (res.status === 200 || res.status === 206) {
-            onSuccess([`${hw.setname} couldn't check out ${requested}, checked out ${checkedOut}`]);
+            onSuccess([`${hw.setname} couldn't check out ${requested}, checked out ${checkedout}`]);
         } else {
             const errMsg = res.message || "Unknown error.";
             onError(`${hw.setname} checked out 0. Unable to check out ${requested}. ${errMsg}`);

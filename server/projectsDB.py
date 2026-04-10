@@ -114,17 +114,18 @@ def closeProject(client, userid, projectid):
     users_col = db.users
     project = projects_col.find_one({"projectid": projectid})
     if project:
-        if userid not in project['owneruserid']:
+        if userid != project['owneruserid']:
             return False, "User is not the owner of the project"
         else:
             if project['checkedout']:
                 for hwSetName, qty in project['checkedout'].items():
                     hardwareDB.returnSpace(client, hwSetName, qty, projectid)
-            users_col.update_one({"userid": userid}, {"$pull": {"projects": projectid}})
+            # Remove project from all members' lists
+            users_col.update_many({"userid": {"$in": project.get('members', [])}}, {"$pull": {"projects": projectid}})
             projects_col.delete_one({"projectid": projectid})
             return True, "Project closed successfully"
     else:
-        return False, "Project not found"   
+        return False, "Project not found"
 
 # Function to check out hardware for a project (take from pool → increase project allocation)
 def checkOutHW(client, projectid, hwSetName, qty, userid):

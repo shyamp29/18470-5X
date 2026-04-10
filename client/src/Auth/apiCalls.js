@@ -124,6 +124,16 @@ const apiJoinProject = async (projectid, userid) => {
     return post('/api/projects/add_user_to_project', { projectid, userid });
 };
 
+// POST /api/projects/leave_project → { message }
+const apiLeaveProject = async (projectid) => {
+    return post('/api/projects/leave_project', { projectid });
+};
+
+// POST /api/projects/close_project → { message }
+const apiDeleteProject = async (projectid) => {
+    return post('/api/projects/close_project', { projectid });
+};
+
 // POST /api/projects/checkout → { message, availability, checkedout, error }
 // 200 OK on full checkout; 206 Partial if qty > availability (error: -1).
 // projectid is read from the server session (set by GET /api/projects/:id).
@@ -171,6 +181,8 @@ export {
     apiFetchProjectInfo,
     apiCreateProject,
     apiJoinProject,
+    apiLeaveProject,
+    apiDeleteProject,
 
     // hardware
     apiFetchAllHardware,

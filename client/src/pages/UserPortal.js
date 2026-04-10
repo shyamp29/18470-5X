@@ -264,7 +264,7 @@ const UserPortal = () => {
                             <button
                                 style={{
                                     ...UserProfileStyle.submitBtn,
-                                    ...((isCreatingProject || projectIdTaken) && {
+                                    ...((isCreatingProject || projectidTaken) && {
                                         backgroundColor: 'var(--color-disabled)',
                                         cursor: 'not-allowed',
                                     }),

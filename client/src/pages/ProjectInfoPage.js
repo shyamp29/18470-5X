@@ -6,6 +6,7 @@ import UserProfileStyle from "../AppStyle/userProfile.js";
 import ProjectInfoStyle from "../AppStyle/projectInfo.js";
 import '../styles/global.css';
 import { ErrorPopup } from "../components/popups";
+import { apiLeaveProject, apiDeleteProject } from "../Auth/apiCalls";
 
 const ProjectInfoPage = ({ projectid, userid, onBack }) => {
     const [successMessages, setSuccessMessages] = useState([]);
@@ -40,12 +41,37 @@ const ProjectInfoPage = ({ projectid, userid, onBack }) => {
         return () => clearInterval(interval);
     }, []);
 
+    const [actionBusy, setActionBusy] = useState(false);
     const { data, loading, qtys, handleQtyChange, reload, setData } = useProjectData(projectid);
     const { busy, handleCheckout, handleCheckin } = useHardwareOps(
         data, qtys, reload, showSuccess, showError, setData
-
     );
     const isOwner = data && data.owneruserid === userid;
+
+    const handleLeaveOrDelete = async () => {
+        const action = isOwner ? 'delete' : 'leave';
+        const confirmed = window.confirm(
+            isOwner
+                ? `Delete project "${data.name}"? This will check in all hardware and remove it for all members.`
+                : `Leave project "${data.name}"?`
+        );
+        if (!confirmed) return;
+        setActionBusy(true);
+        try {
+            const res = isOwner
+                ? await apiDeleteProject(projectid)
+                : await apiLeaveProject(projectid);
+            if (res.status === 200) {
+                onBack();
+            } else {
+                showError(res.message || `Failed to ${action} project.`);
+            }
+        } catch {
+            showError(`An unexpected error occurred while trying to ${action} the project.`);
+        } finally {
+            setActionBusy(false);
+        }
+    };
 
     return (
         <div style={ProjectInfoStyle.pageBox}>
@@ -54,8 +80,8 @@ const ProjectInfoPage = ({ projectid, userid, onBack }) => {
                 {data && (
                     <button
                         className={`btn-action ${isOwner ? 'btn-action--danger' : 'btn-action--neutral'}`}
-                        disabled
-                        title="Not yet implemented — pending backend support"
+                        onClick={handleLeaveOrDelete}
+                        disabled={actionBusy || busy}
                     >
                         {isOwner ? 'Delete Project' : 'Leave Project'}
                     </button>

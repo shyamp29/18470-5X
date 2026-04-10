@@ -8,7 +8,7 @@ const useProjectData = (projectid) => {
     const [qtys, setQtys] = useState([]);
 
     const load = useCallback(async () => {
-        if (!projectId) return;
+        if (!projectid) return;
         setLoading(true);
         const [projRes, hwRes] = await Promise.all([
             apiFetchProjectInfo(projectid),
@@ -35,7 +35,7 @@ const useProjectData = (projectid) => {
 
     // Listen for server-pushed hardware updates and patch local state
     useEffect(() => {
-        if (!projectId) return;
+        if (!projectid) return;
 
         const handleHardwareUpdate = ({ setname, availability }) => {
             setData(prev => {
@@ -53,7 +53,7 @@ const useProjectData = (projectid) => {
 
         socket.on('hardware_update', handleHardwareUpdate);
         return () => { socket.off('hardware_update', handleHardwareUpdate); };
-    }, [projectId]);
+    }, [projectid]);
 
     const handleQtyChange = (idx, value) => {
         setQtys(prev => prev.map((q, i) => i === idx ? Math.max(0, Number(value)) : q));

@@ -63,6 +63,8 @@ def login(client, userid, password):
         return False, "userid does not exist\nPlease check and try again", None, None
         
     # 2. Check if the provided passwordhash matches the stored hash
+    if not user.get('passwordhash'):
+        return False, "Invalid credentials.", None, None
     if check_password_hash(user['passwordhash'], password):
         return True, f"{user['username']} logged in successfully", user["userid"], user["username"]
     else:
@@ -145,9 +147,6 @@ def getUserProjectsList(client, userid):
             success, msg, project_data = projectsDB.queryProject(client, projectid)
             if success and project_data:
                 projectsList.append(project_data)
-    else:
-        is_admin = user.get('isAdmin', False)
-        return True, "User found", is_admin
     return True, "Projects fetched successfully", projectsList
 
 # Function to check if a user is an admin
