@@ -4,10 +4,10 @@ from pymongo import MongoClient, ReturnDocument
 '''
 Structure of Hardware Set entry:
 HardwareSet = {
-    'setName': hwSetName,
+    'setname': hwSetName,
     'capacity': initCapacity,
     'availability': initCapacity
-    'checkedOutBy': {projectId: qty, ...}
+    'checkedoutby': {projectid: qty, ...}
 }
 '''
 
@@ -16,14 +16,14 @@ def createHardwareSet(client, hwSetName, capacity):
     # Create a new hardware set in the database
     db = client.myapp_database
     hardware_col = db.hardware
-    if hardware_col.find_one({"setName": hwSetName}):
+    if hardware_col.find_one({"setname": hwSetName}):
         return False, "Hardware set name already exists"
     else:
         new_hardware_set = {
-            'setName': hwSetName,
+            'setname': hwSetName,
             'capacity': capacity,
             'availability': capacity,
-            'checkedOutBy': {}
+            'checkedoutby': {}
         }
         hardware_col.insert_one(new_hardware_set)
         return True, "Hardware set created successfully"
@@ -33,7 +33,7 @@ def queryHardwareSet(client, hwSetName):
     # Query and return a hardware set from the database
     db = client.myapp_database
     hardware_col = db.hardware
-    hardware_set = hardware_col.find_one({"setName": hwSetName})
+    hardware_set = hardware_col.find_one({"setname": hwSetName})
     if not hardware_set:
         return False, "Hardware set not found", None
     else:
@@ -44,7 +44,7 @@ def queryHardwareSet(client, hwSetName):
 def addCapacity(client, hwSetName, addCapacity):
     db = client.myapp_database
     hardware_col = db.hardware
-    hardware_set = hardware_col.find_one({"setName": hwSetName})
+    hardware_set = hardware_col.find_one({"setname": hwSetName})
     if not hardware_set:
         return False, "Hardware set not found"
     else:
@@ -52,12 +52,12 @@ def addCapacity(client, hwSetName, addCapacity):
             return False, "Capacity must be positive"
         else:
             hardware_set['availability'] += addCapacity
-            hardware_col.update_one({"setName": hwSetName}, {"$inc": {"capacity": addCapacity, "availability": addCapacity}})
+            hardware_col.update_one({"setname": hwSetName}, {"$inc": {"capacity": addCapacity, "availability": addCapacity}})
             return True, "Hardware set capacity updated successfully"   
 
 
 # Function to request space from a hardware set
-def requestSpace(client, hwSetName, qty, projectId):
+def requestSpace(client, hwSetName, qty, projectid):
     # Request a certain qty of hardware and update availability (reduces availability)
     db = client.myapp_database
     hardware_col = db.hardware
@@ -65,13 +65,13 @@ def requestSpace(client, hwSetName, qty, projectId):
     # Atomically verify availability and update
     updated_hardware = hardware_col.find_one_and_update(
         {
-            "setName": hwSetName,
+            "setname": hwSetName,
             "availability": {"$gte": qty}  # only update if enough space
         },
         {
             "$inc": {
                 "availability": -qty,
-                f"checkedOutBy.{projectId}": qty
+                f"checkedoutby.{projectid}": qty
             }
         },
         return_document=ReturnDocument.AFTER
@@ -79,7 +79,7 @@ def requestSpace(client, hwSetName, qty, projectId):
 
     if not updated_hardware:
         # Check if it was NOT found because of availability or doesn't exist
-        hw_exists = hardware_col.find_one({"setName": hwSetName})
+        hw_exists = hardware_col.find_one({"setname": hwSetName})
         if not hw_exists:
             return False, "Hardware set not found", None, None, -1
         else:
@@ -88,15 +88,15 @@ def requestSpace(client, hwSetName, qty, projectId):
     return True, "Hardware space requested successfully", qty, updated_hardware['availability'], 0
 
 # Function to return space to a hardware set
-def returnSpace(client, hwSetName, qty, projectId):
+def returnSpace(client, hwSetName, qty, projectid):
     # Return hardware back to the set (increases availability)
     db = client.myapp_database
     hardware_col = db.hardware
 
     # Atomically verify they have enough checked out, and update
     query = {
-        "setName": hwSetName,
-        f"checkedOutBy.{projectId}": {"$gte": qty}
+        "setname": hwSetName,
+        f"checkedoutby.{projectid}": {"$gte": qty}
     }
 
     updated_hardware = hardware_col.find_one_and_update(
@@ -104,22 +104,22 @@ def returnSpace(client, hwSetName, qty, projectId):
         {
             "$inc": {
                 "availability": qty,
-                f"checkedOutBy.{projectId}": -qty
+                f"checkedoutby.{projectid}": -qty
             }
         },
         return_document=ReturnDocument.AFTER
     )
 
     if not updated_hardware:
-        hw_exists = hardware_col.find_one({"setName": hwSetName})
+        hw_exists = hardware_col.find_one({"setname": hwSetName})
         if not hw_exists:
             return False, "Hardware set not found", None, None, -1
         else:
             return False, "Hardware space return calculation error (returning more than checked out)", None, None, -1
 
-    # Optional cleanup if checkedOutBy is 0
-    if updated_hardware['checkedOutBy'].get(projectId, 0) <= 0:
-        hardware_col.update_one({"setName": hwSetName}, {"$unset": {f"checkedOutBy.{projectId}": ""}})
+    # Optional cleanup if checkedoutby is 0
+    if updated_hardware['checkedoutby'].get(projectid, 0) <= 0:
+        hardware_col.update_one({"setname": hwSetName}, {"$unset": {f"checkedoutby.{projectid}": ""}})
 
     return True, "Hardware space returned successfully", qty, updated_hardware['availability'] 
 

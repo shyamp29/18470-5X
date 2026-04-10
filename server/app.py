@@ -55,14 +55,14 @@ def lowercase_project(project):
         return project
     return {
         "_id": project.get("_id"),
-        "projectid": project.get("projectId"),
+        "projectid": project.get("projectid"),
         "name": project.get("name"),
         "description": project.get("description"),
-        "owneruserid": project.get("ownerUserid"),
-        "checkedout": project.get("checkedOut", {}),
+        "owneruserid": project.get("owneruserid"),
+        "checkedout": project.get("checkedout", {}),
         "members": project.get("members", []),
-        "createdat": project.get("createdAt"),
-        "updatedat": project.get("updatedAt"),
+        "createdat": project.get("createdat"),
+        "updatedat": project.get("updatedat"),
     }
 
 
@@ -71,10 +71,10 @@ def lowercase_hardware_set(hardware_set):
         return hardware_set
     return {
         "_id": hardware_set.get("_id"),
-        "setname": hardware_set.get("setName"),
+        "setname": hardware_set.get("setname"),
         "capacity": hardware_set.get("capacity"),
         "availability": hardware_set.get("availability"),
-        "checkedoutby": hardware_set.get("checkedOutBy", {}),
+        "checkedoutby": hardware_set.get("checkedoutby", {}),
     }
 
 
@@ -96,7 +96,7 @@ def add_user():
     # Attempt to add the user using the usersDB module
     success, message = usersDB.register(client, username, userid, password)
 
-    # Return a JdON response
+    # Return a JSON response
     if success:
         return jsonify({"message": message}), 200
     else:
@@ -159,6 +159,45 @@ def reset_password():
     else:
         return jsonify({"message": message}), 409
 
+@app.route("/api/users/verify", methods=["POST"])
+def verify_user():
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Invalid JSON data"}), 400
+
+    userid = data.get("userid")
+    username = data.get("username")
+
+    if not all([userid, username]):
+        return jsonify({"message": "Missing required fields"}), 401
+
+    # Attempt to verify the user
+    success, message = usersDB.verifyUser(client, userid, username)
+
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"message": message}), 409
+
+@app.route("/api/users/change-password", methods=["POST"])
+def change_password():
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Invalid JSON data"}), 400
+
+    userid = session.get("userid")
+    password = data.get("password")
+
+    if not all([userid, password]):
+        return jsonify({"message": "Missing required fields"}), 401
+
+    # Attempt to change the password
+    success, message = usersDB.changePassword(client, userid, password)
+
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"message": message}), 409
 
 # Route for getting the list of user projects
 @app.route("/api/projects/", methods=["GET"])
@@ -192,21 +231,21 @@ def create_project():
         return jsonify({"message": "Invalid JSON data"}), 400
 
     name = data.get("name")
-    projectId = data.get("projectId")
+    projectid = data.get("projectid")
     description = data.get("description")
     userid = session.get("userid")
 
-    if not all([name, projectId, description, userid]):
+    if not all([name, projectid, description, userid]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to add the project using the projectsDB module
-    success, message, projectId, name = projectsDB.createProject(
-        client, name, projectId, description, userid
+    success, message, projectid, name = projectsDB.createProject(
+        client, name, projectid, description, userid
     )
 
     # Return a JSON response
     if success:
-        return jsonify({"message": message, "projectid": projectId, "name": name}), 200
+        return jsonify({"message": message, "projectid": projectid, "name": name}), 200
     else:
         return jsonify({"message": message}), 409
 
@@ -225,19 +264,20 @@ def get_all_projects():
 
 
 # Route for getting project information
-@app.route("/api/projects/<projectId>", methods=["GET"])
-def get_project_info(projectId):
+@app.route("/api/projects/<projectid>", methods=["GET"])
+def get_project_info(projectid):
     userid = session.get("userid")
-    session["projectId"] = projectId
+    session["projectid"] = projectid
 
-    if not all([projectId, userid]):
+    if not all([projectid, userid]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to get the project information using the projectsDB module
-    success, message, project = projectsDB.queryProject(client, projectId)
+    success, message, project = projectsDB.queryProject(client, projectid)
     if success:
         lp = lowercase_project(project)
         lp["ownerusername"] = usersDB.getUsernameById(client, lp["owneruserid"])
+        lp["members"] = [str(memberid) + ": " + str(usersDB.getUsernameById(client, str(memberid).strip())) for memberid in lp["members"]]
         return jsonify({"message": message, "project": lp}), 200
     else:
         return jsonify({"message": message}), 404
@@ -250,15 +290,60 @@ def add_user_to_project():
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    projectId = data.get("projectId")
+    projectid = data.get("projectid")
     newUserId = data.get("userid")
     requesterId = session.get("userid")
 
-    if not all([projectId, newUserId, requesterId]):
+    if not all([projectid, newUserId, requesterId]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to add the user to the project using the projectsDB module
-    success, message, _, _ = projectsDB.addUser(client, projectId, requesterId, newUserId)
+    success, message, _, _ = projectsDB.addUser(client, projectid, requesterId, newUserId)
+
+    # Return a JSON response
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"message": message}), 404
+
+
+@app.route("/api/projects/close_project", methods=["POST"])
+def close_project():
+    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Invalid JSON data"}), 400
+
+    projectid = data.get('projectid')
+    userid = session.get('userid')
+
+    if not all([projectid, userid]):
+        return jsonify({"message": "Missing required fields"}), 401
+
+    # Attempt to close the project using the projectsDB module
+    success, message = projectsDB.closeProject(client, userid, projectid)
+
+    # Return a JSON response
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"message": message}), 404
+
+@app.route("/api/projects/leave_project", methods=["POST"])
+def leave_project():
+    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Invalid JSON data"}), 400
+
+    projectid = data.get('projectid')
+    userid = session.get('userid')
+
+    if not all([projectid, userid]):
+        return jsonify({"message": "Missing required fields"}), 401
+
+    # Attempt to leave the project using the projectsDB module
+    success, message = projectsDB.leaveProject(client, userid, projectid)
 
     # Return a JSON response
     if success:
@@ -275,17 +360,17 @@ def check_out():
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    projectId = session.get("projectId")
-    hwSetName = data.get("setName")
+    projectid = session.get("projectid")
+    hwSetName = data.get("setname")
     qty = data.get("qty")
     userid = session.get("userid")
 
-    if not all([projectId, hwSetName, qty, userid]):
+    if not all([projectid, hwSetName, qty, userid]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to check out the hardware using the projectsDB module
-    success, message, checkedOutQty, newAvailability, error = projectsDB.checkOutHW(
-        client, projectId, hwSetName, qty, userid
+    success, message, checkedoutQty, newAvailability, error = projectsDB.checkOutHW(
+        client, projectid, hwSetName, qty, userid
     )
 
     # Return a JSON response
@@ -295,7 +380,7 @@ def check_out():
             jsonify(
                 {
                     "message": message,
-                    "checkedout": checkedOutQty,
+                    "checkedout": checkedoutQty,
                     "availability": newAvailability,
                     "error": error,
                 }
@@ -308,7 +393,7 @@ def check_out():
             jsonify(
                 {
                     "message": message,
-                    "checkedout": checkedOutQty,
+                    "checkedout": checkedoutQty,
                     "availability": newAvailability,
                     "error": error,
                 }
@@ -327,17 +412,17 @@ def check_in():
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    projectId = session.get("projectId")
-    hwSetName = data.get("setName")
+    projectid = session.get("projectid")
+    hwSetName = data.get("setname")
     qty = data.get("qty")
     userid = session.get("userid")
 
-    if not all([projectId, hwSetName, qty, userid]):
+    if not all([projectid, hwSetName, qty, userid]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to check in the hardware using the projectsDB module
     success, message, returnedQty, newAvailability, error = projectsDB.checkInHW(
-        client, projectId, hwSetName, qty, userid
+        client, projectid, hwSetName, qty, userid
     )
 
     # Return a JSON response
@@ -379,15 +464,20 @@ def create_hardware_set():
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    setName = data.get("setName")
+    setname = data.get("setname")
     capacity = data.get("capacity")
     userid = session.get("userid")
 
-    if not all([setName, capacity, userid]):
+    if not all([setname, capacity, userid]):
         return jsonify({"message": "Missing required fields"}), 400
-
+    
+    # Check if user is an admin
+    success_check, message_check, is_admin = usersDB.isAdminUser(client, userid)
+    if not success_check or not is_admin:
+        return jsonify({"success": False, "message": "Admin privileges required to create hardware"}), 403
+    
     # Attempt to create the hardware set using the hardwareDB module
-    success, message = hardwareDB.createHardwareSet(client, setName, capacity)
+    success, message = hardwareDB.createHardwareSet(client, setname, capacity)
 
     # Return a JSON response
     if success:
@@ -396,19 +486,49 @@ def create_hardware_set():
         return jsonify({"message": message}), 400
 
 
+# Route for updating hardware capacity (scaling)
+@app.route('/update_hardware_capacity', methods=['POST'])
+def update_hardware_capacity():
+    # Extract data from request
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid JSON data"}), 400
+
+    hwName = data.get('hwName')
+    newCapacity = data.get('newCapacity')
+    userid = session.get('user_id')
+
+    if not all([hwName, newCapacity, userid]):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
+    
+    # Check if user is an admin
+    success_check, message_check, is_admin = usersDB.isAdminUser(client, userid)
+    if not success_check or not is_admin:
+        return jsonify({"success": False, "message": "Admin privileges required to update hardware"}), 403
+    
+    # Attempt to update the hardware capacity using the hardwareDB module
+    success, message = hardwareDB.updateCapacity(client, hwName, newCapacity)
+
+    # Return a JSON response
+    if success:
+        return jsonify({"success": True, "message": message}), 200
+    else:
+        return jsonify({"success": False, "message": message}), 400
+
+
 # Route for getting hardware information
-@app.route("/api/hardware/<setName>", methods=["GET"])
-def get_hw_info(setName):
+@app.route("/api/hardware/<setname>", methods=["GET"])
+def get_hw_info(setname):
     # Extract data from request
     data = request.get_json()
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    if not all([setName]):
+    if not all([setname]):
         return jsonify({"message": "Missing required fields"}), 401
 
     # Attempt to get hardware information using the hardwareDB module
-    success, message, hardwareSet = hardwareDB.queryHardwareSet(client, setName)
+    success, message, hardwareSet = hardwareDB.queryHardwareSet(client, setname)
 
     # Return a JSON response
     if success:
@@ -449,15 +569,15 @@ def add_capacity():
     if not data:
         return jsonify({"message": "Invalid JSON data"}), 400
 
-    setName = data.get("setName")
+    setname = data.get("setname")
     addCapacity = data.get("addCapacity")
     userid = session.get("userid")
 
-    if not all([setName, addCapacity, userid]):
+    if not all([setname, addCapacity, userid]):
         return jsonify({"message": "Missing required fields"}), 400
 
     # Attempt to add capacity to the hardware set using the hardwareDB module
-    success, message = hardwareDB.updateCapacity(client, setName, addCapacity)
+    success, message = hardwareDB.updateCapacity(client, setname, addCapacity)
 
     # Return a JSON response
     if success:

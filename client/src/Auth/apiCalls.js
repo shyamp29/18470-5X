@@ -46,18 +46,18 @@ const _parseResponse = async (res) => {
 
 const post = async (path, body = {}) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
-        method:      'POST',
-        headers:     _headers(),
+        method: 'POST',
+        headers: _headers(),
         credentials: 'include',
-        body:        JSON.stringify(body),
+        body: JSON.stringify(body),
     });
     return _parseResponse(res);
 };
 
 const get = async (path) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
-        method:      'GET',
-        headers:     _headers(),
+        method: 'GET',
+        headers: _headers(),
         credentials: 'include',
     });
     return _parseResponse(res);
@@ -109,33 +109,33 @@ const apiFetchAllProjects = async () => {
     return get('/api/projects/all');
 };
 
-// GET /api/projects/:projectId → { message, project: { ... } }
-const apiFetchProjectInfo = async (projectId) => {
-    return get(`/api/projects/${encodeURIComponent(projectId)}`);
+// GET /api/projects/:projectid → { message, project: { ... } }
+const apiFetchProjectInfo = async (projectid) => {
+    return get(`/api/projects/${encodeURIComponent(projectid)}`);
 };
 
 // POST /api/projects/create → { message, projectid, name }
-const apiCreateProject = async ({ projectId, name, description = '' }) => {
-    return post('/api/projects/create', { projectId, name, description });
+const apiCreateProject = async ({ projectid, name, description = '' }) => {
+    return post('/api/projects/create', { projectid, name, description });
 };
 
 // POST /api/projects/add_user_to_project → { message }
-const apiJoinProject = async (projectId, userid) => {
-    return post('/api/projects/add_user_to_project', { projectId, userid });
+const apiJoinProject = async (projectid, userid) => {
+    return post('/api/projects/add_user_to_project', { projectid, userid });
 };
 
 // POST /api/projects/checkout → { message, availability, checkedout, error }
 // 200 OK on full checkout; 206 Partial if qty > availability (error: -1).
-// projectId is read from the server session (set by GET /api/projects/:id).
-const apiCheckout = async ({ setName, qty }) => {
-    return post('/api/projects/checkout', { setName, qty });
+// projectid is read from the server session (set by GET /api/projects/:id).
+const apiCheckout = async ({ setname, qty }) => {
+    return post('/api/projects/checkout', { setname, qty });
 };
 
 // POST /api/projects/checkin → { message, availability, checkedin, error }
 // 206 Partial if qty > project's checkedout for that set (error: -1).
-// projectId is read from the server session (set by GET /api/projects/:id).
-const apiCheckin = async ({ setName, qty }) => {
-    return post('/api/projects/checkin', { setName, qty });
+// projectid is read from the server session (set by GET /api/projects/:id).
+const apiCheckin = async ({ setname, qty }) => {
+    return post('/api/projects/checkin', { setname, qty });
 };
 
 
@@ -148,9 +148,9 @@ const apiFetchAllHardware = async () => {
     return get('/api/hardware');
 };
 
-// GET /api/hardware/:setName → { message, hardwareset: { setname, capacity, availability, checkedoutby } }
-const apiFetchHardwareSet = async (setName) => {
-    return get(`/api/hardware/${encodeURIComponent(setName)}`);
+// GET /api/hardware/:setname → { message, hardwareset: { setname, capacity, availability, checkedoutby } }
+const apiFetchHardwareSet = async (setname) => {
+    return get(`/api/hardware/${encodeURIComponent(setname)}`);
 };
 
 

@@ -3,12 +3,12 @@ import { apiJoinProject } from '../Auth/apiCalls';
 import UserProfileStyle from '../AppStyle/userProfile';
 import ProjectInfoStyle from '../AppStyle/projectInfo';
 
-const AddUserForm = ({ projectId, onSuccess, onError }) => {
+const AddUserForm = ({ projectid, onSuccess, onError }) => {
     const [newUserId, setNewUserId] = useState('');
 
     const handleAddUser = async () => {
         if (!newUserId.trim()) return;
-        const res = await apiJoinProject(projectId, newUserId.trim());
+        const res = await apiJoinProject(projectid, newUserId.trim());
         if (res.status === 200) {
             onSuccess(`User "${newUserId.trim()}" added to project.`);
             setNewUserId('');

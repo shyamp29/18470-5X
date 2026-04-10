@@ -6,7 +6,7 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
 
     const handleCheckoutAll = async () => {
         const entries = (data?.hardware ?? [])
-            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.availability) }))
+            .map((hw, idx) => ({ setname: hw.setname, qty: Math.min(qtys[idx], hw.availability) }))
             .filter(e => e.qty > 0);
         if (entries.length === 0) {
             onError("Enter a quantity greater than 0 for at least one HW Set.");
@@ -16,19 +16,19 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
         const errors = [];
         const results = [];
 
-        for (const { setName, qty } of entries) {
-            const res = await apiCheckout({ setName, qty });
-            const checkedOut = Number(res.checkedout ?? qty);
+        for (const { setname, qty } of entries) {
+            const res = await apiCheckout({ setname, qty });
+            const checkedout = Number(res.checkedout ?? qty);
             if (res.status === 200) {
-                results.push(`${setName} checked out ${checkedOut}`);
+                results.push(`${setname} checked out ${checkedout}`);
             } else if (res.status === 206) {
-                const notChecked = qty - checkedOut;
+                const notChecked = qty - checkedout;
                 results.push(
-                    `${setName} checked out ${checkedOut}. Unable to check out ${notChecked}. ${res.message ?? ''}`.trim()
+                    `${setname} checked out ${checkedout}. Unable to check out ${notChecked}. ${res.message ?? ''}`.trim()
                 );
             } else {
                 const errMsg = res.message || "Unknown error.";
-                errors.push(`${setName} checked out 0. Unable to check out ${qty}. ${errMsg}`);
+                errors.push(`${setname} checked out 0. Unable to check out ${qty}. ${errMsg}`);
             }
         }
 
@@ -44,7 +44,7 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
 
     const handleCheckinAll = async () => {
         const entries = (data?.hardware ?? [])
-            .map((hw, idx) => ({ setName: hw.setname, qty: Math.min(qtys[idx], hw.allocated) }))
+            .map((hw, idx) => ({ setname: hw.setname, qty: Math.min(qtys[idx], hw.allocated) }))
             .filter(e => e.qty > 0);
         if (entries.length === 0) {
             onError("Checked in 0.");
@@ -54,19 +54,19 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
         const errors = [];
         const results = [];
 
-        for (const { setName, qty } of entries) {
-            const res = await apiCheckin({ setName, qty });
+        for (const { setname, qty } of entries) {
+            const res = await apiCheckin({ setname, qty });
             const checkedIn = Number(res.checkedin ?? qty);
             if (res.status === 200) {
-                results.push(`${setName} checked in ${checkedIn}`);
+                results.push(`${setname} checked in ${checkedIn}`);
             } else if (res.status === 206) {
                 const notChecked = qty - checkedIn;
                 results.push(
-                    `${setName} checked in ${checkedIn}. Unable to check in ${notChecked}. ${res.message ?? ''}`.trim()
+                    `${setname} checked in ${checkedIn}. Unable to check in ${notChecked}. ${res.message ?? ''}`.trim()
                 );
             } else {
                 const errMsg = res.message || "Unknown error.";
-                errors.push(`${setName} checked in 0. Unable to check in ${qty}. ${errMsg}`);
+                errors.push(`${setname} checked in 0. Unable to check in ${qty}. ${errMsg}`);
             }
         }
 
@@ -89,8 +89,8 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
             return;
         }
         setBusy(true);
-        const res = await apiCheckout({ setName: hw.setname, qty });
-        const checkedOut = Number(res.checkedout ?? qty);
+        const res = await apiCheckout({ setname: hw.setname, qty });
+        const checkedout = Number(res.checkedout ?? qty);
         setBusy(false);
 
         // Update local data instead of reloading
@@ -102,7 +102,7 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
                         ? {
                             ...h,
                             availability: Number(res.availability ?? h.availability),
-                            allocated: h.allocated + checkedOut
+                            allocated: h.allocated + checkedout
                         }
                         : h
                 )
@@ -127,10 +127,10 @@ const useHardwareOps = (data, qtys, reload, onSuccess, onError, setData) => {
             return;
         }
         setBusy(true);
-        const res = await apiCheckin({ setName: hw.setname, qty });
+        const res = await apiCheckin({ setname: hw.setname, qty });
         const checkedIn = Number(res.checkedin ?? qty);
         setBusy(false);
-       
+
         // Update local data instead of reloading
         if (setData && data) {
             setData(prevData => ({

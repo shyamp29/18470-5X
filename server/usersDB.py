@@ -3,11 +3,11 @@ import projectsDB
 
 '''
 Structure of User entry:
-User = {
+user = {
     'username': username,
     'userid': userid,
-    'passwordHash': passwordHash,
-    'createdAt': createdAt,
+    'passwordhash': passwordhash,
+    'createdat': createdat,
     'projects': [project1_ID, project2_ID, ...]
 }
 '''
@@ -29,9 +29,10 @@ def register(client, username, userid, password):
         new_user = {
             'username': username,
             'userid': userid,
-            'passwordHash': hashed_password,
-            'createdAt': datetime.now(),
-            'projects': []
+            'passwordhash': hashed_password,
+            'createdat': datetime.now(),
+            'projects': [],
+            'isAdmin': False
         }
         users_col.insert_one(new_user)
         return True, f"{username} registered successfully, Please login"
@@ -61,8 +62,8 @@ def login(client, userid, password):
     if not user:
         return False, "userid does not exist\nPlease check and try again", None, None
         
-    # 2. Check if the provided passwordHash matches the stored hash
-    if check_password_hash(user['passwordHash'], password):
+    # 2. Check if the provided passwordhash matches the stored hash
+    if check_password_hash(user['passwordhash'], password):
         return True, f"{user['username']} logged in successfully", user["userid"], user["username"]
     else:
         return False, "Incorrect password\nPlease check and try again", None, None
@@ -76,16 +77,36 @@ def resetPassword(client, userid, oldPassword, newPassword):
     if not user:
         return False, "User not found"
 
-    if check_password_hash(user['passwordHash'], oldPassword):    
-        # Hash the new passwordHash
+    if check_password_hash(user['passwordhash'], oldPassword):    
+        # Hash the new passwordhash
         new_hashed_password = generate_password_hash(newPassword)
         users_col.update_one(
         {"userid": userid}, # 1. Find the user with this ID
-        {"$set": {"passwordHash": new_hashed_password}})
+        {"$set": {"passwordhash": new_hashed_password}})
         return True, "password reset successful"
     else:
         return False, "Incorrect password\nPlease check and try again"
 
+def verifyUser(client, userid, username):
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userid": userid})
+    if not user:
+        return False, "User not found"
+    elif user['userid'] == userid and user['username'] == username:
+        return True, "User credentials match"
+    else:
+        return False, "userid and username do not match"
+
+def changePassword(client, userid, password):
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userid": userid})
+    if not user:
+        return False, "User not found"
+    else:
+        users_col.update_one({"userid": userid}, {"$set": {"passwordhash": generate_password_hash(password)}})
+        return True, "Password changed successfully"
 
 # Function to add a user to a project
 def joinProject(client, userid, projectid):
@@ -125,7 +146,32 @@ def getUserProjectsList(client, userid):
             if success and project_data:
                 projectsList.append(project_data)
     else:
-        return False, "No projects found", None
-    
-    return True, "Projects fetched successfully", projectsList 
+        is_admin = user.get('isAdmin', False)
+        return True, "User found", is_admin
+    return True, "Projects fetched successfully", projectsList
+
+# Function to check if a user is an admin
+def isAdminUser(client, userid):
+    # Check if the user has admin privileges
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userid": userid})
+    if not user:
+        return False, "User not found", False
+    else:
+        is_admin = user.get('isAdmin', False)
+        return True, "User found", is_admin
+
+# Function to set a user as admin
+def setAdminUser(client, userid, isAdminFlag):
+    # Set admin privileges for a user
+    db = client.myapp_database
+    users_col = db.users
+    user = users_col.find_one({"userid": userid})
+    if not user:
+        return False, "User not found"
+    else:
+        users_col.update_one({"userid": userid}, {"$set": {"isAdmin": isAdminFlag}})
+        status = "promoted to admin" if isAdminFlag else "removed from admin"
+        return True, f"User {status} successfully"
 

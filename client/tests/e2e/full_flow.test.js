@@ -7,7 +7,7 @@
  *  3.  Log in with wrong combination of userid/password
  *  4.  Create a new project (new project id)
  *  5.  Try creating a new project with existing project id
- *  6.  Add a member to an existing project with userId
+ *  6.  Add a member to an existing project with userid
  *  7.  Checkout hardware set 1
  *  8.  Checkout hardware set 2
  *  9.  See if available quantities are reduced
@@ -36,7 +36,7 @@ import { test, expect } from '@playwright/test';
 import {
   HW1, HW2,
   QTY_HW1_CHECKOUT, QTY_HW2_CHECKOUT,
-  QTY_HW1_CHECKIN,  QTY_HW2_CHECKIN,
+  QTY_HW1_CHECKIN, QTY_HW2_CHECKIN,
   QTY_OVER_CAPACITY,
 } from './testData.js';
 
@@ -56,11 +56,11 @@ test.describe('Full E2E Demo Flow', () => {
   // Per-browser user/project data — avoids collisions when all browsers run in parallel
   let USER_A, USER_B, PROJECT_A;
 
-  test.beforeAll(async ({}, testInfo) => {
-    const b   = testInfo.project.name.replace(/\s+/g, '_').toLowerCase();
+  test.beforeAll(async ({ }, testInfo) => {
+    const b = testInfo.project.name.replace(/\s+/g, '_').toLowerCase();
     const run = Date.now().toString(36); // unique per run — no cleanup needed
-    USER_A    = { username: `E2E User A`, userid: `e2e_a_${b}_${run}`,  password: 'testpass_A1!' };
-    USER_B    = { username: `TA User`,    userid: `e2e_b_${b}_${run}`,  password: 'tapass_B2!'  };
+    USER_A = { username: `E2E User A`, userid: `e2e_a_${b}_${run}`, password: 'testpass_A1!' };
+    USER_B = { username: `TA User`, userid: `e2e_b_${b}_${run}`, password: 'tapass_B2!' };
     PROJECT_A = { id: `E2EP-${b}-${run}`, name: `E2E Test Project Alpha`, description: 'Created by the automated E2E test suite' };
   });
 
@@ -121,7 +121,7 @@ test.describe('Full E2E Demo Flow', () => {
     await page.waitForTimeout(500);
 
     const btnDisabled = await page.locator('button:has-text("Create")').isDisabled();
-    const errVisible  = await page.locator('text=already exists').isVisible();
+    const errVisible = await page.locator('text=already exists').isVisible();
     expect(btnDisabled || errVisible).toBeTruthy();
   });
 
@@ -301,7 +301,7 @@ test.describe('Full E2E Demo Flow', () => {
     await page.waitForTimeout(500);
 
     const btnDisabled = await page.locator('button:has-text("Create")').isDisabled();
-    const errVisible  = await page.locator('text=already exists').isVisible();
+    const errVisible = await page.locator('text=already exists').isVisible();
     expect(btnDisabled || errVisible).toBeTruthy();
   });
 

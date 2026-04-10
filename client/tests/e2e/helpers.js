@@ -61,12 +61,12 @@ export async function signOut(page) {
  * autocomplete dropdown, and click Open.
  * Asserts the Project Info heading is visible before returning.
  */
-export async function openProject(page, projectId) {
+export async function openProject(page, projectid) {
   await page.goto('/profile');
   const searchBox = page.locator('input[placeholder*="Search Project"]');
-  await searchBox.fill(projectId);
+  await searchBox.fill(projectid);
 
-  const dropdownItem = page.locator(`text=${projectId}`).first();
+  const dropdownItem = page.locator(`text=${projectid}`).first();
   await dropdownItem.waitFor({ state: 'visible', timeout: 5000 });
   await dropdownItem.click();
 
