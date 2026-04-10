@@ -1,4 +1,5 @@
 # Import necessary libraries and modules
+import os
 import projectsDB
 
 '''
@@ -18,7 +19,7 @@ from datetime import datetime
 # Function to add a new user
 def register(client, username, userid, password):
     # Add a new user to the database
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     if users_col.find_one({"userid": userid}):
         return False, "userid already exists"
@@ -40,7 +41,7 @@ def register(client, username, userid, password):
 # Helper function to query a user by username and userid
 def __queryUser(client, username, userid):
     # Query and return a user from the database
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:
@@ -53,7 +54,7 @@ def __queryUser(client, username, userid):
 # Function to log in a user
 def login(client, userid, password):
     # Authenticate a user and return login status
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     
     # 1. Find the user by ID
@@ -72,7 +73,7 @@ def login(client, userid, password):
 
 # Function to reset password
 def resetPassword(client, userid, oldPassword, newPassword):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
 
     user = users_col.find_one({"userid": userid})
@@ -90,7 +91,7 @@ def resetPassword(client, userid, oldPassword, newPassword):
         return False, "Incorrect password\nPlease check and try again"
 
 def verifyUser(client, userid, username):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:
@@ -101,7 +102,7 @@ def verifyUser(client, userid, username):
         return False, "userid and username do not match"
 
 def changePassword(client, userid, password):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:
@@ -113,7 +114,7 @@ def changePassword(client, userid, password):
 # Function to add a user to a project
 def joinProject(client, userid, projectid):
     # Add a project to the user's project list
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if user:
@@ -126,7 +127,7 @@ def joinProject(client, userid, projectid):
 
 # Function to get username by userid
 def getUsernameById(client, userid):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid}, {"username": 1})
     if user:
@@ -136,7 +137,7 @@ def getUsernameById(client, userid):
 # Function to get the list of projects for a user
 def getUserProjectsList(client, userid):
     # Get and return the list of projects a user is part of
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:
@@ -152,7 +153,7 @@ def getUserProjectsList(client, userid):
 # Function to check if a user is an admin
 def isAdminUser(client, userid):
     # Check if the user has admin privileges
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:
@@ -164,7 +165,7 @@ def isAdminUser(client, userid):
 # Function to set a user as admin
 def setAdminUser(client, userid, isAdminFlag):
     # Set admin privileges for a user
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     users_col = db.users
     user = users_col.find_one({"userid": userid})
     if not user:

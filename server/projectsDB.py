@@ -1,4 +1,5 @@
 # Import necessary libraries and modules
+import os
 from pymongo import MongoClient, ReturnDocument
 from datetime import datetime
 
@@ -22,7 +23,7 @@ Project = {
 # Function to create a new project
 def createProject(client, name, projectid, description, userid):
     # Create a new project in the database
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     if projects_col.find_one({"projectid": projectid}):
         return False, "ProjectID already exists", None, None
@@ -46,7 +47,7 @@ def createProject(client, name, projectid, description, userid):
 
 # Function to get all projects
 def getAllProjects(client):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     projects = list(projects_col.find())
     for p in projects:
@@ -56,7 +57,7 @@ def getAllProjects(client):
 # Function to query a project by its ID
 def queryProject(client, projectid):
     # Query and return a project from the database
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     project = projects_col.find_one({"projectid": projectid})
     if project:
@@ -67,7 +68,7 @@ def queryProject(client, projectid):
 
 # Function to add a user to a project
 def addUser(client, projectid, requesterId, newUserId):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     project = projects_col.find_one({"projectid": projectid})
 
@@ -88,7 +89,7 @@ def addUser(client, projectid, requesterId, newUserId):
 # Function to let a project member leave the project
 def leaveProject(client, userid, projectid):
     # Add a project to the user's project list
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     users_col = db.users
 
@@ -109,7 +110,7 @@ def leaveProject(client, userid, projectid):
 # Function to close a project
 def closeProject(client, userid, projectid):
     # Close a project in the database
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
     users_col = db.users
     project = projects_col.find_one({"projectid": projectid})
@@ -129,7 +130,7 @@ def closeProject(client, userid, projectid):
 
 # Function to check out hardware for a project (take from pool → increase project allocation)
 def checkOutHW(client, projectid, hwSetName, qty, userid):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
 
     project = projects_col.find_one({"projectid": projectid})
@@ -155,7 +156,7 @@ def checkOutHW(client, projectid, hwSetName, qty, userid):
 
 # Function to check in hardware for a project (return to pool → decrease project allocation)
 def checkInHW(client, projectid, hwSetName, qty, userid):
-    db = client.myapp_database
+    db = client[os.getenv("DB_NAME")]
     projects_col = db.Projects
 
     project = projects_col.find_one({"projectid": projectid})
