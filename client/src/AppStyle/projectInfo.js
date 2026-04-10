@@ -7,6 +7,8 @@ const ProjectInfoStyle = {
         width: '90%',
         margin: '60px auto',
         color: 'var(--color-text-primary)',
+        maxHeight: 'calc(100vh - 2 * var(--trim-height) - 40px)',
+        overflowY: 'auto',
     },
     headerRow: {
         display: 'flex',

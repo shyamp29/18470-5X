@@ -38,6 +38,8 @@ const UserProfileStyle = {
         marginTop: '20px',
         marginBottom: '20px',
         boxSizing: 'border-box',
+        maxHeight: 'calc(100vh - 2 * var(--trim-height) - 40px)',
+        overflowY: 'auto',
     },
     header: {
         fontSize: 'var(--font-size-3xl)',
