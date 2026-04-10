@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { apiFetchUserProjects } from "../Auth/apiCalls.js";
+import { apiFetchUserProjects, apiLeaveProject, apiDeleteProject } from "../Auth/apiCalls.js";
 import '../styles/AllProjectsPage.css';
 
 const AllProjectsPage = ({ userid, onBack }) => {
     const [myProjects, setMyProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [actionBusy, setActionBusy] = useState(null); // projectid currently being acted on
 
     useEffect(() => {
         const load = async () => {
@@ -15,6 +16,32 @@ const AllProjectsPage = ({ userid, onBack }) => {
         };
         load();
     }, [userid]);
+
+    const handleLeaveOrDelete = async (proj) => {
+        const isOwner = proj.owneruserid === userid;
+        const action = isOwner ? 'delete' : 'leave';
+        const confirmed = window.confirm(
+            isOwner
+                ? `Delete project "${proj.name}"? This cannot be undone.`
+                : `Leave project "${proj.name}"?`
+        );
+        if (!confirmed) return;
+        setActionBusy(proj.projectid);
+        try {
+            const res = isOwner
+                ? await apiDeleteProject(proj.projectid)
+                : await apiLeaveProject(proj.projectid);
+            if (res.status === 200) {
+                setMyProjects(prev => prev.filter(p => p.projectid !== proj.projectid));
+            } else {
+                alert(res.message || `Failed to ${action} project.`);
+            }
+        } catch {
+            alert(`An unexpected error occurred.`);
+        } finally {
+            setActionBusy(null);
+        }
+    };
 
     return (
         <>
@@ -57,10 +84,12 @@ const AllProjectsPage = ({ userid, onBack }) => {
                                         <span className="field-label">Action</span>
                                         <button
                                             className={isOwner ? 'btn-delete-project' : 'btn-leave-project'}
-                                            disabled
-                                            title="Not yet implemented — pending backend support"
+                                            disabled={actionBusy === proj.projectid}
+                                            onClick={() => handleLeaveOrDelete(proj)}
                                         >
-                                            {isOwner ? '🗑 Delete Project' : '⇒ Leave Project'}
+                                            {actionBusy === proj.projectid
+                                                ? (isOwner ? 'Deleting...' : 'Leaving...')
+                                                : (isOwner ? '🗑 Delete Project' : '⇒ Leave Project')}
                                         </button>
                                     </div>
                                 </div>
