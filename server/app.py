@@ -28,7 +28,8 @@ client = MongoClient(MONGODB_SERVER)
 # Initialize a new Flask web application
 app = Flask(__name__)
 app.secret_key = "encription_key"
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 ALLOWED_ORIGINS = [
@@ -84,6 +85,17 @@ def lowercase_hardware_set(hardware_set):
         "availability": hardware_set.get("availability"),
         "checkedoutby": hardware_set.get("checkedoutby", {}),
     }
+
+
+# Health check endpoint — used by Render to verify the service is running
+@app.route("/health", methods=["GET"])
+def health_check():
+    try:
+        client.admin.command("ping")
+        db_status = "connected"
+    except Exception:
+        db_status = "unavailable"
+    return jsonify({"status": "ok", "db": db_status}), 200
 
 
 # Route for adding a new user
