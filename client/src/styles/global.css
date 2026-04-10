@@ -4,15 +4,18 @@
 ───────────────────────────────────────────────────────────────────────────── */
 @import './theme.css';
 
-/* ── Disabled action buttons (Delete Project / Leave Project) ────────────── */
+/* ── Action buttons (Delete Project / Leave Project) ─────────────────────── */
 /* Use: className="btn-action btn-action--danger" or "btn-action btn-action--neutral" */
 .btn-action {
   padding: 6px 14px;
-  color: var(--color-card-bg);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+.btn-action:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
